@@ -12,9 +12,10 @@
     --card:#181A20;
     --card-hover:#22252E;
     --border:#2C303E;
-    --yellow:#FFCC00;
-    --red:#FC3F1D;
-    --green:#10B981;
+    --brand:#16C2B2;
+    --gold:#F2A93B;
+    --red:#FF5B4C;
+    --green:#22C55E;
     --text:#F5F5F7;
     --text-soft:#8B8D98;
     --text-faint:#5A5D6B;
@@ -22,19 +23,19 @@
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
     background:
-      radial-gradient(circle at 10% 0%, rgba(255,204,0,0.06), transparent 40%),
-      radial-gradient(circle at 90% 100%, rgba(252,63,29,0.06), transparent 45%),
+      radial-gradient(circle at 10% 0%, rgba(22,194,178,0.08), transparent 40%),
+      radial-gradient(circle at 90% 100%, rgba(255,91,76,0.08), transparent 45%),
       var(--bg);
     font-family:'Inter', sans-serif;
     color:var(--text);
     padding:48px 24px 80px 24px;
   }
-
+ 
   /* ---------- Header / tokens ---------- */
   .intro{max-width:1200px; margin:0 auto 44px auto;}
   .eyebrow{
     font-size:12px; letter-spacing:.14em; text-transform:uppercase;
-    color:var(--yellow); font-weight:700; margin-bottom:10px;
+    color:var(--brand); font-weight:700; margin-bottom:10px;
   }
   h1.brand{
     font-weight:900; font-size:clamp(38px,5.5vw,58px); letter-spacing:-0.02em;
@@ -42,12 +43,12 @@
   }
   .brand .logo{
     width:44px; height:44px; border-radius:12px;
-    background:linear-gradient(135deg, var(--yellow), #FFE066);
+    background:linear-gradient(135deg, var(--brand), #FFE066);
     display:flex; align-items:center; justify-content:center;
     font-weight:900; color:var(--bg); font-size:20px; flex:0 0 auto;
   }
   .tagline{font-size:15px; color:var(--text-soft); margin-top:10px; max-width:560px; line-height:1.55;}
-
+ 
   .tokens{display:flex; gap:10px; flex-wrap:wrap; margin-top:26px;}
   .swatch{
     display:flex; align-items:center; gap:9px;
@@ -56,13 +57,13 @@
   }
   .swatch .dot{width:20px; height:20px; border-radius:6px; flex:0 0 auto; border:1px solid rgba(255,255,255,.08);}
   .swatch b{color:var(--text); font-weight:700; display:block; font-size:12.5px;}
-
+ 
   .section-label{
     max-width:1200px; margin:56px auto 18px auto; display:flex; align-items:baseline; gap:10px;
   }
-  .section-label .num{font-weight:900; font-size:13px; color:var(--yellow);}
+  .section-label .num{font-weight:900; font-size:13px; color:var(--brand);}
   .section-label .txt{font-weight:700; font-size:15px; color:var(--text);}
-
+ 
   /* ---------- Phones row ---------- */
   .row{max-width:1200px; margin:0 auto; display:flex; gap:24px; flex-wrap:wrap; justify-content:center;}
   .phone-wrap{display:flex; flex-direction:column; align-items:center; gap:12px;}
@@ -80,11 +81,11 @@
     width:100px; height:20px; background:#000; border-radius:0 0 12px 12px; z-index:5;
   }
   .caption{text-align:center; font-size:12px; color:var(--text-faint); max-width:280px; line-height:1.5;}
-
+ 
   /* ---------- Onboarding ---------- */
   .ob-wrap{flex:1; display:flex; flex-direction:column; padding:52px 22px 24px 22px;}
   .ob-logo{
-    width:56px; height:56px; border-radius:16px; background:linear-gradient(135deg,var(--yellow),#FFE066);
+    width:56px; height:56px; border-radius:16px; background:linear-gradient(135deg,var(--brand),#FFE066);
     display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--bg); font-size:24px;
     margin-bottom:22px;
   }
@@ -96,13 +97,13 @@
     background:var(--card); border:1.5px solid var(--border); border-radius:12px; padding:13px 14px;
     font-size:14px; color:var(--text-faint);
   }
-  .field .input.filled{color:var(--text); border-color:var(--yellow);}
+  .field .input.filled{color:var(--text); border-color:var(--brand);}
   .ob-cta{
-    margin-top:auto; background:var(--yellow); color:var(--bg); border:none; border-radius:14px;
+    margin-top:auto; background:var(--brand); color:var(--bg); border:none; border-radius:14px;
     padding:16px; font-weight:800; font-size:14px; text-align:center;
   }
   .ob-legal{font-size:10.5px; color:var(--text-faint); text-align:center; margin-top:12px; line-height:1.5;}
-
+ 
   /* ---------- Home / Hub ---------- */
   .home{flex:1; overflow:hidden; padding:44px 18px 18px 18px; display:flex; flex-direction:column; gap:16px;}
   .greet-row{display:flex; justify-content:space-between; align-items:flex-start;}
@@ -112,40 +113,40 @@
     width:38px; height:38px; border-radius:50%; background:var(--card); border:1.5px solid var(--border);
     display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12.5px;
   }
-
+ 
   .banner{
-    border-radius:16px; padding:14px 16px; background:linear-gradient(120deg, #2A2200, #1C1706);
-    border:1px solid #4A3E00; display:flex; justify-content:space-between; align-items:center;
+    border-radius:16px; padding:14px 16px; background:linear-gradient(120deg, #0A2E2B, #0F1015);
+    border:1px solid #16C2B2/40; display:flex; justify-content:space-between; align-items:center;
   }
-  .banner .b-title{font-size:13px; font-weight:800; color:var(--yellow);}
+  .banner .b-title{font-size:13px; font-weight:800; color:var(--brand);}
   .banner .b-sub{font-size:11px; color:var(--text-soft); margin-top:2px;}
-  .banner .b-pct{font-size:20px; font-weight:900; color:var(--yellow);}
-
+  .banner .b-pct{font-size:20px; font-weight:900; color:var(--brand);}
+ 
   .services{display:grid; grid-template-columns:1fr; gap:10px;}
   .svc-card{
     border-radius:16px; padding:16px; display:flex; align-items:center; gap:14px;
     border:1px solid var(--border); position:relative; overflow:hidden;
   }
-  .svc-card.taxi{background:linear-gradient(120deg, rgba(252,63,29,.14), var(--card));}
-  .svc-card.market{background:linear-gradient(120deg, rgba(255,204,0,.14), var(--card));}
-  .svc-card.delivery{background:linear-gradient(120deg, rgba(16,185,129,.14), var(--card));}
+  .svc-card.taxi{background:linear-gradient(120deg, rgba(255,91,76,.14), var(--card));}
+  .svc-card.market{background:linear-gradient(120deg, rgba(242,169,59,.14), var(--card));}
+  .svc-card.delivery{background:linear-gradient(120deg, rgba(34,197,94,.14), var(--card));}
   .svc-icon{
     width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; flex:0 0 auto;
   }
   .svc-card.taxi .svc-icon{background:var(--red);}
-  .svc-card.market .svc-icon{background:var(--yellow);}
+  .svc-card.market .svc-icon{background:var(--gold);}
   .svc-card.delivery .svc-icon{background:var(--green);}
   .svc-icon svg{width:24px; height:24px;}
   .svc-name{font-weight:800; font-size:14.5px;}
   .svc-sub{font-size:11.5px; color:var(--text-soft); margin-top:2px;}
   .svc-arrow{margin-left:auto; color:var(--text-faint); font-size:18px;}
-
+ 
   .quick-row{display:flex; gap:8px; overflow:hidden;}
   .qchip{
     font-size:11px; font-weight:600; background:var(--card); border:1px solid var(--border);
     color:var(--text-soft); padding:8px 12px; border-radius:20px; white-space:nowrap;
   }
-
+ 
   /* ---------- Taxi screen ---------- */
   .map{flex:1; position:relative; background:
     linear-gradient(180deg, rgba(255,255,255,0.02), transparent),
@@ -166,7 +167,7 @@
   .route-pin.a{background:var(--green); top:180px; left:90px;}
   .route-pin.b{background:var(--red); top:270px; left:190px;}
   .route-line{position:absolute; border-top:2.5px dashed var(--text-faint); opacity:.6; top:225px; left:100px; width:95px; transform:rotate(25deg);}
-
+ 
   .taxi-sheet{background:var(--card); border-radius:22px 22px 0 0; padding:16px 16px 18px 16px; border-top:1px solid var(--border);}
   .handle{width:34px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 14px auto;}
   .addr-stack{display:flex; flex-direction:column; gap:8px; margin-bottom:14px;}
@@ -176,29 +177,29 @@
   .addr-row.to .adot{background:var(--red);}
   .addr-row span{font-size:12.5px; color:var(--text-soft); font-weight:600;}
   .addr-row.to span{color:var(--text);}
-
+ 
   .tariff-scroll{display:flex; gap:9px; overflow:hidden; margin-bottom:14px;}
   .tariff-card{
     min-width:88px; background:var(--bg); border:1.5px solid var(--border); border-radius:14px;
     padding:10px 9px; text-align:center;
   }
-  .tariff-card.active{border-color:var(--red); background:rgba(252,63,29,.08);}
+  .tariff-card.active{border-color:var(--red); background:rgba(255,91,76,.12);}
   .tariff-icon{font-size:20px; margin-bottom:4px;}
   .tariff-name{font-size:11px; font-weight:700;}
   .tariff-price{font-size:12px; font-weight:800; color:var(--text); margin-top:3px;}
-
+ 
   .taxi-cta{
     width:100%; background:var(--red); color:#fff; border:none; border-radius:14px; padding:15px;
-    font-weight:800; font-size:13.5px; box-shadow:0 12px 24px -10px rgba(252,63,29,.6);
+    font-weight:800; font-size:13.5px; box-shadow:0 12px 24px -10px rgba(255,91,76,.6);
   }
-
+ 
   /* ---------- Market ---------- */
   .market{flex:1; padding:44px 16px 0 16px; display:flex; flex-direction:column; gap:14px; overflow:hidden;}
   .m-title{font-size:19px; font-weight:800;}
   .m-search{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:11px 13px; font-size:12.5px; color:var(--text-faint);}
   .m-cats{display:flex; gap:8px;}
   .m-cat{font-size:11px; font-weight:700; padding:7px 12px; border-radius:18px; background:var(--card); border:1px solid var(--border); color:var(--text-soft);}
-  .m-cat.active{background:var(--yellow); color:var(--bg); border-color:var(--yellow);}
+  .m-cat.active{background:var(--gold); color:var(--bg); border-color:var(--gold);}
   .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   .p-card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px; position:relative;}
   .p-img{
@@ -214,15 +215,15 @@
   .p-price-row{display:flex; align-items:baseline; gap:5px; margin-top:5px;}
   .p-price{font-size:13px; font-weight:800;}
   .p-old{font-size:10px; color:var(--text-faint); text-decoration:line-through;}
-
+ 
   .checkout-bar{
-    margin-top:auto; margin-bottom:14px; background:var(--yellow); border-radius:14px; padding:13px 16px;
+    margin-top:auto; margin-bottom:14px; background:var(--gold); border-radius:14px; padding:13px 16px;
     display:flex; justify-content:space-between; align-items:center;
   }
   .checkout-bar .cb-left{font-size:11.5px; font-weight:700; color:var(--bg);}
   .checkout-bar .cb-count{font-size:9.5px; color:#5A4B00;}
   .checkout-bar .cb-btn{font-size:12.5px; font-weight:800; color:var(--bg);}
-
+ 
   /* ---------- Admin panel (desktop) ---------- */
   .admin{
     max-width:1200px; margin:0 auto; background:var(--card); border:1px solid var(--border);
@@ -232,21 +233,21 @@
     width:210px; background:#101117; border-right:1px solid var(--border); padding:22px 14px; flex:0 0 auto;
   }
   .admin-logo{display:flex; align-items:center; gap:10px; padding:0 8px 24px 8px;}
-  .admin-logo .lg{width:30px; height:30px; border-radius:8px; background:var(--yellow);}
+  .admin-logo .lg{width:30px; height:30px; border-radius:8px; background:var(--brand);}
   .admin-logo span{font-weight:800; font-size:14px;}
   .admin-nav-item{
     display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:10px;
     font-size:12.5px; font-weight:600; color:var(--text-soft); margin-bottom:4px;
   }
-  .admin-nav-item.active{background:rgba(255,204,0,.1); color:var(--yellow);}
+  .admin-nav-item.active{background:rgba(22,194,178,.1); color:var(--brand);}
   .admin-nav-item .ico{width:16px; height:16px; border-radius:4px; background:currentColor; opacity:.35;}
-
+ 
   .admin-main{flex:1; padding:26px 28px; min-width:0;}
   .admin-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:22px;}
   .admin-h1{font-size:18px; font-weight:800;}
   .admin-h-sub{font-size:11.5px; color:var(--text-soft); margin-top:3px;}
-  .admin-add-btn{background:var(--yellow); color:var(--bg); font-weight:800; font-size:12px; padding:10px 16px; border-radius:10px; border:none;}
-
+  .admin-add-btn{background:var(--brand); color:var(--bg); font-weight:800; font-size:12px; padding:10px 16px; border-radius:10px; border:none;}
+ 
   .stat-row{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px;}
   .stat-card{background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:16px;}
   .stat-label{font-size:11px; color:var(--text-soft); font-weight:600;}
@@ -254,13 +255,13 @@
   .stat-delta{font-size:10.5px; font-weight:700; margin-top:4px;}
   .stat-delta.up{color:var(--green);}
   .stat-delta.down{color:var(--red);}
-
+ 
   .chart-box{
     background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:22px;
     display:flex; align-items:flex-end; gap:8px; height:120px;
   }
-  .bar{flex:1; background:linear-gradient(180deg, var(--yellow), rgba(255,204,0,.25)); border-radius:6px 6px 0 0;}
-
+  .bar{flex:1; background:linear-gradient(180deg, var(--brand), rgba(22,194,178,.25)); border-radius:6px 6px 0 0;}
+ 
   table{width:100%; border-collapse:collapse;}
   thead th{
     text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em;
@@ -271,7 +272,7 @@
   .prod-cell{display:flex; align-items:center; gap:10px;}
   .prod-thumb{width:34px; height:34px; border-radius:8px; background:var(--card-hover);}
   .status-pill{font-size:10.5px; font-weight:700; padding:5px 10px; border-radius:8px; display:inline-block;}
-  .status-pill.pending{background:rgba(255,204,0,.12); color:var(--yellow);}
+  .status-pill.pending{background:rgba(242,169,59,.12); color:var(--gold);}
   .status-pill.progress{background:rgba(16,185,129,.12); color:var(--green);}
   .status-pill.done{background:rgba(139,141,152,.12); color:var(--text-soft);}
   .row-actions{display:flex; gap:8px;}
@@ -280,26 +281,27 @@
 </style>
 </head>
 <body>
-
+ 
   <div class="intro">
     <div class="eyebrow">Dizayn tizimi — Super-App</div>
     <h1 class="brand"><div class="logo">U</div>UzGo</h1>
-    <p class="tagline">Yandex Go uslubidagi qorong'i, yuqori kontrastli interfeys — Taksi, Market va Delivery bitta ilovada, uchta aniq brend rangi bilan ajratilgan: sariq (asosiy), qizil (taksi/chegirma), yashil (yetkazish).</p>
-
+    <p class="tagline">Qorong'i, yuqori kontrastli super-app interfeysi — lekin Yandex'ning o'z rangidan (sariq+qizil) qasddan uzoqlashtirilgan: brend rangi sifatida turkuaz (o'ziga xos, Yandex bilan aralashmaydi), har xizmat esa o'z aniq rangida — Taksi qizil-korall, Market oltin, Delivery yashil.</p>
+ 
     <div class="tokens">
       <div class="swatch"><div class="dot" style="background:#0F1015"></div><div><b>Background</b>#0F1015</div></div>
       <div class="swatch"><div class="dot" style="background:#181A20"></div><div><b>Card Surface</b>#181A20</div></div>
       <div class="swatch"><div class="dot" style="background:#22252E"></div><div><b>Hover Card</b>#22252E</div></div>
       <div class="swatch"><div class="dot" style="background:#2C303E"></div><div><b>Border</b>#2C303E</div></div>
-      <div class="swatch"><div class="dot" style="background:#FFCC00"></div><div><b>Accent — Brand</b>#FFCC00</div></div>
-      <div class="swatch"><div class="dot" style="background:#FC3F1D"></div><div><b>Accent — Taksi</b>#FC3F1D</div></div>
-      <div class="swatch"><div class="dot" style="background:#10B981"></div><div><b>Accent — Delivery</b>#10B981</div></div>
+      <div class="swatch"><div class="dot" style="background:#16C2B2"></div><div><b>Brend — Turkuaz</b>#16C2B2</div></div>
+      <div class="swatch"><div class="dot" style="background:#F2A93B"></div><div><b>Market — Oltin</b>#F2A93B</div></div>
+      <div class="swatch"><div class="dot" style="background:#FF5B4C"></div><div><b>Taksi — Korall-qizil</b>#FF5B4C</div></div>
+      <div class="swatch"><div class="dot" style="background:#22C55E"></div><div><b>Delivery — Yashil</b>#22C55E</div></div>
     </div>
   </div>
-
+ 
   <div class="section-label"><span class="num">01—04</span><span class="txt">Mobil ekranlar</span></div>
   <div class="row">
-
+ 
     <div class="phone-wrap">
       <div class="phone-label">Onboarding</div>
       <div class="phone"><div class="notch"></div>
@@ -318,7 +320,7 @@
       </div>
       <p class="caption">Majburiy ro'yxatdan o'tish — ma'lumotlar Supabase <code>profiles</code> jadvaliga yoziladi.</p>
     </div>
-
+ 
     <div class="phone-wrap">
       <div class="phone-label">Bosh sahifa — Hub</div>
       <div class="phone"><div class="notch"></div>
@@ -359,7 +361,7 @@
       </div>
       <p class="caption">3 ta xizmat kartochkasi o'z brend rangida ajratiladi — foydalanuvchi bir qarashda tanlaydi.</p>
     </div>
-
+ 
     <div class="phone-wrap">
       <div class="phone-label">Taksi</div>
       <div class="phone"><div class="notch"></div>
@@ -389,7 +391,7 @@
       </div>
       <p class="caption">Yandex Go uslubidagi gorizontal tarif slayderi — 4 ta daraja, faol karta qizil chegara bilan.</p>
     </div>
-
+ 
     <div class="phone-wrap">
       <div class="phone-label">Market</div>
       <div class="phone"><div class="notch"></div>
@@ -426,9 +428,9 @@
       </div>
       <p class="caption">Suzuvchi Checkout Bar doim ekranning pastida turadi — sariq rang bilan ajratilgan.</p>
     </div>
-
+ 
   </div>
-
+ 
   <div class="section-label"><span class="num">05</span><span class="txt">Admin Panel (Desktop)</span></div>
   <div class="admin">
     <div class="admin-sidebar">
@@ -444,21 +446,21 @@
         <div><div class="admin-h1">Dashboard</div><div class="admin-h-sub">Bugungi umumiy statistika</div></div>
         <button class="admin-add-btn">+ Mahsulot qo'shish</button>
       </div>
-
+ 
       <div class="stat-row">
         <div class="stat-card"><div class="stat-label">Bugungi daromad</div><div class="stat-value">24.6M</div><div class="stat-delta up">↑ 12.4%</div></div>
         <div class="stat-card"><div class="stat-label">Faol buyurtmalar</div><div class="stat-value">183</div><div class="stat-delta up">↑ 6.1%</div></div>
         <div class="stat-card"><div class="stat-label">Onlayn haydovchilar</div><div class="stat-value">47</div><div class="stat-delta down">↓ 2.3%</div></div>
         <div class="stat-card"><div class="stat-label">Yangi foydalanuvchilar</div><div class="stat-value">312</div><div class="stat-delta up">↑ 18.9%</div></div>
       </div>
-
+ 
       <div class="chart-box">
         <div class="bar" style="height:40%"></div><div class="bar" style="height:65%"></div>
         <div class="bar" style="height:52%"></div><div class="bar" style="height:80%"></div>
         <div class="bar" style="height:45%"></div><div class="bar" style="height:70%"></div>
         <div class="bar" style="height:95%"></div>
       </div>
-
+ 
       <table>
         <thead><tr><th>Mahsulot</th><th>Narx</th><th>Buyurtma</th><th>Holat</th><th></th></tr></thead>
         <tbody>
@@ -484,6 +486,6 @@
       </table>
     </div>
   </div>
-
+ 
 </body>
 </html>

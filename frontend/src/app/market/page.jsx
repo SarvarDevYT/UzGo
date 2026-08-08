@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="card flex flex-col overflow-hidden group bg-[#181A20] border border-[#2C303E] hover:border-[#FFCC00]/50 rounded-3xl transition-all duration-300 shadow-xl">
+    <div className="card flex flex-col overflow-hidden group bg-[#181A20] border border-[#2C303E] hover:border-[#F2A93B]/50 rounded-3xl transition-all duration-300 shadow-xl">
       <div className="relative overflow-hidden bg-[#0F1015]">
         <img
           src={product.image_url}
@@ -45,12 +45,12 @@ const ProductCard = ({ product }) => {
           onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400'; }}
         />
         {discount > 0 && (
-          <span className="absolute top-2.5 left-2.5 bg-[#FC3F1D] text-white text-xs font-black px-2 py-1 rounded-xl shadow-lg">
+          <span className="absolute top-2.5 left-2.5 bg-[#FF5B4C] text-white text-xs font-black px-2 py-1 rounded-xl shadow-lg">
             -{discount}%
           </span>
         )}
         {product.stock <= 3 && product.stock > 0 && (
-          <span className="absolute top-2.5 right-2.5 bg-[#FFCC00] text-[#0F1015] text-xs font-bold px-2 py-0.5 rounded-lg">
+          <span className="absolute top-2.5 right-2.5 bg-[#F2A93B] text-[#0F1015] text-xs font-bold px-2 py-0.5 rounded-lg">
             Kam qoldi
           </span>
         )}
@@ -63,13 +63,13 @@ const ProductCard = ({ product }) => {
         <p className="text-xs text-gray-400 line-clamp-1 mb-2 font-medium">{product.description}</p>
 
         <div className="flex items-center gap-1 mb-3">
-          <Star className="w-3.5 h-3.5 fill-[#FFCC00] text-[#FFCC00]" />
-          <span className="text-xs font-bold text-[#FFCC00]">{product.rating || 4.8}</span>
+          <Star className="w-3.5 h-3.5 fill-[#F2A93B] text-[#F2A93B]" />
+          <span className="text-xs font-bold text-[#F2A93B]">{product.rating || 4.8}</span>
           <span className="text-xs text-gray-500">({product.reviews_count || 50})</span>
         </div>
 
         <div className="mt-auto mb-3">
-          <div className="text-lg font-black text-[#FFCC00]">
+          <div className="text-lg font-black text-white">
             {formatPrice(product.price)}
           </div>
           {product.old_price && (
@@ -83,7 +83,7 @@ const ProductCard = ({ product }) => {
           className={`w-full py-3 rounded-2xl text-xs font-extrabold transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 ${
             added
               ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-              : 'bg-[#FFCC00] text-[#0F1015] hover:bg-yellow-400 shadow-md shadow-[#FFCC00]/20'
+              : 'bg-[#F2A93B] text-[#0F1015] hover:bg-[#E0982A] shadow-md shadow-[#F2A93B]/20'
           }`}
         >
           <ShoppingCart className="w-4 h-4" />
@@ -107,7 +107,6 @@ export default function MarketPage() {
 
   useEffect(() => {
     setLoading(true);
-    // Fetch from Supabase PostgreSQL
     supabase
       .from('market_products')
       .select('*')
@@ -116,7 +115,6 @@ export default function MarketPage() {
           setProducts(data);
           setLoading(false);
         } else {
-          // Fallback to API / Mock
           api.get('/market/products/')
             .then(resData => {
               const list = Array.isArray(resData) ? resData : resData.results || [];
@@ -151,15 +149,15 @@ export default function MarketPage() {
   }, [products, activeCategory, search]);
 
   return (
-    <div className="min-h-screen bg-[#0F1015] text-[#F3F4F6] pb-28">
-      {/* Yandex Market Hero Banner */}
-      <div className="relative py-8 px-4 bg-gradient-to-r from-purple-900/60 via-[#181A20] to-[#0F1015] border-b border-[#2C303E]">
+    <div className="min-h-screen bg-[#0F1015] text-[#F5F5F7] pb-28">
+      {/* Market Hero Banner (Gold Amber Accent) */}
+      <div className="relative py-8 px-4 bg-gradient-to-r from-[#F2A93B]/20 via-[#181A20] to-[#0F1015] border-b border-[#2C303E]">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <span className="text-3xl">🛍️</span>
             <div>
               <h1 className="text-2xl font-black text-white">UzGo Market</h1>
-              <p className="text-xs text-purple-300 font-medium">Supabase PostgreSQL bilan integratsiyalangan</p>
+              <p className="text-xs text-[#F2A93B] font-medium">Minglab sifatli mahsulotlar onlayn do'koni</p>
             </div>
           </div>
 
@@ -169,7 +167,7 @@ export default function MarketPage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Mahsulotlarni qidiring..."
-              className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-[#181A20] border border-[#2C303E] text-white font-medium outline-none focus:border-[#FFCC00] transition-colors"
+              className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-[#181A20] border border-[#2C303E] text-white font-medium outline-none focus:border-[#F2A93B] transition-colors"
             />
           </div>
         </div>
@@ -184,7 +182,7 @@ export default function MarketPage() {
               onClick={() => setActiveCategory(cat.id)}
               className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
                 activeCategory === cat.id
-                  ? 'bg-[#FFCC00] text-[#0F1015] shadow-lg shadow-[#FFCC00]/20'
+                  ? 'bg-[#F2A93B] text-[#0F1015] shadow-lg shadow-[#F2A93B]/20'
                   : 'bg-[#181A20] border border-[#2C303E] text-gray-400 hover:text-white'
               }`}
             >
@@ -196,7 +194,7 @@ export default function MarketPage() {
 
         {/* Products Grid */}
         {loading ? (
-          <div className="text-center py-20 text-gray-400 text-sm font-medium">Supabase PostgreSQL ma'lumotlari yuklanmoqda...</div>
+          <div className="text-center py-20 text-gray-400 text-sm font-medium">Mahsulotlar yuklanmoqda...</div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {filteredProducts.map(product => (
@@ -211,13 +209,13 @@ export default function MarketPage() {
         <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-40 animate-slide-up w-full max-w-md px-4">
           <button
             onClick={() => router.push('/market/cart')}
-            className="w-full flex items-center justify-between px-6 py-4 rounded-2xl shadow-2xl font-black text-sm transition-all hover:scale-105 active:scale-95 bg-[#FFCC00] text-[#0F1015] shadow-[#FFCC00]/30"
+            className="w-full flex items-center justify-between px-6 py-4 rounded-2xl shadow-2xl font-black text-sm transition-all hover:scale-105 active:scale-95 bg-[#F2A93B] text-[#0F1015] shadow-[#F2A93B]/30"
           >
             <div className="flex items-center gap-2">
               <ShoppingCart className="w-5 h-5" />
-              <span>{cartCount} ta mahsulot</span>
+              <span>Savat — {cartCount} mahsulot</span>
             </div>
-            <div className="flex items-center gap-1 text-base">
+            <div className="flex items-center gap-1 text-base font-black">
               <span>{cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0).toLocaleString('ru-RU')} so'm</span>
               <ChevronRight className="w-4 h-4" />
             </div>
