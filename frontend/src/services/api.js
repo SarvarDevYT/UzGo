@@ -4,7 +4,7 @@ const getApiBaseUrl = () => {
   if (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
-  return 'http://localhost:8000/api';
+  return 'http://localhost:5000/api';
 };
 
 const api = axios.create({
