@@ -4,7 +4,7 @@ const getApiBaseUrl = () => {
   if (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
-  return 'http://localhost:5000/api';
+  return 'http://localhost:8000/api';
 };
 
 const api = axios.create({
@@ -15,7 +15,6 @@ const api = axios.create({
   },
 });
 
-// Request interceptor — JWT token qo'shish
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
@@ -29,7 +28,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor — xatolarni boshqarish
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {

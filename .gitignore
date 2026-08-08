@@ -9,6 +9,11 @@ frontend/out/
 frontend/build/
 frontend/dist/
 
+# Python & Django
+backend/db.sqlite3
+*.pyc
+__pycache__/
+
 # Android Studio & Gradle build outputs
 mobile/.gradle/
 mobile/build/
