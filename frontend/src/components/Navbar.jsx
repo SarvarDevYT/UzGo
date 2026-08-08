@@ -20,12 +20,14 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full bg-[#181A20]/90 backdrop-blur-xl border-b border-[#2C303E]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo UzGo Turquoise Style */}
+          {/* Logo UzGo Official Style */}
           <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#16C2B2] to-[#FFE066] flex items-center justify-center shadow-lg shadow-[#16C2B2]/20 font-black text-[#0F1015] text-lg tracking-tighter group-hover:scale-105 transition-transform">
-                U
-              </div>
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <img 
+                src="/logo.png" 
+                alt="UzGo Logo" 
+                className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-[#16C2B2]/20 group-hover:scale-105 transition-transform" 
+              />
               <span className="font-extrabold text-xl text-white tracking-wide">
                 Uz<span className="text-[#16C2B2]">Go</span>
               </span>

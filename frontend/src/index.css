@@ -16,9 +16,16 @@ html, body {
   background-color: #0F1015;
   color: #F5F5F7;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
-/* Hide scrollbars for clean app feel */
+/* Mobile Soft Keyboard scroll adjustments */
+input, textarea, select {
+  scroll-margin-top: 100px;
+  scroll-margin-bottom: 100px;
+}
+
+/* Hide scrollbars for clean mobile app feel */
 ::-webkit-scrollbar {
   display: none;
   width: 0;
