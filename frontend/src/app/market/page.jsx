@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { Search, Filter, ShoppingCart, Star, ChevronRight, Tag, Zap, TrendingUp } from 'lucide-react';
 import { addItem } from '../../store/cartSlice';
+import { supabase } from '../../services/supabaseClient';
 import api from '../../services/api';
 
 const CATEGORIES = [
@@ -43,7 +44,7 @@ const ProductCard = ({ product }) => {
           className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400'; }}
         />
-        {discount && (
+        {discount > 0 && (
           <span className="absolute top-2.5 left-2.5 bg-[#FC3F1D] text-white text-xs font-black px-2 py-1 rounded-xl shadow-lg">
             -{discount}%
           </span>
@@ -63,7 +64,7 @@ const ProductCard = ({ product }) => {
 
         <div className="flex items-center gap-1 mb-3">
           <Star className="w-3.5 h-3.5 fill-[#FFCC00] text-[#FFCC00]" />
-          <span className="text-xs font-bold text-[#FFCC00]">{product.rating}</span>
+          <span className="text-xs font-bold text-[#FFCC00]">{product.rating || 4.8}</span>
           <span className="text-xs text-gray-500">({product.reviews_count || 50})</span>
         </div>
 
@@ -106,23 +107,34 @@ export default function MarketPage() {
 
   useEffect(() => {
     setLoading(true);
-    api.get('/market/products/')
-      .then(data => {
-        const list = Array.isArray(data) ? data : data.results || [];
-        setProducts(list);
-      })
-      .catch(() => {
-        // Fallback mock
-        setProducts([
-          { id: 1, name: 'Samsung Galaxy A54 128GB', description: '6.4" Super AMOLED, 5000mAh, 50MP', price: 3850000, old_price: 4200000, category_id: 'cat1', stock: 15, rating: 4.7, image_url: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400' },
-          { id: 2, name: 'AirPods Pro 2', description: 'Aktiv shovqin yutuvchi, USB-C korpus', price: 2100000, old_price: 2400000, category_id: 'cat1', stock: 8, rating: 4.9, image_url: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400' },
-          { id: 3, name: 'Adidas Ultraboost 22', description: 'Professional yugurish poyabzali', price: 1200000, old_price: 1500000, category_id: 'cat4', stock: 20, rating: 4.6, image_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400' },
-          { id: 4, name: 'Nike Air Force 1 White', description: 'Klassik dizayn, premium charm', price: 950000, old_price: 1100000, category_id: 'cat4', stock: 30, rating: 4.8, image_url: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400' },
-          { id: 5, name: 'MacBook Air M2 256GB', description: '13.6" Liquid Retina, 8GB RAM', price: 12500000, old_price: 13500000, category_id: 'cat1', stock: 5, rating: 4.9, image_url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400' },
-          { id: 6, name: 'Dyson V12 Detect Slim', description: 'Simsiz changyutgich, lazer chiroqli', price: 5200000, old_price: 5800000, category_id: 'cat5', stock: 4, rating: 4.9, image_url: 'https://images.unsplash.com/photo-1558317374-067fb5f30001?w=400' },
-        ]);
-      })
-      .finally(() => setLoading(false));
+    // Fetch from Supabase PostgreSQL
+    supabase
+      .from('market_products')
+      .select('*')
+      .then(({ data, error }) => {
+        if (!error && data && data.length > 0) {
+          setProducts(data);
+          setLoading(false);
+        } else {
+          // Fallback to API / Mock
+          api.get('/market/products/')
+            .then(resData => {
+              const list = Array.isArray(resData) ? resData : resData.results || [];
+              setProducts(list);
+            })
+            .catch(() => {
+              setProducts([
+                { id: 1, name: 'Samsung Galaxy A54 128GB', description: '6.4" Super AMOLED, 5000mAh, 50MP', price: 3850000, old_price: 4200000, category_id: 'cat1', stock: 15, rating: 4.7, image_url: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400' },
+                { id: 2, name: 'AirPods Pro 2', description: 'Aktiv shovqin yutuvchi, USB-C korpus', price: 2100000, old_price: 2400000, category_id: 'cat1', stock: 8, rating: 4.9, image_url: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400' },
+                { id: 3, name: 'Adidas Ultraboost 22', description: 'Professional yugurish poyabzali', price: 1200000, old_price: 1500000, category_id: 'cat4', stock: 20, rating: 4.6, image_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400' },
+                { id: 4, name: 'Nike Air Force 1 White', description: 'Klassik dizayn, premium charm', price: 950000, old_price: 1100000, category_id: 'cat4', stock: 30, rating: 4.8, image_url: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400' },
+                { id: 5, name: 'MacBook Air M2 256GB', description: '13.6" Liquid Retina, 8GB RAM', price: 12500000, old_price: 13500000, category_id: 'cat1', stock: 5, rating: 4.9, image_url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400' },
+                { id: 6, name: 'Dyson V12 Detect Slim', description: 'Simsiz changyutgich, lazer chiroqli', price: 5200000, old_price: 5800000, category_id: 'cat5', stock: 4, rating: 4.9, image_url: 'https://images.unsplash.com/photo-1558317374-067fb5f30001?w=400' },
+              ]);
+            })
+            .finally(() => setLoading(false));
+        }
+      });
   }, []);
 
   useEffect(() => {
@@ -147,7 +159,7 @@ export default function MarketPage() {
             <span className="text-3xl">🛍️</span>
             <div>
               <h1 className="text-2xl font-black text-white">UzGo Market</h1>
-              <p className="text-xs text-purple-300 font-medium">Minglab mahsulotlar onlayn do'konda</p>
+              <p className="text-xs text-purple-300 font-medium">Supabase PostgreSQL bilan integratsiyalangan</p>
             </div>
           </div>
 
@@ -184,7 +196,7 @@ export default function MarketPage() {
 
         {/* Products Grid */}
         {loading ? (
-          <div className="text-center py-20 text-gray-400 text-sm font-medium">Mahsulotlar yuklanmoqda...</div>
+          <div className="text-center py-20 text-gray-400 text-sm font-medium">Supabase PostgreSQL ma'lumotlari yuklanmoqda...</div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {filteredProducts.map(product => (
