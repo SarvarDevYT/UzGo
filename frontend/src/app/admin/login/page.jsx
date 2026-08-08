@@ -8,8 +8,8 @@ import { setCredentials } from '../../../store/authSlice';
 import api from '../../../services/api';
 
 export default function AdminLoginPage() {
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
+  const [identifier, setIdentifier] = useState('+998990000001');
+  const [password, setPassword] = useState('admin1234');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -37,18 +37,20 @@ export default function AdminLoginPage() {
             token: 'demo-admin-jwt-token-123456',
             user: {
               id: 'u4',
-              name: 'Sardor Admin',
+              name: 'Sardor Admin (Termiz)',
               phone: '+998990000001',
               role: 'admin'
             }
           };
         } else {
-          throw new Error("Login yoki parol noto'g'ri! Demo: +998990000001 / admin1234");
+          throw new Error("Login yoki parol noto'g'ri! Demo: admin / admin1234");
         }
       }
 
       if (authData && authData.token) {
         dispatch(setCredentials(authData));
+        document.cookie = `uzgo_admin_token=${authData.token}; path=/; max-age=86400`;
+        document.cookie = `uzgo_user_role=admin; path=/; max-age=86400`;
         router.push('/admin/dashboard');
       } else {
         throw new Error("Login yoki parol noto'g'ri!");
@@ -61,63 +63,61 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0d1b3e] to-[#111827] flex items-center justify-center px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-md w-full space-y-8 bg-[#1f2937] p-8 md:p-10 rounded-2xl shadow-2xl border border-[#374151]">
+    <div className="min-h-screen bg-[#0F1015] flex items-center justify-center px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="max-w-md w-full space-y-8 bg-[#181A20] p-8 md:p-10 rounded-3xl shadow-2xl border border-[#2C303E]">
         
         <div className="text-center">
-          <div className="mx-auto w-16 h-16 bg-[#FFC300] rounded-full flex items-center justify-center shadow-lg mb-4">
-            <span className="text-[#0d1b3e] text-2xl font-black tracking-tighter">UG</span>
-          </div>
-          <h2 className="text-3xl font-extrabold text-white">Uz<span className="text-[#FFC300]">Go</span></h2>
-          <p className="mt-2 text-sm text-gray-400 font-medium uppercase tracking-widest">Boshqaruv Paneli</p>
+          <img src="/logo.png" alt="UzGo Admin Logo" className="w-16 h-16 object-contain mx-auto mb-3 rounded-2xl shadow-lg shadow-[#16C2B2]/20" />
+          <h2 className="text-3xl font-black text-white">Uz<span className="text-[#16C2B2]">Go</span> Admin</h2>
+          <p className="mt-1 text-xs text-[#16C2B2] font-bold uppercase tracking-widest">Termiz Super-App Boshqaruv Paneli</p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+        <form className="mt-8 space-y-5" onSubmit={handleLogin}>
           {error && (
-            <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 flex items-center gap-2 text-red-400 text-sm">
+            <div className="bg-red-500/10 border border-red-500/50 rounded-2xl p-3.5 flex items-center gap-2 text-red-400 text-xs font-bold">
               <AlertCircle size={18} />
               <span>{error}</span>
             </div>
           )}
 
           <div className="space-y-4">
-            <div className="relative">
-              <label className="text-sm font-medium text-gray-300 block mb-1">Email yoki Telefon</label>
+            <div>
+              <label className="text-xs font-bold text-gray-300 block mb-1">Login (Email, Telefon yoki 'admin')</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                  <User size={20} />
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500">
+                  <User size={18} />
                 </div>
                 <input
                   type="text"
                   required
-                  className="appearance-none rounded-lg relative block w-full pl-10 px-3 py-3 border border-[#374151] bg-[#111827] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFC300] focus:border-transparent transition-all sm:text-sm"
-                  placeholder="+998 99 000 00 01"
+                  className="appearance-none rounded-xl relative block w-full pl-10 px-3.5 py-3 border border-[#2C303E] bg-[#0F1015] text-white placeholder-gray-500 focus:outline-none focus:border-[#16C2B2] transition-all text-xs font-medium"
+                  placeholder="admin yoki +998990000001"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                 />
               </div>
             </div>
 
-            <div className="relative">
-              <label className="text-sm font-medium text-gray-300 block mb-1">Parol</label>
+            <div>
+              <label className="text-xs font-bold text-gray-300 block mb-1">Parol</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                  <Lock size={20} />
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500">
+                  <Lock size={18} />
                 </div>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
-                  className="appearance-none rounded-lg relative block w-full pl-10 pr-10 py-3 border border-[#374151] bg-[#111827] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFC300] focus:border-transparent transition-all sm:text-sm"
+                  className="appearance-none rounded-xl relative block w-full pl-10 pr-10 py-3 border border-[#2C303E] bg-[#0F1015] text-white placeholder-gray-500 focus:outline-none focus:border-[#16C2B2] transition-all text-xs font-medium"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-[#FFC300]"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-500 hover:text-[#16C2B2]"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
@@ -127,15 +127,17 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-[#0d1b3e] bg-[#FFC300] hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FFC300] focus:ring-offset-[#111827] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-3.5 px-4 border border-transparent text-xs font-black rounded-xl text-[#0F1015] bg-[#16C2B2] hover:bg-[#13B0A2] focus:outline-none transition-all shadow-lg shadow-[#16C2B2]/20"
             >
               {loading ? 'Kirilmoqda...' : 'Tizimga kirish'}
             </button>
           </div>
         </form>
 
-        <div className="mt-6 text-center text-xs text-gray-500">
-          <p>Demo: +998990000001 / admin1234</p>
+        <div className="mt-6 text-center text-xs text-gray-400 bg-[#0F1015] p-3 rounded-xl border border-[#2C303E]">
+          <p className="font-bold text-white mb-1">🔑 Demo Kirish Ma'lumotlari:</p>
+          <p className="text-[#16C2B2] font-mono font-extrabold">Login: <span className="text-white">admin</span> (yoki <span className="text-white">+998990000001</span>)</p>
+          <p className="text-[#16C2B2] font-mono font-extrabold">Parol: <span className="text-white">admin1234</span></p>
         </div>
       </div>
     </div>
