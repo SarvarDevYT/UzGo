@@ -56,6 +56,15 @@
     border-radius:10px; padding:8px 14px 8px 8px; font-size:12px; color:var(--text-soft);
   }
   .swatch .dot{width:20px; height:20px; border-radius:6px; flex:0 0 auto; border:1px solid rgba(255,255,255,.08);}
+  .swatch .dot.bg-swatch-1{background:#0F1015;}
+  .swatch .dot.bg-swatch-2{background:#181A20;}
+  .swatch .dot.bg-swatch-3{background:#22252E;}
+  .swatch .dot.bg-swatch-4{background:#2C303E;}
+  .swatch .dot.bg-swatch-5{background:#16C2B2;}
+  .swatch .dot.bg-swatch-6{background:#F2A93B;}
+  .swatch .dot.bg-swatch-7{background:#FF5B4C;}
+  .swatch .dot.bg-swatch-8{background:#22C55E;}
+
   .swatch b{color:var(--text); font-weight:700; display:block; font-size:12.5px;}
  
   .section-label{
@@ -116,7 +125,7 @@
  
   .banner{
     border-radius:16px; padding:14px 16px; background:linear-gradient(120deg, #0A2E2B, #0F1015);
-    border:1px solid #16C2B2/40; display:flex; justify-content:space-between; align-items:center;
+    border:1px solid rgba(22,194,178,0.4); display:flex; justify-content:space-between; align-items:center;
   }
   .banner .b-title{font-size:13px; font-weight:800; color:var(--brand);}
   .banner .b-sub{font-size:11px; color:var(--text-soft); margin-top:2px;}
@@ -261,7 +270,14 @@
     display:flex; align-items:flex-end; gap:8px; height:120px;
   }
   .bar{flex:1; background:linear-gradient(180deg, var(--brand), rgba(22,194,178,.25)); border-radius:6px 6px 0 0;}
- 
+  .bar.h-40{height:40%;}
+  .bar.h-65{height:65%;}
+  .bar.h-52{height:52%;}
+  .bar.h-80{height:80%;}
+  .bar.h-45{height:45%;}
+  .bar.h-70{height:70%;}
+  .bar.h-95{height:95%;}
+
   table{width:100%; border-collapse:collapse;}
   thead th{
     text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em;
@@ -288,14 +304,14 @@
     <p class="tagline">Qorong'i, yuqori kontrastli super-app interfeysi — lekin Yandex'ning o'z rangidan (sariq+qizil) qasddan uzoqlashtirilgan: brend rangi sifatida turkuaz (o'ziga xos, Yandex bilan aralashmaydi), har xizmat esa o'z aniq rangida — Taksi qizil-korall, Market oltin, Delivery yashil.</p>
  
     <div class="tokens">
-      <div class="swatch"><div class="dot" style="background:#0F1015"></div><div><b>Background</b>#0F1015</div></div>
-      <div class="swatch"><div class="dot" style="background:#181A20"></div><div><b>Card Surface</b>#181A20</div></div>
-      <div class="swatch"><div class="dot" style="background:#22252E"></div><div><b>Hover Card</b>#22252E</div></div>
-      <div class="swatch"><div class="dot" style="background:#2C303E"></div><div><b>Border</b>#2C303E</div></div>
-      <div class="swatch"><div class="dot" style="background:#16C2B2"></div><div><b>Brend — Turkuaz</b>#16C2B2</div></div>
-      <div class="swatch"><div class="dot" style="background:#F2A93B"></div><div><b>Market — Oltin</b>#F2A93B</div></div>
-      <div class="swatch"><div class="dot" style="background:#FF5B4C"></div><div><b>Taksi — Korall-qizil</b>#FF5B4C</div></div>
-      <div class="swatch"><div class="dot" style="background:#22C55E"></div><div><b>Delivery — Yashil</b>#22C55E</div></div>
+      <div class="swatch"><div class="dot bg-swatch-1"></div><div><b>Background</b>#0F1015</div></div>
+      <div class="swatch"><div class="dot bg-swatch-2"></div><div><b>Card Surface</b>#181A20</div></div>
+      <div class="swatch"><div class="dot bg-swatch-3"></div><div><b>Hover Card</b>#22252E</div></div>
+      <div class="swatch"><div class="dot bg-swatch-4"></div><div><b>Border</b>#2C303E</div></div>
+      <div class="swatch"><div class="dot bg-swatch-5"></div><div><b>Brend — Turkuaz</b>#16C2B2</div></div>
+      <div class="swatch"><div class="dot bg-swatch-6"></div><div><b>Market — Oltin</b>#F2A93B</div></div>
+      <div class="swatch"><div class="dot bg-swatch-7"></div><div><b>Taksi — Korall-qizil</b>#FF5B4C</div></div>
+      <div class="swatch"><div class="dot bg-swatch-8"></div><div><b>Delivery — Yashil</b>#22C55E</div></div>
     </div>
   </div>
  
@@ -455,10 +471,10 @@
       </div>
  
       <div class="chart-box">
-        <div class="bar" style="height:40%"></div><div class="bar" style="height:65%"></div>
-        <div class="bar" style="height:52%"></div><div class="bar" style="height:80%"></div>
-        <div class="bar" style="height:45%"></div><div class="bar" style="height:70%"></div>
-        <div class="bar" style="height:95%"></div>
+        <div class="bar h-40"></div><div class="bar h-65"></div>
+        <div class="bar h-52"></div><div class="bar h-80"></div>
+        <div class="bar h-45"></div><div class="bar h-70"></div>
+        <div class="bar h-95"></div>
       </div>
  
       <table>

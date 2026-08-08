@@ -3,14 +3,14 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, MapPin, CreditCard, Banknote, ShieldCheck } from 'lucide-react';
-import OrderTracker from '../../../modules/delivery/components/OrderTracker';
+import OrderTracker from '../../../components/OrderTracker';
 
 export default function DeliveryCheckoutPage() {
   const router = useRouter();
   
   const [cart] = useState([
-    { id: 'm1', name: 'Margarita', price: 45000, quantity: 1 },
-    { id: 'm2', name: 'Pepperoni', price: 52000, quantity: 1 }
+    { id: 'm1', name: 'Margarita Pizza', price: 45000, quantity: 1 },
+    { id: 'm2', name: 'Pepperoni Pizza', price: 52000, quantity: 1 }
   ]);
   const storeName = "Toshkent Pizza";
   const deliveryFee = 5000;
@@ -41,44 +41,44 @@ export default function DeliveryCheckoutPage() {
 
   if (orderPlaced) {
     return (
-      <div className="min-h-screen bg-dark-bg p-4 flex flex-col items-center justify-center">
-        <h2 className="text-2xl font-bold text-dark-text mb-6 text-center">Buyurtmangiz qabul qilindi! 🎉</h2>
+      <div className="min-h-screen bg-[#0F1015] p-4 flex flex-col items-center justify-center">
+        <h2 className="text-2xl font-black text-white mb-6 text-center">Buyurtmangiz qabul qilindi! 🎉</h2>
         <OrderTracker orderId={orderId} onClose={() => router.push('/delivery')} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-dark-bg text-dark-text pb-20">
+    <div className="min-h-screen bg-[#0F1015] text-[#F5F5F7] pb-20">
       {/* Header */}
-      <div className="bg-dark-card p-4 flex items-center gap-3 border-b border-dark-border sticky top-0 z-10">
-        <button onClick={() => router.back()} className="p-1 text-dark-muted hover:text-dark-text">
+      <div className="bg-[#181A20] p-4 flex items-center gap-3 border-b border-[#2C303E] sticky top-0 z-10">
+        <button onClick={() => router.back()} className="p-1 text-gray-400 hover:text-white">
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <h1 className="text-lg font-bold">Buyurtmani rasmiylashtirish</h1>
+        <h1 className="text-lg font-extrabold text-white">Buyurtmani rasmiylashtirish</h1>
       </div>
 
       <div className="p-4 space-y-6 max-w-xl mx-auto">
         {/* Order Items */}
-        <div className="bg-dark-card border border-dark-border rounded-xl p-4">
-          <h2 className="font-semibold text-lg mb-3">{storeName}</h2>
+        <div className="bg-[#181A20] border border-[#2C303E] rounded-2xl p-4 shadow-xl">
+          <h2 className="font-extrabold text-lg text-white mb-3">{storeName}</h2>
           <div className="space-y-3">
             {cart.map(item => (
-              <div key={item.id} className="flex justify-between items-center text-sm">
+              <div key={item.id} className="flex justify-between items-center text-sm font-medium">
                 <span>{item.quantity}x {item.name}</span>
-                <span className="font-medium">{item.price.toLocaleString('uz-UZ')} so'm</span>
+                <span className="font-black text-[#16C2B2]">{item.price.toLocaleString('ru-RU')} so'm</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Address Input */}
-        <div className="bg-dark-card border border-dark-border rounded-xl p-4">
-          <h2 className="font-semibold mb-3 flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-[#1a237e]" /> Yetkazib berish manzili
+        <div className="bg-[#181A20] border border-[#2C303E] rounded-2xl p-4 shadow-xl">
+          <h2 className="font-bold mb-3 flex items-center gap-2 text-white">
+            <MapPin className="w-5 h-5 text-[#22C55E]" /> Yetkazib berish manzili
           </h2>
           <textarea 
-            className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-dark-text focus:border-[#1a237e] focus:outline-none transition-colors"
+            className="w-full bg-[#0F1015] border border-[#2C303E] rounded-xl p-3 text-white focus:border-[#22C55E] focus:outline-none transition-colors text-sm font-medium"
             placeholder="Shahar, tuman, ko'cha, uy raqami..."
             rows={3}
             value={address}
@@ -87,42 +87,37 @@ export default function DeliveryCheckoutPage() {
         </div>
 
         {/* Payment Methods */}
-        <div className="bg-dark-card border border-dark-border rounded-xl p-4">
-          <h2 className="font-semibold mb-3 flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-[#1a237e]" /> To'lov usuli
+        <div className="bg-[#181A20] border border-[#2C303E] rounded-2xl p-4 shadow-xl">
+          <h2 className="font-bold mb-3 flex items-center gap-2 text-white">
+            <CreditCard className="w-5 h-5 text-[#16C2B2]" /> To'lov usuli
           </h2>
           <div className="space-y-2">
-            <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${paymentMethod === 'cash' ? 'border-[#ffc107] bg-[#ffc107]/10' : 'border-dark-border bg-dark-bg'}`}>
+            <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${paymentMethod === 'cash' ? 'border-[#F2A93B] bg-[#F2A93B]/10' : 'border-[#2C303E] bg-[#0F1015]'}`}>
               <input type="radio" name="payment" value="cash" checked={paymentMethod === 'cash'} onChange={() => setPaymentMethod('cash')} className="hidden" />
-              <Banknote className={`w-5 h-5 ${paymentMethod === 'cash' ? 'text-[#ffc107]' : 'text-dark-muted'}`} />
-              <span className={paymentMethod === 'cash' ? 'font-medium' : ''}>Naqd pul (Kuryerga)</span>
+              <Banknote className={`w-5 h-5 ${paymentMethod === 'cash' ? 'text-[#F2A93B]' : 'text-gray-400'}`} />
+              <span className={paymentMethod === 'cash' ? 'font-bold text-white' : 'text-gray-300'}>Naqd pul (Kuryerga)</span>
             </label>
-            <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${paymentMethod === 'click' ? 'border-blue-500 bg-blue-500/10' : 'border-dark-border bg-dark-bg'}`}>
+            <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${paymentMethod === 'click' ? 'border-blue-500 bg-blue-500/10' : 'border-[#2C303E] bg-[#0F1015]'}`}>
               <input type="radio" name="payment" value="click" checked={paymentMethod === 'click'} onChange={() => setPaymentMethod('click')} className="hidden" />
-              <ShieldCheck className={`w-5 h-5 ${paymentMethod === 'click' ? 'text-blue-500' : 'text-dark-muted'}`} />
-              <span className={paymentMethod === 'click' ? 'font-medium' : ''}>Click orqali</span>
-            </label>
-            <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${paymentMethod === 'payme' ? 'border-cyan-500 bg-cyan-500/10' : 'border-dark-border bg-dark-bg'}`}>
-              <input type="radio" name="payment" value="payme" checked={paymentMethod === 'payme'} onChange={() => setPaymentMethod('payme')} className="hidden" />
-              <ShieldCheck className={`w-5 h-5 ${paymentMethod === 'payme' ? 'text-cyan-500' : 'text-dark-muted'}`} />
-              <span className={paymentMethod === 'payme' ? 'font-medium' : ''}>Payme orqali</span>
+              <ShieldCheck className={`w-5 h-5 ${paymentMethod === 'click' ? 'text-blue-500' : 'text-gray-400'}`} />
+              <span className={paymentMethod === 'click' ? 'font-bold text-white' : 'text-gray-300'}>Click orqali</span>
             </label>
           </div>
         </div>
 
         {/* Price Breakdown */}
-        <div className="bg-dark-card border border-dark-border rounded-xl p-4 space-y-2">
-          <div className="flex justify-between text-dark-muted text-sm">
+        <div className="bg-[#181A20] border border-[#2C303E] rounded-2xl p-4 space-y-2 shadow-xl">
+          <div className="flex justify-between text-gray-400 text-xs font-semibold">
             <span>Mahsulotlar narxi</span>
-            <span>{subtotal.toLocaleString('uz-UZ')} so'm</span>
+            <span className="text-white">{subtotal.toLocaleString('ru-RU')} so'm</span>
           </div>
-          <div className="flex justify-between text-dark-muted text-sm">
+          <div className="flex justify-between text-gray-400 text-xs font-semibold">
             <span>Yetkazib berish</span>
-            <span>{deliveryFee.toLocaleString('uz-UZ')} so'm</span>
+            <span className="text-white">{deliveryFee.toLocaleString('ru-RU')} so'm</span>
           </div>
-          <div className="border-t border-dark-border pt-2 mt-2 flex justify-between font-bold text-lg">
+          <div className="border-t border-[#2C303E] pt-2 mt-2 flex justify-between font-black text-base">
             <span>Jami</span>
-            <span className="text-[#ffc107]">{total.toLocaleString('uz-UZ')} so'm</span>
+            <span className="text-[#16C2B2]">{total.toLocaleString('ru-RU')} so'm</span>
           </div>
         </div>
 
@@ -130,8 +125,10 @@ export default function DeliveryCheckoutPage() {
         <button 
           onClick={handleCheckout}
           disabled={isSubmitting || !address}
-          className={`w-full py-4 rounded-xl font-bold text-white transition-colors ${
-            isSubmitting || !address ? 'bg-dark-border text-dark-muted cursor-not-allowed' : 'bg-[#1a237e] hover:bg-[#283593] shadow-lg'
+          className={`w-full py-4 rounded-2xl font-black text-sm transition-all shadow-xl ${
+            isSubmitting || !address 
+              ? 'bg-[#2C303E] text-gray-500 cursor-not-allowed' 
+              : 'bg-[#22C55E] text-[#0F1015] hover:bg-[#16A34A] shadow-[#22C55E]/20'
           }`}
         >
           {isSubmitting ? 'Buyurtma rasmiylashtirilmoqda...' : 'Buyurtmani tasdiqlash'}
