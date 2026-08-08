@@ -3,159 +3,169 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
-import { MapPin, CreditCard, CheckCircle2, ChevronLeft } from 'lucide-react';
-import { selectCartTotal, clearCart } from '../../../store/cartSlice';
+import { MapPin, Phone, User, CreditCard, CheckCircle2, ArrowRight } from 'lucide-react';
+import { clearCart } from '../../../store/cartSlice';
+import { supabase } from '../../../services/supabaseClient';
 
 export default function CheckoutPage() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const cartTotal = useSelector(selectCartTotal);
+  const { user } = useSelector((state) => state.auth || { user: null });
+  const { items } = useSelector((state) => state.cart || { items: [] });
 
-  const [address, setAddress] = useState({ city: 'Toshkent', street: '', house: '' });
-  const [paymentMethod, setPaymentMethod] = useState('cash'); // cash | click | payme
+  const [name, setName] = useState(user?.name || 'Sardor Rahimov');
+  const [phone, setPhone] = useState(user?.phone || '+998901234567');
+  const [address, setAddress] = useState('Chilonzor 8-kvartal, 12-uy');
+  const [paymentMethod, setPaymentMethod] = useState('cash');
+  const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const subtotal = cartTotal || 15550000;
-  const delivery = 20000;
-  const total = subtotal + delivery;
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const deliveryFee = subtotal > 0 ? 15000 : 0;
+  const total = subtotal + deliveryFee;
 
-  const handleConfirm = () => {
-    if (!address.street || !address.house) return;
-    
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // Save order to Supabase orders table
+      await supabase.from('orders').insert([
+        {
+          user_name: name,
+          phone: phone,
+          order_type: 'market',
+          items: items,
+          total_price: total,
+          delivery_fee: deliveryFee,
+          address: address,
+          payment_method: paymentMethod,
+          status: 'pending'
+        }
+      ]);
+    } catch (err) {
+      console.error('Order save error:', err);
+    }
+
+    setLoading(false);
     setIsSuccess(true);
-    setTimeout(() => {
-      dispatch(clearCart());
-      router.push('/market');
-    }, 2500);
+    dispatch(clearCart());
   };
 
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen bg-[#0F1015] text-[#F3F4F6] flex flex-col justify-center items-center p-4">
+        <div className="bg-[#181A20] border border-[#2C303E] rounded-3xl p-8 max-w-md w-full text-center shadow-2xl animate-slide-up">
+          <CheckCircle2 size={64} className="text-emerald-400 mx-auto mb-4 animate-bounce" />
+          <h1 className="text-2xl font-black text-white mb-2">Buyurtma Qabul Qilindi!</h1>
+          <p className="text-xs text-gray-400 mb-6">
+            Rahmat, {name}! Buyurtmangiz Supabase-ga saqlandi va kuryer tez orada yetkazib beradi.
+          </p>
+          <button 
+            onClick={() => router.push('/')}
+            className="w-full py-4 rounded-2xl bg-[#FFCC00] text-[#0F1015] font-black text-sm hover:bg-yellow-400 transition-all shadow-lg"
+          >
+            Bosh Sahifaga Qaytish
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col min-h-[calc(100vh-64px)] bg-dark-bg relative">
-      <div className="p-4 bg-dark-card border-b border-dark-border z-10 sticky top-0 flex items-center gap-3">
-        <button onClick={() => router.back()} className="p-2 -ml-2 rounded-full text-dark-text hover:bg-dark-bg transition-colors">
-          <ChevronLeft size={24} />
-        </button>
-        <h1 className="text-xl font-bold text-dark-text">Buyurtmani rasmiylashtirish</h1>
-      </div>
+    <div className="min-h-screen bg-[#0F1015] text-[#F3F4F6] p-4 pb-24 max-w-lg mx-auto">
+      <h1 className="text-2xl font-black text-white mb-4">Rasmiylashtirish</h1>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 max-w-xl mx-auto w-full">
-        {/* Address Section */}
-        <section className="bg-dark-card p-4 rounded-xl border border-dark-border shadow-sm">
-          <h2 className="text-lg font-semibold text-dark-text mb-4 flex items-center gap-2">
-            <MapPin size={20} className="text-primary-900" /> Yetkazib berish manzili
-          </h2>
-          <div className="space-y-3">
-            <div>
-              <label className="text-xs text-dark-text/70 mb-1 block">Shahar / Tuman</label>
-              <input 
-                type="text" 
-                value={address.city}
-                onChange={e => setAddress({...address, city: e.target.value})}
-                className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-dark-text focus:outline-none focus:border-primary-900"
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="col-span-2">
-                <label className="text-xs text-dark-text/70 mb-1 block">Ko'cha</label>
-                <input 
-                  type="text"
-                  placeholder="Masalan: Navoiy"
-                  value={address.street}
-                  onChange={e => setAddress({...address, street: e.target.value})}
-                  className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-dark-text focus:outline-none focus:border-primary-900"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-dark-text/70 mb-1 block">Uy / Xonadon</label>
-                <input 
-                  type="text"
-                  placeholder="Masalan: 14A"
-                  value={address.house}
-                  onChange={e => setAddress({...address, house: e.target.value})}
-                  className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-dark-text focus:outline-none focus:border-primary-900"
-                />
-              </div>
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* User Info */}
+        <div className="bg-[#181A20] border border-[#2C303E] rounded-3xl p-5 shadow-xl space-y-3">
+          <h2 className="text-xs font-bold text-[#FFCC00] uppercase tracking-wider">Mijoz Ma'lumotlari</h2>
+          
+          <div>
+            <label className="text-xs text-gray-400 block mb-1">Ism va Familiya</label>
+            <input 
+              type="text" 
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full bg-[#0F1015] border border-[#2C303E] rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[#FFCC00]" 
+            />
           </div>
-        </section>
 
-        {/* Payment Methods Section */}
-        <section className="bg-dark-card p-4 rounded-xl border border-dark-border shadow-sm">
-          <h2 className="text-lg font-semibold text-dark-text mb-4 flex items-center gap-2">
-            <CreditCard size={20} className="text-accent" /> To'lov usuli
-          </h2>
-          <div className="space-y-3">
-            <label className={`flex items-center justify-between p-3 rounded-lg border-2 cursor-pointer transition-colors ${paymentMethod === 'cash' ? 'border-[#ffc107] bg-[#ffc107]/10' : 'border-dark-border hover:border-dark-text/30'}`}>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">💵</span>
-                <span className="font-medium text-dark-text">Naqd pul</span>
-              </div>
-              <input type="radio" name="payment" checked={paymentMethod === 'cash'} onChange={() => setPaymentMethod('cash')} className="w-5 h-5 accent-[#ffc107]" />
-            </label>
-            
-            <label className={`flex items-center justify-between p-3 rounded-lg border-2 cursor-pointer transition-colors ${paymentMethod === 'click' ? 'border-[#ffc107] bg-[#ffc107]/10' : 'border-dark-border hover:border-dark-text/30'}`}>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">📱</span>
-                <span className="font-medium text-dark-text">Click</span>
-              </div>
-              <input type="radio" name="payment" checked={paymentMethod === 'click'} onChange={() => setPaymentMethod('click')} className="w-5 h-5 accent-[#ffc107]" />
-            </label>
-
-            <label className={`flex items-center justify-between p-3 rounded-lg border-2 cursor-pointer transition-colors ${paymentMethod === 'payme' ? 'border-[#ffc107] bg-[#ffc107]/10' : 'border-dark-border hover:border-dark-text/30'}`}>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🟢</span>
-                <span className="font-medium text-dark-text">Payme</span>
-              </div>
-              <input type="radio" name="payment" checked={paymentMethod === 'payme'} onChange={() => setPaymentMethod('payme')} className="w-5 h-5 accent-[#ffc107]" />
-            </label>
+          <div>
+            <label className="text-xs text-gray-400 block mb-1">Telefon Raqam</label>
+            <input 
+              type="tel" 
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full bg-[#0F1015] border border-[#2C303E] rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[#FFCC00]" 
+            />
           </div>
-        </section>
 
-        {/* Summary */}
-        <section className="bg-dark-card p-4 rounded-xl border border-dark-border shadow-sm">
-          <h2 className="text-lg font-semibold text-dark-text mb-4">Xulosa</h2>
-          <div className="space-y-2 text-sm text-dark-text/80 mb-4">
-            <div className="flex justify-between">
-              <span>Mahsulotlar narxi:</span>
-              <span>{new Intl.NumberFormat('uz-UZ').format(subtotal)} so'm</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Yetkazib berish:</span>
-              <span>{new Intl.NumberFormat('uz-UZ').format(delivery)} so'm</span>
-            </div>
-          </div>
-          <div className="pt-3 border-t border-dark-border flex justify-between font-bold text-lg">
-            <span className="text-dark-text">Jami:</span>
-            <span className="text-accent">{new Intl.NumberFormat('uz-UZ').format(total)} so'm</span>
-          </div>
-        </section>
-      </div>
-
-      <div className="p-4 bg-dark-card border-t border-dark-border mt-auto z-10 max-w-xl mx-auto w-full">
-        <button 
-          onClick={handleConfirm}
-          disabled={!address.street || !address.house}
-          className="w-full bg-[#1a237e] text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-[#283593] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#1a237e]/30"
-        >
-          Buyurtmani tasdiqlash
-        </button>
-      </div>
-
-      {/* Success Modal */}
-      {isSuccess && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-dark-card rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl border border-dark-border animate-in zoom-in-95">
-            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 size={40} className="text-green-500" />
-            </div>
-            <h2 className="text-2xl font-bold text-dark-text mb-2">Buyurtmangiz qabul qilindi!</h2>
-            <p className="text-dark-text/70 mb-6">Tez orada kuryerimiz siz bilan bog'lanadi.</p>
-            <div className="inline-block border-2 border-accent/30 rounded-full px-4 py-2 text-sm font-semibold text-accent animate-pulse">
-              Bosh sahifaga qaytilmoqda...
-            </div>
+          <div>
+            <label className="text-xs text-gray-400 block mb-1">Yetkazib berish manzili</label>
+            <input 
+              type="text" 
+              required
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full bg-[#0F1015] border border-[#2C303E] rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[#FFCC00]" 
+            />
           </div>
         </div>
-      )}
+
+        {/* Payment Method */}
+        <div className="bg-[#181A20] border border-[#2C303E] rounded-3xl p-5 shadow-xl">
+          <h2 className="text-xs font-bold text-[#FFCC00] uppercase tracking-wider mb-3">To'lov Usuli</h2>
+          
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { id: 'cash', label: 'Naqd' },
+              { id: 'click', label: 'Click' },
+              { id: 'payme', label: 'Payme' },
+            ].map(m => (
+              <button
+                type="button"
+                key={m.id}
+                onClick={() => setPaymentMethod(m.id)}
+                className={`py-3 rounded-2xl text-xs font-extrabold border transition-all ${
+                  paymentMethod === m.id 
+                    ? 'border-[#FFCC00] bg-[#FFCC00]/10 text-[#FFCC00]' 
+                    : 'border-[#2C303E] bg-[#0F1015] text-gray-400'
+                }`}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Summary */}
+        <div className="bg-[#181A20] border border-[#2C303E] rounded-3xl p-5 shadow-xl space-y-2">
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>Mahsulotlar:</span>
+            <span>{subtotal.toLocaleString('ru-RU')} so'm</span>
+          </div>
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>Yetkazib berish:</span>
+            <span>{deliveryFee.toLocaleString('ru-RU')} so'm</span>
+          </div>
+          <div className="flex justify-between text-base font-black text-white pt-2 border-t border-[#2C303E]">
+            <span>Jami:</span>
+            <span className="text-[#FFCC00]">{total.toLocaleString('ru-RU')} so'm</span>
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          disabled={loading || items.length === 0}
+          className="w-full py-4 rounded-2xl bg-[#FFCC00] hover:bg-yellow-400 text-[#0F1015] font-black text-base transition-all shadow-xl shadow-[#FFCC00]/20 flex items-center justify-center gap-2"
+        >
+          <span>{loading ? 'Yuborilmoqda...' : 'Buyurtmani Tasdiqlash'}</span>
+          <ArrowRight size={18} />
+        </button>
+      </form>
     </div>
   );
 }

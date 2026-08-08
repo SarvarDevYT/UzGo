@@ -1,14 +1,36 @@
 'use client';
 
-import { Provider } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { Provider, useSelector } from 'react-redux';
+import { usePathname, useRouter } from 'next/navigation';
 import { store } from '../store';
 import { ToastProvider } from '../components/ToastProvider';
+
+function AuthGuard({ children }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { isAuthenticated } = useSelector((state) => state.auth || { isAuthenticated: false });
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    if (!isAuthenticated && pathname !== '/login' && !pathname?.startsWith('/admin')) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, pathname, mounted, router]);
+
+  return <>{children}</>;
+}
 
 export default function Providers({ children }) {
   return (
     <Provider store={store}>
       <ToastProvider>
-        {children}
+        <AuthGuard>{children}</AuthGuard>
       </ToastProvider>
     </Provider>
   );

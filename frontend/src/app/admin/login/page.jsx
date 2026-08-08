@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { Eye, EyeOff, Lock, User, AlertCircle } from 'lucide-react';
-import { setAuth } from '../../../store/authSlice';
+import { setCredentials } from '../../../store/authSlice';
 import api from '../../../services/api';
 
 export default function AdminLoginPage() {
@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
       }
 
       if (authData && authData.token) {
-        dispatch(setAuth(authData));
+        dispatch(setCredentials(authData));
         router.push('/admin/dashboard');
       } else {
         throw new Error("Login yoki parol noto'g'ri!");
