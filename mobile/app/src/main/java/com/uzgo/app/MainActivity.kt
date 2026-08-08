@@ -26,8 +26,8 @@ class MainActivity : AppCompatActivity() {
     private var geolocationOrigin: String? = null
     private var geolocationCallback: GeolocationPermissions.Callback? = null
 
-    // Vercel Production URLs
-    private var primaryUrl = "https://uz-go.vercel.app"
+    // Exact Live Vercel Production URL
+    private var primaryUrl = "https://uz-go-opal.vercel.app"
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
                 <div class="card">
                     <div class="icon">🚀</div>
                     <h2>UzGo Serveriga Ulanish</h2>
-                    <p>Vercel domenini tekshiring yoki serverni qayta yuklang.</p>
+                    <p>Internet yoki server aloqasini tekshiring.</p>
                     <button class="btn" onclick="location.reload()">Qaytadan Urinish</button>
                 </div>
             </body>
