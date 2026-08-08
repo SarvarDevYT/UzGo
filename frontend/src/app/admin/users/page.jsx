@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Users, Search, DollarSign, Shield, Trash2, ArrowUpRight, ArrowDownLeft, CheckCircle } from 'lucide-react';
+import { Users, Search, DollarSign, Shield, Trash2, RefreshCw } from 'lucide-react';
 import { supabase } from '../../../services/supabaseClient';
 
 export default function AdminUsersPage() {
@@ -15,33 +15,32 @@ export default function AdminUsersPage() {
   const [amount, setAmount] = useState(50000);
   const [actionType, setActionType] = useState('deposit');
 
-  const fetchUsers = () => {
+  const fetchRealUsers = async () => {
     setLoading(true);
-    supabase.from('profiles').select('*').order('created_at', { ascending: false })
-      .then(({ data, error }) => {
-        if (!error && data && data.length > 0) {
-          setUsersList(data);
-        } else {
-          setUsersList([
-            { id: 'u1', name: 'Sarvarbek (Termiz)', phone: '+998901234567', role: 'user', balance: 150000, rides_count: 12 },
-            { id: 'u2', name: 'Jamshidbek Alimov', phone: '+998912345678', role: 'driver', balance: 250000, rides_count: 48 },
-            { id: 'u3', name: 'Dilnoza Tursunova', phone: '+998935554433', role: 'user', balance: 75000, rides_count: 5 },
-            { id: 'u4', name: 'Sardor Admin', phone: '+998990000001', role: 'admin', balance: 500000, rides_count: 0 },
-          ]);
-        }
-      })
-      .finally(() => setLoading(false));
+    try {
+      const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+      if (!error && data) {
+        setUsersList(data);
+      } else {
+        setUsersList([]);
+      }
+    } catch (err) {
+      console.error('Fetch real users error:', err);
+      setUsersList([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchRealUsers();
   }, []);
 
   const handleRoleChange = async (userId, newRole) => {
     try {
       await supabase.from('profiles').update({ role: newRole }).eq('id', userId);
     } catch (err) {}
-    setUsersList(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
+    fetchRealUsers();
     alert(`Foydalanuvchi roli '${newRole.toUpperCase()}'ga o'zgartirildi!`);
   };
 
@@ -56,22 +55,22 @@ export default function AdminUsersPage() {
       await supabase.from('profiles').update({ balance: newBal }).eq('id', selectedUser.id);
     } catch (err) {}
 
-    setUsersList(prev => prev.map(u => u.id === selectedUser.id ? { ...u, balance: newBal } : u));
+    fetchRealUsers();
     setShowBalanceModal(false);
     alert(`Foydalanuvchi hamyoni balansi ${actionType === 'deposit' ? '+' : '-'}${amount.toLocaleString('ru-RU')} so'mga o'zgardi!`);
   };
 
   const handleDeleteUser = async (id) => {
-    if (!confirm("Foydalanuvchini o'chirishga ishonchingiz komilmi?")) return;
+    if (!confirm("Foydalanuvchini bazadan o'chirishga ishonchingiz komilmi?")) return;
     try {
       await supabase.from('profiles').delete().eq('id', id);
     } catch (err) {}
-    setUsersList(prev => prev.filter(u => u.id !== id));
+    fetchRealUsers();
   };
 
   const filtered = usersList.filter(u => 
-    u.name.toLowerCase().includes(search.toLowerCase()) || 
-    u.phone.includes(search)
+    (u.name || '').toLowerCase().includes(search.toLowerCase()) || 
+    (u.phone || '').includes(search)
   );
 
   return (
@@ -81,10 +80,16 @@ export default function AdminUsersPage() {
         <div>
           <h1 className="text-xl font-black text-white flex items-center gap-2">
             <Users className="text-[#16C2B2]" size={24} />
-            Foydalanuvchilar va Rollar Boshqaruvi
+            Foydalanuvchilar va Rollar Boshqaruvi (Real Baza)
           </h1>
           <p className="text-xs text-gray-400">Rollar o'zgartirish (Foydalanuvchi, Haydovchi, Admin) hamda Hamyon balansi</p>
         </div>
+        <button 
+          onClick={fetchRealUsers}
+          className="flex items-center gap-1.5 bg-[#181A20] border border-[#2C303E] hover:border-[#16C2B2] text-[#16C2B2] font-bold py-2 px-3 rounded-xl text-xs"
+        >
+          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Real Yangilash
+        </button>
       </div>
 
       {/* Search Bar */}
@@ -117,44 +122,52 @@ export default function AdminUsersPage() {
                 <tr>
                   <td colSpan={5} className="text-center py-8 text-gray-400">Yuklanmoqda...</td>
                 </tr>
-              ) : filtered.map((u) => (
-                <tr key={u.id} className="hover:bg-[#22252E] transition-colors">
-                  <td className="px-5 py-3.5 font-extrabold text-white">{u.name}</td>
-                  <td className="px-5 py-3.5 text-xs text-gray-400">{u.phone}</td>
-                  <td className="px-5 py-3.5">
-                    <select
-                      value={u.role || 'user'}
-                      onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                      className={`text-xs font-black p-2 rounded-xl border outline-none cursor-pointer ${
-                        u.role === 'admin' ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' :
-                        u.role === 'driver' ? 'bg-red-500/20 text-red-400 border-red-500/40' :
-                        'bg-blue-500/20 text-blue-400 border-blue-500/40'
-                      }`}
-                    >
-                      <option value="user" className="bg-[#181A20] text-white">Foydalanuvchi</option>
-                      <option value="driver" className="bg-[#181A20] text-white">Haydovchi (Flot)</option>
-                      <option value="admin" className="bg-[#181A20] text-white">Super Admin</option>
-                    </select>
-                  </td>
-                  <td className="px-5 py-3.5 font-black text-[#16C2B2]">
-                    {(u.balance || 0).toLocaleString('ru-RU')} so'm
-                  </td>
-                  <td className="px-5 py-3.5 flex items-center gap-2">
-                    <button 
-                      onClick={() => { setSelectedUser(u); setShowBalanceModal(true); }}
-                      className="bg-[#16C2B2]/10 border border-[#16C2B2]/30 text-[#16C2B2] hover:bg-[#16C2B2]/20 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1"
-                    >
-                      <DollarSign size={14} /> Balans
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteUser(u.id)}
-                      className="text-red-400 hover:text-red-300 p-1.5 rounded-lg hover:bg-red-500/20"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+              ) : filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8 text-gray-500 font-medium">
+                    Hozircha bazada ro'yxatdan o'tgan foydalanuvchilar mavjud emas (0 ta)
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filtered.map((u) => (
+                  <tr key={u.id} className="hover:bg-[#22252E] transition-colors">
+                    <td className="px-5 py-3.5 font-extrabold text-white">{u.name || u.phone || 'Foydalanuvchi'}</td>
+                    <td className="px-5 py-3.5 text-xs text-gray-400">{u.phone}</td>
+                    <td className="px-5 py-3.5">
+                      <select
+                        value={u.role || 'user'}
+                        onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                        className={`text-xs font-black p-2 rounded-xl border outline-none cursor-pointer ${
+                          u.role === 'admin' ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' :
+                          u.role === 'driver' ? 'bg-red-500/20 text-red-400 border-red-500/40' :
+                          'bg-blue-500/20 text-blue-400 border-blue-500/40'
+                        }`}
+                      >
+                        <option value="user" className="bg-[#181A20] text-white">Foydalanuvchi</option>
+                        <option value="driver" className="bg-[#181A20] text-white">Haydovchi (Flot)</option>
+                        <option value="admin" className="bg-[#181A20] text-white">Super Admin</option>
+                      </select>
+                    </td>
+                    <td className="px-5 py-3.5 font-black text-[#16C2B2]">
+                      {(u.balance || 0).toLocaleString('ru-RU')} so'm
+                    </td>
+                    <td className="px-5 py-3.5 flex items-center gap-2">
+                      <button 
+                        onClick={() => { setSelectedUser(u); setShowBalanceModal(true); }}
+                        className="bg-[#16C2B2]/10 border border-[#16C2B2]/30 text-[#16C2B2] hover:bg-[#16C2B2]/20 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1"
+                      >
+                        <DollarSign size={14} /> Balans
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteUser(u.id)}
+                        className="text-red-400 hover:text-red-300 p-1.5 rounded-lg hover:bg-red-500/20"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

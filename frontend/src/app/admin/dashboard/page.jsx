@@ -2,16 +2,16 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { TrendingUp, TrendingDown, Users, Car, ShoppingBag, DollarSign, Plus, RefreshCw } from 'lucide-react';
+import { TrendingUp, Users, Car, ShoppingBag, Plus, RefreshCw, AlertCircle } from 'lucide-react';
 import { supabase } from '../../../services/supabaseClient';
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
-    revenue: '24.6M',
-    activeOrders: 183,
-    onlineDrivers: 47,
-    newUsers: 312,
+    revenue: 0,
+    activeOrders: 0,
+    onlineDrivers: 0,
+    totalUsers: 0,
   });
 
   const [recentOrders, setRecentOrders] = useState([]);
@@ -19,43 +19,47 @@ export default function AdminDashboard() {
   const fetchLiveDashboardData = async () => {
     setLoading(true);
     try {
-      // 1. Fetch Orders from Supabase
+      // 1. Query real orders from Supabase
       const { data: ordersData } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
       
-      // 2. Fetch Profiles/Users & Drivers from Supabase
+      // 2. Query real profiles from Supabase
       const { data: profilesData } = await supabase.from('profiles').select('*');
 
-      let calcRevenue = 46100000;
-      let activeOrdCount = 18;
-      let onlineDrvCount = 14;
-      let usersCount = profilesData ? profilesData.length : 312;
+      // 3. Query real taxi rides from Supabase
+      const { data: ridesData } = await supabase.from('taxi_rides').select('*');
 
-      if (ordersData && ordersData.length > 0) {
+      let totalRevenue = 0;
+      let pendingCount = 0;
+      let driversCount = 0;
+      let usersCount = 0;
+
+      if (ordersData) {
         setRecentOrders(ordersData.slice(0, 5));
-        const totalSum = ordersData.reduce((acc, curr) => acc + (curr.total_price || 0), 0);
-        if (totalSum > 0) calcRevenue = totalSum;
-        activeOrdCount = ordersData.filter(o => o.status === 'pending' || o.status === 'processing').length || 12;
+        totalRevenue += ordersData.reduce((sum, o) => sum + (Number(o.total_price) || 0), 0);
+        pendingCount += ordersData.filter(o => o.status === 'pending' || o.status === 'processing').length;
       } else {
-        setRecentOrders([
-          { id: '1042', user_name: 'Sarvarbek', total_price: 340000, payment_method: 'cash', status: 'pending' },
-          { id: '1041', user_name: 'Jamshidbek', total_price: 890000, payment_method: 'click', status: 'processing' },
-          { id: '1039', user_name: 'Dilnoza', total_price: 560000, payment_method: 'payme', status: 'delivered' },
-        ]);
+        setRecentOrders([]);
       }
 
-      if (profilesData && profilesData.length > 0) {
-        onlineDrvCount = profilesData.filter(p => p.role === 'driver').length || 14;
+      if (ridesData) {
+        totalRevenue += ridesData.reduce((sum, r) => sum + (Number(r.price) || 0), 0);
+        pendingCount += ridesData.filter(r => r.status === 'searching' || r.status === 'accepted').length;
+      }
+
+      if (profilesData) {
+        usersCount = profilesData.length;
+        driversCount = profilesData.filter(p => p.role === 'driver').length;
       }
 
       setStats({
-        revenue: (calcRevenue / 1000000).toFixed(1) + 'M',
-        activeOrders: activeOrdCount,
-        onlineDrivers: onlineDrvCount,
-        newUsers: usersCount,
+        revenue: totalRevenue,
+        activeOrders: pendingCount,
+        onlineDrivers: driversCount,
+        totalUsers: usersCount,
       });
 
     } catch (err) {
-      console.error('Fetch live admin dashboard error:', err);
+      console.error('Fetch dashboard error:', err);
     } finally {
       setLoading(false);
     }
@@ -70,8 +74,8 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black text-white">Dashboard — Real-Vaqt Statistika</h1>
-          <p className="text-xs text-gray-400">Termiz Super-App real bazaviy ko'rsatkichlari va tushumlari</p>
+          <h1 className="text-2xl font-black text-white">Dashboard — Aniq Real Statistika</h1>
+          <p className="text-xs text-gray-400">Termiz Super-App bazaviy real ma'lumotlar bazasidan hisoblangan ko'rsatkichlar</p>
         </div>
 
         <div className="flex gap-2">
@@ -79,7 +83,7 @@ export default function AdminDashboard() {
             onClick={fetchLiveDashboardData}
             className="flex items-center gap-1.5 bg-[#181A20] border border-[#2C303E] hover:border-[#16C2B2] text-[#16C2B2] font-bold py-2.5 px-3 rounded-xl text-xs"
           >
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Yangilash
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Real Yangilash
           </button>
 
           <Link 
@@ -91,37 +95,39 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Stat Cards Grid */}
+      {/* Real Stat Cards Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-[#181A20] border border-[#2C303E] rounded-2xl p-5 shadow-xl">
-          <span className="text-xs font-bold text-gray-400 block mb-1">Jami Daromad</span>
-          <div className="text-2xl font-black text-white">{stats.revenue} <span className="text-xs font-medium text-gray-400">so'm</span></div>
-          <div className="text-xs font-bold text-[#16C2B2] mt-2 flex items-center gap-1">
-            <TrendingUp size={14} /> Real Supabase Baza
+          <span className="text-xs font-bold text-gray-400 block mb-1">Jami Daromad (Haqiqiy)</span>
+          <div className="text-2xl font-black text-[#16C2B2]">
+            {stats.revenue.toLocaleString('ru-RU')} <span className="text-xs font-medium text-gray-400">so'm</span>
+          </div>
+          <div className="text-xs font-bold text-gray-500 mt-2 flex items-center gap-1">
+            • Real bazaviy aylanma
           </div>
         </div>
 
         <div className="bg-[#181A20] border border-[#2C303E] rounded-2xl p-5 shadow-xl">
           <span className="text-xs font-bold text-gray-400 block mb-1">Faol Buyurtmalar</span>
           <div className="text-2xl font-black text-white">{stats.activeOrders} <span className="text-xs font-medium text-gray-400">ta</span></div>
-          <div className="text-xs font-bold text-[#16C2B2] mt-2 flex items-center gap-1">
-            <TrendingUp size={14} /> Real-vaqt kutilmoqda
+          <div className="text-xs font-bold text-gray-500 mt-2 flex items-center gap-1">
+            • Hozir jarayonda
           </div>
         </div>
 
         <div className="bg-[#181A20] border border-[#2C303E] rounded-2xl p-5 shadow-xl">
           <span className="text-xs font-bold text-gray-400 block mb-1">Flot Haydovchilari</span>
           <div className="text-2xl font-black text-white">{stats.onlineDrivers} <span className="text-xs font-medium text-gray-400">nafar</span></div>
-          <div className="text-xs font-bold text-[#F2A93B] mt-2 flex items-center gap-1">
-            <Car size={14} /> Yandex Fleet Flot
+          <div className="text-xs font-bold text-gray-500 mt-2 flex items-center gap-1">
+            • Baza profilidagi haydovchilar
           </div>
         </div>
 
         <div className="bg-[#181A20] border border-[#2C303E] rounded-2xl p-5 shadow-xl">
-          <span className="text-xs font-bold text-gray-400 block mb-1">Foydalanuvchilar</span>
-          <div className="text-2xl font-black text-white">{stats.newUsers} <span className="text-xs font-medium text-gray-400">ta</span></div>
-          <div className="text-xs font-bold text-[#16C2B2] mt-2 flex items-center gap-1">
-            <Users size={14} /> Ro'yxatdan o'tgan
+          <span className="text-xs font-bold text-gray-400 block mb-1">Jami Foydalanuvchilar</span>
+          <div className="text-2xl font-black text-white">{stats.totalUsers} <span className="text-xs font-medium text-gray-400">ta</span></div>
+          <div className="text-xs font-bold text-gray-500 mt-2 flex items-center gap-1">
+            • Bazada ro'yxatdan o'tgan
           </div>
         </div>
       </div>
@@ -145,27 +151,39 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#2C303E]">
-              {recentOrders.map((o, idx) => (
-                <tr key={idx} className="hover:bg-[#22252E] transition-colors">
-                  <td className="px-5 py-3.5 font-mono font-bold text-white">#{o.id.toString().slice(0, 8)}</td>
-                  <td className="px-5 py-3.5 font-semibold text-white">{o.user_name}</td>
-                  <td className="px-5 py-3.5 font-black text-[#16C2B2]">{o.total_price?.toLocaleString('ru-RU')} so'm</td>
-                  <td className="px-5 py-3.5">
-                    <span className="bg-[#22252E] border border-[#2C303E] text-xs font-bold px-2 py-0.5 rounded-lg uppercase">
-                      {o.payment_method || 'cash'}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <span className={`px-2.5 py-1 rounded-lg text-xs font-bold uppercase ${
-                      o.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
-                      o.status === 'processing' ? 'bg-blue-500/20 text-blue-400' :
-                      'bg-green-500/20 text-green-400'
-                    }`}>
-                      {o.status === 'pending' ? 'Kutilmoqda' : o.status === 'processing' ? 'Jarayonda' : 'Yetkazildi'}
-                    </span>
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8 text-gray-400">Yuklanmoqda...</td>
+                </tr>
+              ) : recentOrders.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8 text-gray-500 font-medium">
+                    Hozircha bazada real buyurtmalar mavjud emas (0 ta)
                   </td>
                 </tr>
-              ))}
+              ) : (
+                recentOrders.map((o, idx) => (
+                  <tr key={idx} className="hover:bg-[#22252E] transition-colors">
+                    <td className="px-5 py-3.5 font-mono font-bold text-white">#{o.id.toString().slice(0, 8)}</td>
+                    <td className="px-5 py-3.5 font-semibold text-white">{o.user_name || o.phone || 'Foydalanuvchi'}</td>
+                    <td className="px-5 py-3.5 font-black text-[#16C2B2]">{(o.total_price || 0).toLocaleString('ru-RU')} so'm</td>
+                    <td className="px-5 py-3.5">
+                      <span className="bg-[#22252E] border border-[#2C303E] text-xs font-bold px-2 py-0.5 rounded-lg uppercase">
+                        {o.payment_method || 'cash'}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className={`px-2.5 py-1 rounded-lg text-xs font-bold uppercase ${
+                        o.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
+                        o.status === 'processing' ? 'bg-blue-500/20 text-blue-400' :
+                        'bg-green-500/20 text-green-400'
+                      }`}>
+                        {o.status === 'pending' ? 'Kutilmoqda' : o.status === 'processing' ? 'Jarayonda' : 'Yetkazildi'}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

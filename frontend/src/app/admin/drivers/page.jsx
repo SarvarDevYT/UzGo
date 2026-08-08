@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Car, Search, Plus, Trash2, DollarSign, ArrowUpRight, ArrowDownLeft, Shield, CheckCircle, XCircle } from 'lucide-react';
+import { Car, Search, Plus, Trash2, DollarSign, RefreshCw } from 'lucide-react';
 import { supabase } from '../../../services/supabaseClient';
 
 export default function AdminDriversPage() {
@@ -25,25 +25,25 @@ export default function AdminDriversPage() {
   const [balanceAmount, setBalanceAmount] = useState(50000);
   const [balanceAction, setBalanceAction] = useState('deposit'); // deposit | withdraw
 
-  const fetchDrivers = () => {
+  const fetchRealDrivers = async () => {
     setLoading(true);
-    supabase.from('profiles').select('*').eq('role', 'driver')
-      .then(({ data, error }) => {
-        if (!error && data && data.length > 0) {
-          setDrivers(data);
-        } else {
-          setDrivers([
-            { id: 'd1', name: 'Otabek Tursunov', phone: '+998912345678', car: 'Cobalt (75 A 777 AA)', tariff: 'mototaxi', balance: 250000, rides: 148, total_earnings: 2850000, commission: 285000, is_online: true },
-            { id: 'd2', name: 'Sirojiddin Alimov', phone: '+998909876543', car: 'Monza (75 B 123 BB)', tariff: 'comfort', balance: 180000, rides: 92, total_earnings: 1940000, commission: 194000, is_online: true },
-            { id: 'd3', name: 'Bahriddin Qodirov', phone: '+998935554433', car: 'BYD Song (75 C 999 CC)', tariff: 'business', balance: 520000, rides: 210, total_earnings: 4600000, commission: 460000, is_online: false },
-          ]);
-        }
-      })
-      .finally(() => setLoading(false));
+    try {
+      const { data, error } = await supabase.from('profiles').select('*').eq('role', 'driver').order('created_at', { ascending: false });
+      if (!error && data) {
+        setDrivers(data);
+      } else {
+        setDrivers([]);
+      }
+    } catch (err) {
+      console.error('Fetch real drivers error:', err);
+      setDrivers([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchDrivers();
+    fetchRealDrivers();
   }, []);
 
   const handleAddDriver = async (e) => {
@@ -51,59 +51,59 @@ export default function AdminDriversPage() {
     if (!name || !phone) return;
 
     const newDriver = {
-      id: 'd_' + Date.now(),
       name,
       phone,
       car: `${carModel} (${plateNumber})`,
       tariff,
       balance: 100000,
-      rides: 0,
-      total_earnings: 0,
-      commission: 0,
-      is_online: true,
-      role: 'driver'
+      role: 'driver',
+      is_online: true
     };
 
     try {
-      await supabase.from('profiles').insert([newDriver]);
+      const { error } = await supabase.from('profiles').insert([newDriver]);
+      if (error) {
+        alert("Xatolik: Supabase-ga haydovchi saqlab bo'lmadi (" + error.message + ")");
+      } else {
+        alert("Yangi haydovchi Supabase bazasiga muvaffaqiyatli saqlandi! 🎉");
+      }
     } catch (err) {
-      console.log('Supabase driver insert mock fallback');
+      console.error(err);
     }
 
-    setDrivers(prev => [newDriver, ...prev]);
+    fetchRealDrivers();
     setShowAddModal(false);
     setName('');
     setPhone('+9989');
-    alert("Yangi haydovchi (Yandex Fleet) muvaffaqiyatli qo'shildi!");
   };
 
   const handleDeleteDriver = async (id) => {
-    if (!confirm("Ushbu haydovchini flotdan o'chirishga ishonchingiz komilmi?")) return;
+    if (!confirm("Ushbu haydovchini bazadan o'chirishga ishonchingiz komilmi?")) return;
     try {
       await supabase.from('profiles').delete().eq('id', id);
     } catch (err) {}
-    setDrivers(prev => prev.filter(d => d.id !== id));
+    fetchRealDrivers();
   };
 
-  const handleBalanceSubmit = (e) => {
+  const handleBalanceSubmit = async (e) => {
     e.preventDefault();
     if (!selectedDriver) return;
 
     const change = balanceAction === 'deposit' ? balanceAmount : -balanceAmount;
-    setDrivers(prev => prev.map(d => {
-      if (d.id === selectedDriver.id) {
-        return { ...d, balance: Math.max(0, d.balance + change) };
-      }
-      return d;
-    }));
+    const newBalance = Math.max(0, (selectedDriver.balance || 0) + change);
 
+    try {
+      await supabase.from('profiles').update({ balance: newBalance }).eq('id', selectedDriver.id);
+    } catch (err) {}
+
+    fetchRealDrivers();
     setShowBalanceModal(false);
     alert(`Haydovchi balansi ${balanceAction === 'deposit' ? '+' : '-'}${balanceAmount.toLocaleString('ru-RU')} so'mga yangilandi!`);
   };
 
   const filtered = drivers.filter(d => 
-    d.name.toLowerCase().includes(search.toLowerCase()) || 
-    d.phone.includes(search)
+    (d.name || '').toLowerCase().includes(search.toLowerCase()) || 
+    (d.phone || '').includes(search)
   );
 
   return (
@@ -113,17 +113,26 @@ export default function AdminDriversPage() {
         <div>
           <h1 className="text-xl font-black text-white flex items-center gap-2">
             <Car className="text-[#16C2B2]" size={24} />
-            Yandex Fleet — Haydovchilar Flot Boshqaruvi
+            Yandex Fleet — Real Haydovchilar Flot Boshqaruvi
           </h1>
-          <p className="text-xs text-gray-400">Haydovchilarni ro'yxatdan o'tkazish, o'chirish va balansini to'ldirish</p>
+          <p className="text-xs text-gray-400">Haydovchilarni bazaga qo'shish, o'chirish va balansini o'tkazish</p>
         </div>
         
-        <button 
-          onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-1.5 bg-[#16C2B2] text-[#0F1015] font-black px-4 py-2.5 rounded-xl text-xs shadow-lg shadow-[#16C2B2]/20"
-        >
-          <Plus size={16} /> Yangi Haydovchi Qo'shish
-        </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={fetchRealDrivers}
+            className="flex items-center gap-1.5 bg-[#181A20] border border-[#2C303E] hover:border-[#16C2B2] text-[#16C2B2] font-bold py-2.5 px-3 rounded-xl text-xs"
+          >
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Yangilash
+          </button>
+
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-1.5 bg-[#16C2B2] text-[#0F1015] font-black px-4 py-2.5 rounded-xl text-xs shadow-lg shadow-[#16C2B2]/20"
+          >
+            <Plus size={16} /> Yangi Haydovchi Qo'shish
+          </button>
+        </div>
       </div>
 
       {/* Search Input */}
@@ -148,7 +157,6 @@ export default function AdminDriversPage() {
                 <th className="px-5 py-3.5">Avtomobil & Davlat kodi</th>
                 <th className="px-5 py-3.5">Tarif</th>
                 <th className="px-5 py-3.5">Hamyon Balansi</th>
-                <th className="px-5 py-3.5">Sof Daromad</th>
                 <th className="px-5 py-3.5">Holat</th>
                 <th className="px-5 py-3.5">Amallar</th>
               </tr>
@@ -156,51 +164,56 @@ export default function AdminDriversPage() {
             <tbody className="divide-y divide-[#2C303E]">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-8 text-gray-400">Yuklanmoqda...</td>
+                  <td colSpan={6} className="text-center py-8 text-gray-400">Yuklanmoqda...</td>
                 </tr>
-              ) : filtered.map((d) => (
-                <tr key={d.id} className="hover:bg-[#22252E] transition-colors">
-                  <td className="px-5 py-3.5">
-                    <div className="font-extrabold text-white">{d.name}</div>
-                    <div className="text-[10px] text-gray-400">{d.phone}</div>
-                  </td>
-                  <td className="px-5 py-3.5 font-semibold text-xs text-gray-300">{d.car}</td>
-                  <td className="px-5 py-3.5">
-                    <span className="bg-[#FF5B4C]/20 text-[#FF5B4C] border border-[#FF5B4C]/30 text-[10px] px-2 py-0.5 rounded-full font-black uppercase">
-                      {d.tariff || 'Mototaksi'}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3.5 font-black text-[#16C2B2]">
-                    {(d.balance || 0).toLocaleString('ru-RU')} so'm
-                  </td>
-                  <td className="px-5 py-3.5 font-bold text-white">
-                    {(d.total_earnings || 0).toLocaleString('ru-RU')} so'm ({d.rides || 0} ta safar)
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
-                      d.is_online ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
-                    }`}>
-                      {d.is_online ? '● Onlayn' : 'Oflayn'}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3.5 flex items-center gap-2">
-                    <button 
-                      onClick={() => { setSelectedDriver(d); setShowBalanceModal(true); }}
-                      className="bg-[#16C2B2]/10 border border-[#16C2B2]/30 text-[#16C2B2] hover:bg-[#16C2B2]/20 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1"
-                      title="Balans o'tkazish"
-                    >
-                      <DollarSign size={14} /> Balans
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteDriver(d.id)}
-                      className="text-red-400 hover:text-red-300 p-1.5 rounded-lg hover:bg-red-500/20"
-                      title="Flotdan o'chirish"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+              ) : filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="text-center py-8 text-gray-500 font-medium">
+                    Hozircha bazada real flot haydovchilari yo'q (0 nafar). Yuqoridagi "Yangi Haydovchi Qo'shish" tugmasini bosing!
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filtered.map((d) => (
+                  <tr key={d.id} className="hover:bg-[#22252E] transition-colors">
+                    <td className="px-5 py-3.5">
+                      <div className="font-extrabold text-white">{d.name}</div>
+                      <div className="text-[10px] text-gray-400">{d.phone}</div>
+                    </td>
+                    <td className="px-5 py-3.5 font-semibold text-xs text-gray-300">{d.car || 'Cobalt (75 A 777 AA)'}</td>
+                    <td className="px-5 py-3.5">
+                      <span className="bg-[#FF5B4C]/20 text-[#FF5B4C] border border-[#FF5B4C]/30 text-[10px] px-2 py-0.5 rounded-full font-black uppercase">
+                        {d.tariff || 'Mototaksi'}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 font-black text-[#16C2B2]">
+                      {(d.balance || 0).toLocaleString('ru-RU')} so'm
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
+                        d.is_online ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
+                      }`}>
+                        {d.is_online ? '● Onlayn' : 'Oflayn'}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 flex items-center gap-2">
+                      <button 
+                        onClick={() => { setSelectedDriver(d); setShowBalanceModal(true); }}
+                        className="bg-[#16C2B2]/10 border border-[#16C2B2]/30 text-[#16C2B2] hover:bg-[#16C2B2]/20 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1"
+                        title="Balans o'tkazish"
+                      >
+                        <DollarSign size={14} /> Balans
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteDriver(d.id)}
+                        className="text-red-400 hover:text-red-300 p-1.5 rounded-lg hover:bg-red-500/20"
+                        title="Flotdan o'chirish"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
