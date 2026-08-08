@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import android.webkit.GeolocationPermissions
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
@@ -24,17 +23,17 @@ class MainActivity : AppCompatActivity() {
     private var geolocationOrigin: String? = null
     private var geolocationCallback: GeolocationPermissions.Callback? = null
 
-    // Default Web App URL (local dev or production)
-    private val webAppUrl = "http://10.0.2.2:3000" // For Android Emulator connecting to local Next.js
+    // Production Vercel URL with fallback to local dev
+    private val webAppUrl = "https://uz-go.vercel.app"
 
     @SuppressLint("SetJavaScriptEnabled")
-    override function onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Dark status bar styling for mobile app
+        // Dark status bar & navigation bar styling for UzGo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            window.statusBarColor = Color.parseColor("#0A0F1E")
-            window.navigationBarColor = Color.parseColor("#0A0F1E")
+            window.statusBarColor = Color.parseColor("#0F1015")
+            window.navigationBarColor = Color.parseColor("#0F1015")
         }
 
         webView = WebView(this)
@@ -48,12 +47,12 @@ class MainActivity : AppCompatActivity() {
         settings.allowFileAccess = true
         settings.allowContentAccess = true
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.21) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         }
 
         webView.webChromeClient = object : WebChromeClient() {
-            override function onGeolocationPermissionsShowPrompt(
+            override fun onGeolocationPermissionsShowPrompt(
                 origin: String?,
                 callback: GeolocationPermissions.Callback?
             ) {
@@ -76,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         webView.webViewClient = object : WebViewClient() {
-            override function shouldOverrideUrlLoading(
+            override fun shouldOverrideUrlLoading(
                 view: WebView?,
                 request: WebResourceRequest?
             ): Boolean {
@@ -87,7 +86,7 @@ class MainActivity : AppCompatActivity() {
         webView.loadUrl(webAppUrl)
     }
 
-    override function onRequestPermissionsResult(
+    override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
@@ -99,8 +98,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override function onBackPressed() {
-        if (webView.canGoBack()) {
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (::webView.isInitialized && webView.canGoBack()) {
             webView.goBack()
         } else {
             super.onBackPressed()
