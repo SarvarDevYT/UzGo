@@ -8,7 +8,9 @@ import android.os.Build
 import android.os.Bundle
 import android.webkit.GeolocationPermissions
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -24,8 +26,8 @@ class MainActivity : AppCompatActivity() {
     private var geolocationOrigin: String? = null
     private var geolocationCallback: GeolocationPermissions.Callback? = null
 
-    // Production Vercel URL with fallback to local dev
-    private val webAppUrl = "https://uz-go.vercel.app"
+    // Vercel Production URLs
+    private var primaryUrl = "https://uz-go.vercel.app"
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,9 +84,29 @@ class MainActivity : AppCompatActivity() {
             ): Boolean {
                 return false
             }
+
+            override fun onReceivedHttpError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                errorResponse: WebResourceResponse?
+            ) {
+                if (request?.isForMainFrame == true && errorResponse?.statusCode == 404) {
+                    showFallbackErrorPage(view)
+                }
+            }
+
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+                if (request?.isForMainFrame == true) {
+                    showFallbackErrorPage(view)
+                }
+            }
         }
 
-        // Modern OnBackPressedCallback replacing deprecated onBackPressed
+        // Modern OnBackPressedCallback
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (::webView.isInitialized && webView.canGoBack()) {
@@ -96,7 +118,35 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        webView.loadUrl(webAppUrl)
+        webView.loadUrl(primaryUrl)
+    }
+
+    private fun showFallbackErrorPage(view: WebView?) {
+        val htmlData = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    body { background: #0F1015; color: #F5F5F7; font-family: sans-serif; text-align: center; padding: 40px 20px; }
+                    .card { background: #181A20; border: 1px solid #2C303E; padding: 24px; border-radius: 20px; max-width: 360px; margin: 0 auto; }
+                    .icon { font-size: 48px; margin-bottom: 12px; }
+                    h2 { color: #16C2B2; margin-bottom: 8px; font-size: 20px; }
+                    p { color: #8B8D98; font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
+                    .btn { background: #16C2B2; color: #0F1015; border: none; padding: 12px 24px; font-weight: bold; border-radius: 12px; font-size: 14px; width: 100%; cursor: pointer; }
+                </style>
+            </head>
+            <body>
+                <div class="card">
+                    <div class="icon">🚀</div>
+                    <h2>UzGo Serveriga Ulanish</h2>
+                    <p>Vercel domenini tekshiring yoki serverni qayta yuklang.</p>
+                    <button class="btn" onclick="location.reload()">Qaytadan Urinish</button>
+                </div>
+            </body>
+            </html>
+        """.trimIndent()
+        view?.loadDataWithBaseURL(null, htmlData, "text/html", "UTF-8", null)
     }
 
     override fun onRequestPermissionsResult(
