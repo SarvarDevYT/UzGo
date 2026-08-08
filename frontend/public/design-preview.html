@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UzGo — Super-App dizayn tizimi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F1015;
+    --card:#181A20;
+    --card-hover:#22252E;
+    --border:#2C303E;
+    --yellow:#FFCC00;
+    --red:#FC3F1D;
+    --green:#10B981;
+    --text:#F5F5F7;
+    --text-soft:#8B8D98;
+    --text-faint:#5A5D6B;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 10% 0%, rgba(255,204,0,0.06), transparent 40%),
+      radial-gradient(circle at 90% 100%, rgba(252,63,29,0.06), transparent 45%),
+      var(--bg);
+    font-family:'Inter', sans-serif;
+    color:var(--text);
+    padding:48px 24px 80px 24px;
+  }
+
+  /* ---------- Header / tokens ---------- */
+  .intro{max-width:1200px; margin:0 auto 44px auto;}
+  .eyebrow{
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--yellow); font-weight:700; margin-bottom:10px;
+  }
+  h1.brand{
+    font-weight:900; font-size:clamp(38px,5.5vw,58px); letter-spacing:-0.02em;
+    display:flex; align-items:center; gap:14px;
+  }
+  .brand .logo{
+    width:44px; height:44px; border-radius:12px;
+    background:linear-gradient(135deg, var(--yellow), #FFE066);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900; color:var(--bg); font-size:20px; flex:0 0 auto;
+  }
+  .tagline{font-size:15px; color:var(--text-soft); margin-top:10px; max-width:560px; line-height:1.55;}
+
+  .tokens{display:flex; gap:10px; flex-wrap:wrap; margin-top:26px;}
+  .swatch{
+    display:flex; align-items:center; gap:9px;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:8px 14px 8px 8px; font-size:12px; color:var(--text-soft);
+  }
+  .swatch .dot{width:20px; height:20px; border-radius:6px; flex:0 0 auto; border:1px solid rgba(255,255,255,.08);}
+  .swatch b{color:var(--text); font-weight:700; display:block; font-size:12.5px;}
+
+  .section-label{
+    max-width:1200px; margin:56px auto 18px auto; display:flex; align-items:baseline; gap:10px;
+  }
+  .section-label .num{font-weight:900; font-size:13px; color:var(--yellow);}
+  .section-label .txt{font-weight:700; font-size:15px; color:var(--text);}
+
+  /* ---------- Phones row ---------- */
+  .row{max-width:1200px; margin:0 auto; display:flex; gap:24px; flex-wrap:wrap; justify-content:center;}
+  .phone-wrap{display:flex; flex-direction:column; align-items:center; gap:12px;}
+  .phone-label{font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); font-weight:700;}
+  .phone{
+    width:292px; height:620px; background:#000; border-radius:36px; padding:10px;
+    box-shadow:0 30px 70px -20px rgba(0,0,0,0.6), 0 0 0 1px var(--border);
+  }
+  .screen{
+    width:100%; height:100%; background:var(--bg); border-radius:26px; overflow:hidden;
+    position:relative; display:flex; flex-direction:column;
+  }
+  .notch{
+    position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:100px; height:20px; background:#000; border-radius:0 0 12px 12px; z-index:5;
+  }
+  .caption{text-align:center; font-size:12px; color:var(--text-faint); max-width:280px; line-height:1.5;}
+
+  /* ---------- Onboarding ---------- */
+  .ob-wrap{flex:1; display:flex; flex-direction:column; padding:52px 22px 24px 22px;}
+  .ob-logo{
+    width:56px; height:56px; border-radius:16px; background:linear-gradient(135deg,var(--yellow),#FFE066);
+    display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--bg); font-size:24px;
+    margin-bottom:22px;
+  }
+  .ob-title{font-size:23px; font-weight:800; line-height:1.25;}
+  .ob-sub{font-size:13px; color:var(--text-soft); margin-top:8px; line-height:1.5;}
+  .field{margin-top:22px;}
+  .field label{font-size:11.5px; color:var(--text-soft); font-weight:600; display:block; margin-bottom:7px;}
+  .field .input{
+    background:var(--card); border:1.5px solid var(--border); border-radius:12px; padding:13px 14px;
+    font-size:14px; color:var(--text-faint);
+  }
+  .field .input.filled{color:var(--text); border-color:var(--yellow);}
+  .ob-cta{
+    margin-top:auto; background:var(--yellow); color:var(--bg); border:none; border-radius:14px;
+    padding:16px; font-weight:800; font-size:14px; text-align:center;
+  }
+  .ob-legal{font-size:10.5px; color:var(--text-faint); text-align:center; margin-top:12px; line-height:1.5;}
+
+  /* ---------- Home / Hub ---------- */
+  .home{flex:1; overflow:hidden; padding:44px 18px 18px 18px; display:flex; flex-direction:column; gap:16px;}
+  .greet-row{display:flex; justify-content:space-between; align-items:flex-start;}
+  .greet-hi{font-size:12px; color:var(--text-soft); font-weight:600;}
+  .greet-name{font-size:19px; font-weight:800; margin-top:2px;}
+  .avatar{
+    width:38px; height:38px; border-radius:50%; background:var(--card); border:1.5px solid var(--border);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12.5px;
+  }
+
+  .banner{
+    border-radius:16px; padding:14px 16px; background:linear-gradient(120deg, #2A2200, #1C1706);
+    border:1px solid #4A3E00; display:flex; justify-content:space-between; align-items:center;
+  }
+  .banner .b-title{font-size:13px; font-weight:800; color:var(--yellow);}
+  .banner .b-sub{font-size:11px; color:var(--text-soft); margin-top:2px;}
+  .banner .b-pct{font-size:20px; font-weight:900; color:var(--yellow);}
+
+  .services{display:grid; grid-template-columns:1fr; gap:10px;}
+  .svc-card{
+    border-radius:16px; padding:16px; display:flex; align-items:center; gap:14px;
+    border:1px solid var(--border); position:relative; overflow:hidden;
+  }
+  .svc-card.taxi{background:linear-gradient(120deg, rgba(252,63,29,.14), var(--card));}
+  .svc-card.market{background:linear-gradient(120deg, rgba(255,204,0,.14), var(--card));}
+  .svc-card.delivery{background:linear-gradient(120deg, rgba(16,185,129,.14), var(--card));}
+  .svc-icon{
+    width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; flex:0 0 auto;
+  }
+  .svc-card.taxi .svc-icon{background:var(--red);}
+  .svc-card.market .svc-icon{background:var(--yellow);}
+  .svc-card.delivery .svc-icon{background:var(--green);}
+  .svc-icon svg{width:24px; height:24px;}
+  .svc-name{font-weight:800; font-size:14.5px;}
+  .svc-sub{font-size:11.5px; color:var(--text-soft); margin-top:2px;}
+  .svc-arrow{margin-left:auto; color:var(--text-faint); font-size:18px;}
+
+  .quick-row{display:flex; gap:8px; overflow:hidden;}
+  .qchip{
+    font-size:11px; font-weight:600; background:var(--card); border:1px solid var(--border);
+    color:var(--text-soft); padding:8px 12px; border-radius:20px; white-space:nowrap;
+  }
+
+  /* ---------- Taxi screen ---------- */
+  .map{flex:1; position:relative; background:
+    linear-gradient(180deg, rgba(255,255,255,0.02), transparent),
+    repeating-linear-gradient(0deg,#1A1C24 0 1px,transparent 1px 32px),
+    repeating-linear-gradient(90deg,#1A1C24 0 1px,transparent 1px 32px), #121319;
+  }
+  .map-top{position:absolute; top:34px; left:16px; right:16px; display:flex; justify-content:space-between;}
+  .back-btn{
+    width:36px; height:36px; border-radius:50%; background:var(--card); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; font-size:14px;
+  }
+  .gps-btn{
+    position:absolute; right:16px; bottom:14px;
+    width:40px; height:40px; border-radius:12px; background:var(--card); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .route-pin{position:absolute; width:14px; height:14px; border-radius:50% 50% 50% 0; transform:rotate(-45deg);}
+  .route-pin.a{background:var(--green); top:180px; left:90px;}
+  .route-pin.b{background:var(--red); top:270px; left:190px;}
+  .route-line{position:absolute; border-top:2.5px dashed var(--text-faint); opacity:.6; top:225px; left:100px; width:95px; transform:rotate(25deg);}
+
+  .taxi-sheet{background:var(--card); border-radius:22px 22px 0 0; padding:16px 16px 18px 16px; border-top:1px solid var(--border);}
+  .handle{width:34px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 14px auto;}
+  .addr-stack{display:flex; flex-direction:column; gap:8px; margin-bottom:14px;}
+  .addr-row{display:flex; align-items:center; gap:10px; background:var(--bg); border:1px solid var(--border); border-radius:11px; padding:11px 12px;}
+  .addr-row .adot{width:8px; height:8px; border-radius:50%; flex:0 0 auto;}
+  .addr-row.from .adot{background:var(--green);}
+  .addr-row.to .adot{background:var(--red);}
+  .addr-row span{font-size:12.5px; color:var(--text-soft); font-weight:600;}
+  .addr-row.to span{color:var(--text);}
+
+  .tariff-scroll{display:flex; gap:9px; overflow:hidden; margin-bottom:14px;}
+  .tariff-card{
+    min-width:88px; background:var(--bg); border:1.5px solid var(--border); border-radius:14px;
+    padding:10px 9px; text-align:center;
+  }
+  .tariff-card.active{border-color:var(--red); background:rgba(252,63,29,.08);}
+  .tariff-icon{font-size:20px; margin-bottom:4px;}
+  .tariff-name{font-size:11px; font-weight:700;}
+  .tariff-price{font-size:12px; font-weight:800; color:var(--text); margin-top:3px;}
+
+  .taxi-cta{
+    width:100%; background:var(--red); color:#fff; border:none; border-radius:14px; padding:15px;
+    font-weight:800; font-size:13.5px; box-shadow:0 12px 24px -10px rgba(252,63,29,.6);
+  }
+
+  /* ---------- Market ---------- */
+  .market{flex:1; padding:44px 16px 0 16px; display:flex; flex-direction:column; gap:14px; overflow:hidden;}
+  .m-title{font-size:19px; font-weight:800;}
+  .m-search{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:11px 13px; font-size:12.5px; color:var(--text-faint);}
+  .m-cats{display:flex; gap:8px;}
+  .m-cat{font-size:11px; font-weight:700; padding:7px 12px; border-radius:18px; background:var(--card); border:1px solid var(--border); color:var(--text-soft);}
+  .m-cat.active{background:var(--yellow); color:var(--bg); border-color:var(--yellow);}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .p-card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px; position:relative;}
+  .p-img{
+    height:70px; border-radius:9px; background:linear-gradient(135deg,#22252E,#2C303E);
+    display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:8px;
+  }
+  .p-badge{
+    position:absolute; top:8px; left:8px; background:var(--red); color:#fff; font-size:9.5px; font-weight:800;
+    padding:3px 6px; border-radius:6px;
+  }
+  .p-name{font-size:11.5px; font-weight:700; line-height:1.3;}
+  .p-stock{font-size:9.5px; color:var(--green); margin-top:3px; font-weight:600;}
+  .p-price-row{display:flex; align-items:baseline; gap:5px; margin-top:5px;}
+  .p-price{font-size:13px; font-weight:800;}
+  .p-old{font-size:10px; color:var(--text-faint); text-decoration:line-through;}
+
+  .checkout-bar{
+    margin-top:auto; margin-bottom:14px; background:var(--yellow); border-radius:14px; padding:13px 16px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .checkout-bar .cb-left{font-size:11.5px; font-weight:700; color:var(--bg);}
+  .checkout-bar .cb-count{font-size:9.5px; color:#5A4B00;}
+  .checkout-bar .cb-btn{font-size:12.5px; font-weight:800; color:var(--bg);}
+
+  /* ---------- Admin panel (desktop) ---------- */
+  .admin{
+    max-width:1200px; margin:0 auto; background:var(--card); border:1px solid var(--border);
+    border-radius:20px; overflow:hidden; display:flex; box-shadow:0 30px 70px -30px rgba(0,0,0,.6);
+  }
+  .admin-sidebar{
+    width:210px; background:#101117; border-right:1px solid var(--border); padding:22px 14px; flex:0 0 auto;
+  }
+  .admin-logo{display:flex; align-items:center; gap:10px; padding:0 8px 24px 8px;}
+  .admin-logo .lg{width:30px; height:30px; border-radius:8px; background:var(--yellow);}
+  .admin-logo span{font-weight:800; font-size:14px;}
+  .admin-nav-item{
+    display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:10px;
+    font-size:12.5px; font-weight:600; color:var(--text-soft); margin-bottom:4px;
+  }
+  .admin-nav-item.active{background:rgba(255,204,0,.1); color:var(--yellow);}
+  .admin-nav-item .ico{width:16px; height:16px; border-radius:4px; background:currentColor; opacity:.35;}
+
+  .admin-main{flex:1; padding:26px 28px; min-width:0;}
+  .admin-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:22px;}
+  .admin-h1{font-size:18px; font-weight:800;}
+  .admin-h-sub{font-size:11.5px; color:var(--text-soft); margin-top:3px;}
+  .admin-add-btn{background:var(--yellow); color:var(--bg); font-weight:800; font-size:12px; padding:10px 16px; border-radius:10px; border:none;}
+
+  .stat-row{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px;}
+  .stat-card{background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:16px;}
+  .stat-label{font-size:11px; color:var(--text-soft); font-weight:600;}
+  .stat-value{font-size:22px; font-weight:900; margin-top:6px;}
+  .stat-delta{font-size:10.5px; font-weight:700; margin-top:4px;}
+  .stat-delta.up{color:var(--green);}
+  .stat-delta.down{color:var(--red);}
+
+  .chart-box{
+    background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:22px;
+    display:flex; align-items:flex-end; gap:8px; height:120px;
+  }
+  .bar{flex:1; background:linear-gradient(180deg, var(--yellow), rgba(255,204,0,.25)); border-radius:6px 6px 0 0;}
+
+  table{width:100%; border-collapse:collapse;}
+  thead th{
+    text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--text-faint); font-weight:700; padding:0 12px 10px 12px; border-bottom:1px solid var(--border);
+  }
+  tbody td{padding:12px; font-size:12.5px; border-bottom:1px solid var(--border);}
+  tbody tr:last-child td{border-bottom:none;}
+  .prod-cell{display:flex; align-items:center; gap:10px;}
+  .prod-thumb{width:34px; height:34px; border-radius:8px; background:var(--card-hover);}
+  .status-pill{font-size:10.5px; font-weight:700; padding:5px 10px; border-radius:8px; display:inline-block;}
+  .status-pill.pending{background:rgba(255,204,0,.12); color:var(--yellow);}
+  .status-pill.progress{background:rgba(16,185,129,.12); color:var(--green);}
+  .status-pill.done{background:rgba(139,141,152,.12); color:var(--text-soft);}
+  .row-actions{display:flex; gap:8px;}
+  .act-btn{font-size:11px; color:var(--text-soft); font-weight:600;}
+  .act-btn.danger{color:var(--red);}
+</style>
+</head>
+<body>
+
+  <div class="intro">
+    <div class="eyebrow">Dizayn tizimi — Super-App</div>
+    <h1 class="brand"><div class="logo">U</div>UzGo</h1>
+    <p class="tagline">Yandex Go uslubidagi qorong'i, yuqori kontrastli interfeys — Taksi, Market va Delivery bitta ilovada, uchta aniq brend rangi bilan ajratilgan: sariq (asosiy), qizil (taksi/chegirma), yashil (yetkazish).</p>
+
+    <div class="tokens">
+      <div class="swatch"><div class="dot" style="background:#0F1015"></div><div><b>Background</b>#0F1015</div></div>
+      <div class="swatch"><div class="dot" style="background:#181A20"></div><div><b>Card Surface</b>#181A20</div></div>
+      <div class="swatch"><div class="dot" style="background:#22252E"></div><div><b>Hover Card</b>#22252E</div></div>
+      <div class="swatch"><div class="dot" style="background:#2C303E"></div><div><b>Border</b>#2C303E</div></div>
+      <div class="swatch"><div class="dot" style="background:#FFCC00"></div><div><b>Accent — Brand</b>#FFCC00</div></div>
+      <div class="swatch"><div class="dot" style="background:#FC3F1D"></div><div><b>Accent — Taksi</b>#FC3F1D</div></div>
+      <div class="swatch"><div class="dot" style="background:#10B981"></div><div><b>Accent — Delivery</b>#10B981</div></div>
+    </div>
+  </div>
+
+  <div class="section-label"><span class="num">01—04</span><span class="txt">Mobil ekranlar</span></div>
+  <div class="row">
+
+    <div class="phone-wrap">
+      <div class="phone-label">Onboarding</div>
+      <div class="phone"><div class="notch"></div>
+        <div class="screen">
+          <div class="ob-wrap">
+            <div class="ob-logo">U</div>
+            <div class="ob-title">UzGo'ga xush kelibsiz</div>
+            <div class="ob-sub">Davom etish uchun ma'lumotlaringizni kiriting</div>
+            <div class="field"><label>Ism</label><div class="input filled">Sarvarbek</div></div>
+            <div class="field"><label>Familiya</label><div class="input">Familiyangiz</div></div>
+            <div class="field"><label>Telefon raqam</label><div class="input filled">+998 90 123 45 67</div></div>
+            <div class="ob-cta">Davom etish</div>
+            <div class="ob-legal">Davom etish orqali Foydalanish shartlariga rozilik bildirasiz</div>
+          </div>
+        </div>
+      </div>
+      <p class="caption">Majburiy ro'yxatdan o'tish — ma'lumotlar Supabase <code>profiles</code> jadvaliga yoziladi.</p>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone-label">Bosh sahifa — Hub</div>
+      <div class="phone"><div class="notch"></div>
+        <div class="screen">
+          <div class="home">
+            <div class="greet-row">
+              <div><div class="greet-hi">Xush kelibsiz 👋</div><div class="greet-name">Sarvarbek!</div></div>
+              <div class="avatar">SB</div>
+            </div>
+            <div class="banner">
+              <div><div class="b-title">Bugungi keshbek</div><div class="b-sub">Har qanday xizmatda</div></div>
+              <div class="b-pct">+10%</div>
+            </div>
+            <div class="services">
+              <div class="svc-card taxi">
+                <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0F1015" stroke-width="2"><path d="M3 13l2-5a2 2 0 012-1h10a2 2 0 012 1l2 5"/><rect x="3" y="13" width="18" height="6" rx="2"/><circle cx="7.5" cy="19" r="1.3" fill="#0F1015"/><circle cx="16.5" cy="19" r="1.3" fill="#0F1015"/></svg></div>
+                <div><div class="svc-name">UzGo Taksi</div><div class="svc-sub">3 daqiqada yetib keladi</div></div>
+                <div class="svc-arrow">›</div>
+              </div>
+              <div class="svc-card market">
+                <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0F1015" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.3" fill="#0F1015"/><circle cx="18" cy="20" r="1.3" fill="#0F1015"/><path d="M3 3h3l1 3"/></svg></div>
+                <div><div class="svc-name">UzGo Market</div><div class="svc-sub">Elektronika va kiyim</div></div>
+                <div class="svc-arrow">›</div>
+              </div>
+              <div class="svc-card delivery">
+                <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0F1015" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></div>
+                <div><div class="svc-name">UzGo Delivery</div><div class="svc-sub">Taom yetkazib berish</div></div>
+                <div class="svc-arrow">›</div>
+              </div>
+            </div>
+            <div class="quick-row">
+              <div class="qchip">🏠 Uyga</div>
+              <div class="qchip">💼 Ishga</div>
+              <div class="qchip">🎡 Magic City</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="caption">3 ta xizmat kartochkasi o'z brend rangida ajratiladi — foydalanuvchi bir qarashda tanlaydi.</p>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone-label">Taksi</div>
+      <div class="phone"><div class="notch"></div>
+        <div class="screen">
+          <div class="map">
+            <div class="map-top"><div class="back-btn">←</div></div>
+            <div class="route-pin a"></div>
+            <div class="route-pin b"></div>
+            <div class="route-line"></div>
+            <div class="gps-btn">◎</div>
+          </div>
+          <div class="taxi-sheet">
+            <div class="handle"></div>
+            <div class="addr-stack">
+              <div class="addr-row from"><span class="adot"></span><span>Joriy joylashuv</span></div>
+              <div class="addr-row to"><span class="adot"></span><span>Qayerga?</span></div>
+            </div>
+            <div class="tariff-scroll">
+              <div class="tariff-card active"><div class="tariff-icon">🚗</div><div class="tariff-name">Ekonom</div><div class="tariff-price">12k</div></div>
+              <div class="tariff-card"><div class="tariff-icon">🚙</div><div class="tariff-name">Komfort</div><div class="tariff-price">18k</div></div>
+              <div class="tariff-card"><div class="tariff-icon">✨</div><div class="tariff-name">Komfort+</div><div class="tariff-price">25k</div></div>
+              <div class="tariff-card"><div class="tariff-icon">🖤</div><div class="tariff-name">Business</div><div class="tariff-price">40k</div></div>
+            </div>
+            <button class="taxi-cta">Ekonom'ni chaqirish</button>
+          </div>
+        </div>
+      </div>
+      <p class="caption">Yandex Go uslubidagi gorizontal tarif slayderi — 4 ta daraja, faol karta qizil chegara bilan.</p>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone-label">Market</div>
+      <div class="phone"><div class="notch"></div>
+        <div class="screen">
+          <div class="market">
+            <div class="m-title">Market</div>
+            <div class="m-search">🔍 Mahsulot qidirish...</div>
+            <div class="m-cats">
+              <div class="m-cat active">Barchasi</div>
+              <div class="m-cat">Elektronika</div>
+              <div class="m-cat">Kiyim</div>
+            </div>
+            <div class="grid2">
+              <div class="p-card">
+                <div class="p-badge">-15%</div>
+                <div class="p-img">🎧</div>
+                <div class="p-name">Simsiz quloqchin</div>
+                <div class="p-stock">Omborda: 24 ta</div>
+                <div class="p-price-row"><div class="p-price">340k</div><div class="p-old">400k</div></div>
+              </div>
+              <div class="p-card">
+                <div class="p-img">⌚️</div>
+                <div class="p-name">Smart soat X2</div>
+                <div class="p-stock">Omborda: 8 ta</div>
+                <div class="p-price-row"><div class="p-price">890k</div></div>
+              </div>
+            </div>
+            <div class="checkout-bar">
+              <div><div class="cb-left">Savat — 2 mahsulot</div><div class="cb-count">1,230,000 so'm</div></div>
+              <div class="cb-btn">Rasmiylashtirish →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="caption">Suzuvchi Checkout Bar doim ekranning pastida turadi — sariq rang bilan ajratilgan.</p>
+    </div>
+
+  </div>
+
+  <div class="section-label"><span class="num">05</span><span class="txt">Admin Panel (Desktop)</span></div>
+  <div class="admin">
+    <div class="admin-sidebar">
+      <div class="admin-logo"><div class="lg"></div><span>UzGo Admin</span></div>
+      <div class="admin-nav-item active"><div class="ico"></div>Dashboard</div>
+      <div class="admin-nav-item"><div class="ico"></div>Mahsulotlar</div>
+      <div class="admin-nav-item"><div class="ico"></div>Buyurtmalar</div>
+      <div class="admin-nav-item"><div class="ico"></div>Haydovchilar</div>
+      <div class="admin-nav-item"><div class="ico"></div>Foydalanuvchilar</div>
+    </div>
+    <div class="admin-main">
+      <div class="admin-header">
+        <div><div class="admin-h1">Dashboard</div><div class="admin-h-sub">Bugungi umumiy statistika</div></div>
+        <button class="admin-add-btn">+ Mahsulot qo'shish</button>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card"><div class="stat-label">Bugungi daromad</div><div class="stat-value">24.6M</div><div class="stat-delta up">↑ 12.4%</div></div>
+        <div class="stat-card"><div class="stat-label">Faol buyurtmalar</div><div class="stat-value">183</div><div class="stat-delta up">↑ 6.1%</div></div>
+        <div class="stat-card"><div class="stat-label">Onlayn haydovchilar</div><div class="stat-value">47</div><div class="stat-delta down">↓ 2.3%</div></div>
+        <div class="stat-card"><div class="stat-label">Yangi foydalanuvchilar</div><div class="stat-value">312</div><div class="stat-delta up">↑ 18.9%</div></div>
+      </div>
+
+      <div class="chart-box">
+        <div class="bar" style="height:40%"></div><div class="bar" style="height:65%"></div>
+        <div class="bar" style="height:52%"></div><div class="bar" style="height:80%"></div>
+        <div class="bar" style="height:45%"></div><div class="bar" style="height:70%"></div>
+        <div class="bar" style="height:95%"></div>
+      </div>
+
+      <table>
+        <thead><tr><th>Mahsulot</th><th>Narx</th><th>Buyurtma</th><th>Holat</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="prod-cell"><div class="prod-thumb"></div>Simsiz quloqchin</div></td>
+            <td>340,000 so'm</td><td>#UZ-1042</td>
+            <td><span class="status-pill pending">Kutilmoqda</span></td>
+            <td><div class="row-actions"><span class="act-btn">Tahrirlash</span><span class="act-btn danger">O'chirish</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="prod-cell"><div class="prod-thumb"></div>Smart soat X2</div></td>
+            <td>890,000 so'm</td><td>#UZ-1041</td>
+            <td><span class="status-pill progress">Jarayonda</span></td>
+            <td><div class="row-actions"><span class="act-btn">Tahrirlash</span><span class="act-btn danger">O'chirish</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="prod-cell"><div class="prod-thumb"></div>Sport krossovka</div></td>
+            <td>560,000 so'm</td><td>#UZ-1039</td>
+            <td><span class="status-pill done">Yetkazildi</span></td>
+            <td><div class="row-actions"><span class="act-btn">Tahrirlash</span><span class="act-btn danger">O'chirish</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>
