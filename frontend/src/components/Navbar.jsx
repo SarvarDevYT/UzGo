@@ -70,6 +70,24 @@ const Navbar = () => {
 
           {/* Right section */}
           <div className="flex items-center space-x-2">
+            {/* Wallet Button */}
+            <Link 
+              href="/wallet"
+              className="flex items-center gap-1.5 text-xs font-black bg-[#22252E] border border-[#2C303E] text-[#16C2B2] px-3 py-1.5 rounded-xl hover:border-[#16C2B2] transition-colors"
+              title="UzGo Hamyon va Keshbek"
+            >
+              💳 <span className="hidden sm:inline">Hamyon</span>
+            </Link>
+
+            {/* Driver Mode Button */}
+            <Link 
+              href="/driver"
+              className="flex items-center gap-1 text-xs font-black bg-[#FF5B4C]/15 border border-[#FF5B4C]/30 text-[#FF5B4C] px-3 py-1.5 rounded-xl hover:bg-[#FF5B4C]/25 transition-colors"
+              title="Haydovchi Rejimi"
+            >
+              🚖 <span className="hidden sm:inline">Haydovchi</span>
+            </Link>
+
             {/* Language Switcher Toggle */}
             <button 
               onClick={() => toggleLanguage()}

@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { 
   LayoutDashboard, Users, Car, Package, 
   Layers, ShoppingCart, Tag, MapPin, 
-  Menu, X, Bell, LogOut, UserCircle 
+  Menu, X, Bell, LogOut, UserCircle, BarChart3 
 } from 'lucide-react';
 import { logout } from '../../store/authSlice';
 
@@ -23,6 +23,7 @@ export default function AdminLayout({ children }) {
 
   const navigation = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
+    { name: 'Analitika', path: '/admin/analytics', icon: BarChart3 },
     { name: 'Talab Xaritasi', path: '/admin/heatmap', icon: MapPin },
     { name: 'Foydalanuvchilar', path: '/admin/users', icon: Users },
     { name: 'Haydovchilar', path: '/admin/drivers', icon: Car },

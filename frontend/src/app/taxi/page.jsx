@@ -5,6 +5,7 @@ import { MapPin, Navigation, Search, Loader2, Phone, Star, X, Check, Car, Compas
 import { getCurrentAddress } from '../../utils/geolocation';
 import { supabase } from '../../services/supabaseClient';
 import { useLanguage } from '../../context/LanguageContext';
+import YandexMap from '../../components/YandexMap';
 
 const TERMIZ_DISTRICTS = [
   'Termiz Markaz (Al-Hakim at-Tirmiziy)', 
@@ -12,7 +13,7 @@ const TERMIZ_DISTRICTS = [
   'Surxon Sohil MFY (Amudaryo bo\'yi)', 
   'San\'at Saroyi va Teatr tumani', 
   'Do\'stlik MFY (Navoi ko\'chasi)', 
-  'Chegarachi MFY (Yashil park)', 
+  'Chegara MFY (Manguzar Post Tomonda)', 
   'Termiz Avtovokzal (Shimoliy kapasi)', 
   'Termiz Xalqaro Aeroporti', 
   'TerDU Campus (Termiz Davlat Univ)'
@@ -117,34 +118,16 @@ export default function TaxiPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-64px)] bg-[#0F1015] overflow-hidden relative">
-      {/* Map Background (Termiz Map Grid) */}
-      <div className="absolute inset-0 z-0 bg-[#121319] pointer-events-none">
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#1F2330" strokeWidth="1"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-          
-          {from && to && (
-            <g>
-              <path 
-                d="M 120 180 Q 220 280 320 150 T 420 300" 
-                fill="none" 
-                stroke="#FF5B4C" 
-                strokeWidth="5" 
-                strokeLinecap="round"
-                className="drop-shadow-[0_0_12px_rgba(255,91,76,0.6)]" 
-              />
-              <circle cx="120" cy="180" r="8" fill="#22C55E" />
-              <circle cx="420" cy="300" r="8" fill="#FF5B4C" />
-            </g>
-          )}
-
-          <circle cx="180" cy="220" r="10" fill="#FF5B4C" className="animate-pulse" />
-          <circle cx="280" cy="140" r="10" fill="#FF5B4C" />
-        </svg>
+      {/* Real Yandex Maps Integration (Termiz) */}
+      <div className="absolute inset-0 z-0">
+        <YandexMap 
+          fromAddress={from} 
+          toAddress={to} 
+          onSelectLocation={(addr) => {
+            if (!to) setTo(addr);
+            else setFrom(addr);
+          }} 
+        />
       </div>
 
       {/* Taxi Bottom Sheet Container */}

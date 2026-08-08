@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { store } from '../store';
 import { ToastProvider } from '../components/ToastProvider';
 import { LanguageProvider } from '../context/LanguageContext';
+import { WalletProvider } from '../context/WalletContext';
 
 function AuthGuard({ children }) {
   const router = useRouter();
@@ -31,9 +32,11 @@ export default function Providers({ children }) {
   return (
     <Provider store={store}>
       <LanguageProvider>
-        <ToastProvider>
-          <AuthGuard>{children}</AuthGuard>
-        </ToastProvider>
+        <WalletProvider>
+          <ToastProvider>
+            <AuthGuard>{children}</AuthGuard>
+          </ToastProvider>
+        </WalletProvider>
       </LanguageProvider>
     </Provider>
   );
