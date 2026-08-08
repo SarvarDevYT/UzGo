@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MapPin, Navigation, Search, Loader2, Phone, Star, X, Check, Car } from 'lucide-react';
+import { MapPin, Navigation, Search, Loader2, Phone, Star, X, Check, Car, Compass } from 'lucide-react';
+import { getCurrentAddress } from '../../utils/geolocation';
+import { supabase } from '../../services/supabaseClient';
 
 const TASHKENT_DISTRICTS = [
   'Chilonzor 8-kvartal', 'Yunusobod 12-kvartal', 'Mirzo Ulugbek (M.Gorkiy)', 
   'Sergeli 4-bekat', 'Shayxontohur (Samarqand Darvoza)', 'Olmazor (Tinchlik)', 
-  'Bektemir (Qo\'yliq)', 'Uchtepa (Lutfiy)'
+  'Bektemir (Qo\'yliq)', 'Uchtepa (Lutfiy)', 'Tashkent City (Magic City)'
 ];
 
 const TARIFFS = [
@@ -28,6 +30,7 @@ const MOCK_DRIVER = {
 export default function TaxiPage() {
   const [from, setFrom] = useState('Chilonzor 8-kvartal');
   const [to, setTo] = useState('');
+  const [loadingGps, setLoadingGps] = useState(false);
   const [showFromDropdown, setShowFromDropdown] = useState(false);
   const [showToDropdown, setShowToDropdown] = useState(false);
   const [selectedTariff, setSelectedTariff] = useState('economy');
@@ -35,9 +38,41 @@ export default function TaxiPage() {
 
   const activeTariffObj = TARIFFS.find(t => t.id === selectedTariff) || TARIFFS[0];
 
-  const handleSearch = () => {
+  const handleGetGps = async () => {
+    setLoadingGps(true);
+    try {
+      const res = await getCurrentAddress();
+      if (res && res.address) {
+        setFrom(res.address);
+      }
+    } catch (err) {
+      alert(err.message || 'GPS aniqlab bo\'lmadi');
+    } finally {
+      setLoadingGps(false);
+    }
+  };
+
+  const handleSearch = async () => {
     if (!from || !to) return;
     setStatus('searching');
+
+    // Save to Supabase taxi_rides
+    try {
+      await supabase.from('taxi_rides').insert([
+        {
+          from_address: from,
+          to_address: to,
+          tariff: selectedTariff,
+          price: activeTariffObj.price,
+          driver_name: MOCK_DRIVER.name,
+          car_model: MOCK_DRIVER.carModel,
+          plate_number: MOCK_DRIVER.plateNumber,
+          status: 'searching'
+        }
+      ]);
+    } catch (err) {
+      console.error('Supabase write error:', err);
+    }
     
     setTimeout(() => {
       setStatus('found');
@@ -90,9 +125,16 @@ export default function TaxiPage() {
             
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-black text-white tracking-tight">Yandex Go Taksi</h2>
-              <span className="text-xs bg-[#FFCC00]/10 text-[#FFCC00] font-bold px-2.5 py-1 rounded-full border border-[#FFCC00]/20">
-                Tezkor Chaqiruv
-              </span>
+              
+              {/* GPS Current Location Button */}
+              <button 
+                onClick={handleGetGps} 
+                disabled={loadingGps}
+                className="flex items-center gap-1.5 bg-[#FFCC00]/10 text-[#FFCC00] hover:bg-[#FFCC00]/20 font-extrabold text-xs px-3 py-1.5 rounded-full border border-[#FFCC00]/30 transition-all"
+              >
+                {loadingGps ? <Loader2 size={14} className="animate-spin" /> : <Compass size={14} />}
+                <span>{loadingGps ? 'GPS Aniqlanmoqda...' : 'Mening joyim'}</span>
+              </button>
             </div>
             
             {/* Address Inputs (Yandex Go Style) */}
