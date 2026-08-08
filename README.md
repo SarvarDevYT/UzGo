@@ -1,185 +1,51 @@
-# UzGo — Ko'p Xizmatli Platforma (Super-App)
+# UzGo — Surxondaryo (Termiz) Super-App Platformasi 🚕🛍️🛵📦
 
-<div align="center">
-  <h3>🚗 Taksi | 🛍️ Market | 🛵 Yetkazib Berish</h3>
-  <p>O'zbekiston uchun bitta platformada uchta xizmat</p>
-</div>
+**UzGo** — Surxondaryo viloyati, Termiz shahri uchun maxsus yaratilgan brend Super-App ilovasi (Yandex Go alternativi): **Taksi, Mototaksi, Market, Delivery (Taom yetkazish), UzGo Pochta hamda Admin Panel**.
 
 ---
 
-## 📋 Loyiha haqida
+## 🛠️ Loyiha Texnologik Steki (Tech Stack)
 
-**UzGo** — O'zbekiston uchun mo'ljallangan super-app bo'lib, bitta platformada uchta asosiy xizmatni birlashtiradi:
+- **Frontend**: Next.js 14 (App Router), React 18, Redux Toolkit, Tailwind CSS, Lucide Icons.
+- **Database**: Supabase PostgreSQL (Cloud Real-time DB).
+- **Geolocation**: HTML5 Geolocation API + OpenStreetMap Reverse Geocoding.
+- **Mobile**: Android Studio Native WebView Shell (`mobile/`).
+- **Deployment**: Vercel.
 
-- **🚗 Taksi** — Yandex Go uslubida, real-time haydovchi kuzatuvi
-- **🛍️ Market** — Minglab mahsulotlar, savat va checkout
-- **🛵 Yetkazib berish** — Restoran va do'konlardan buyurtma, real-time tracking
+---
 
-## 🛠️ Texnologik Stack
+## 🎨 Dizayn Tizimi (Signature Visual Identity)
 
-| Frontend | Backend |
-|----------|---------|
-| React 18 + Vite | Node.js + Express.js |
-| Tailwind CSS | Socket.io (real-time) |
-| Redux Toolkit | JWT autentifikatsiya |
-| React Router v6 | REST API |
-| Axios | Mock Data (PostgreSQL ready) |
-| Leaflet Maps | bcryptjs, dotenv |
+- **Brend Rangi (Turkuaz)**: `#16C2B2`
+- **Taksi & Mototaksi (Korall-Qizil)**: `#FF5B4C`
+- **Market (Oltin Amber)**: `#F2A93B`
+- **Delivery & Pochta (Zümrad Yashil)**: `#22C55E`
+- **Fon**: Obsidian Dark `#0F1015`, Card `#181A20`, Border `#2C303E`
 
-## 📁 Papka Tuzilishi
+---
 
-```
-uzgo/
-├── frontend/                 # React + Vite
-│   ├── src/
-│   │   ├── components/       # Navbar, BottomNav, Modal, Toast
-│   │   ├── modules/
-│   │   │   ├── taxi/         # Taksi moduli
-│   │   │   ├── market/       # Market moduli
-│   │   │   └── delivery/     # Yetkazib berish moduli
-│   │   ├── pages/            # HomePage, LoginPage, ProfilePage
-│   │   ├── store/            # Redux (auth, cart, ride)
-│   │   ├── services/         # Axios API instance
-│   │   └── App.jsx
-│   └── package.json
-├── backend/                  # Node.js + Express
-│   ├── src/
-│   │   ├── routes/           # Auth, Taxi, Market, Delivery routes
-│   │   ├── middleware/       # JWT auth, Error handler
-│   │   └── data/             # Mock ma'lumotlar bazasi
-│   ├── .env
-│   └── package.json
-└── README.md
-```
+## 📱 Termiz Shahri Uchun Maxsus Funksiyalar
 
-## 🚀 Loyihani Ishga Tushirish
+1. **🚕 Taksi va Mototaksi**:
+   - Tariflar: 🛵 **Mototaksi** (8,000 so'm), 🚗 **Ekonom** (12,000 so'm), 🚙 **Komfort** (18,000 so'm), 🏎️ **Komfort+** (25,000 so'm), 👑 **Business** (40,000 so'm).
+   - Termiz MFY va manzillari (*Termiz Markaz, Indorama MFY, Surxon sohil, TerDU, Aeroport*).
+   - Surxondaryo davlat raqami kodi: **`75`** (masalan: `75 A 777 AA`).
+   - Sayohatni real-vaqtda ulashish (Share Live Ride) va Ichki Chat modali.
+2. **📦 UzGo Pochta**: Hujjat va posilka yetkazish xizmati.
+3. **💳 Click & Payme To'lovlari**: Naqd pul, Click va Payme orqali xaridlarni rasmiylashtirish.
+4. **🌐 Ko'p Tillilik (i18n)**: O'zbek tili 🇺🇿 va Rus tili 🇷🇺 o'rtasida tezkor almashtirish.
+5. **👑 Admin Panel**: Termiz Talab Issiq Xaritasi (Demand Heatmap), Promo-kodlar CRUD va Haydovchilar hisob-kitobi.
 
-### Talablar
+---
 
-- Node.js 18+
-- npm 9+
-
-### 1. Loyihani yuklab oling
+## 🚀 O'rnatish va Ishga Tushirish
 
 ```bash
-git clone <repo-url>
-cd uzgo
-```
-
-### 2. Backend sozlash
-
-```bash
-cd backend
-npm install
-cp .env.example .env
-# .env faylini kerakli qiymatlar bilan to'ldiring
-npm run dev
-```
-
-Backend `http://localhost:5000` da ishga tushadi.
-
-### 3. Frontend sozlash
-
-```bash
+# Frontend
 cd frontend
 npm install
 npm run dev
+
+# Android APK Yig'ish
+Android Studio-da mobile/ papkasini ochib, Build -> Build APK(s) ni bosing.
 ```
-
-Frontend `http://localhost:5173` da ishga tushadi.
-
-### 4. Test login
-
-Demo uchun:
-- **Telefon**: istalgan telefon raqam (masalan: +998901234567)
-- **OTP kodi**: `123456` (mock rejimida)
-
-## 🔧 Muhit O'zgaruvchilari
-
-Backend `.env` fayli:
-
-```env
-PORT=5000
-JWT_SECRET=uzgo_super_secret_jwt_key_2024
-JWT_EXPIRES_IN=7d
-OTP_MOCK=true
-FRONTEND_URL=http://localhost:5173
-```
-
-## 📡 API Endpointlar
-
-### Auth
-| Method | Endpoint | Tavsif |
-|--------|----------|--------|
-| POST | `/api/auth/send-otp` | OTP yuborish |
-| POST | `/api/auth/verify-otp` | OTP tasdiqlash + JWT |
-| GET | `/api/auth/profile` | Profil ma'lumotlari |
-| PUT | `/api/auth/profile` | Profilni yangilash |
-
-### Taksi
-| Method | Endpoint | Tavsif |
-|--------|----------|--------|
-| GET | `/api/taxi/estimate` | Narx hisoblash |
-| POST | `/api/taxi/rides` | Yangi sayohat |
-| GET | `/api/taxi/rides/:id` | Sayohat holati |
-| GET | `/api/taxi/history` | Sayohatlar tarixi |
-
-### Market
-| Method | Endpoint | Tavsif |
-|--------|----------|--------|
-| GET | `/api/market/categories` | Kategoriyalar |
-| GET | `/api/market/products` | Mahsulotlar (filter, search) |
-| GET | `/api/market/products/:id` | Mahsulot detallari |
-| POST | `/api/market/orders` | Buyurtma berish |
-| GET | `/api/market/orders` | Buyurtmalar tarixi |
-
-### Yetkazib Berish
-| Method | Endpoint | Tavsif |
-|--------|----------|--------|
-| GET | `/api/delivery/stores` | Do'konlar ro'yxati |
-| GET | `/api/delivery/stores/:id` | Do'kon ma'lumotlari |
-| GET | `/api/delivery/stores/:id/menu` | Do'kon menyusi |
-| POST | `/api/delivery/orders` | Buyurtma berish |
-| GET | `/api/delivery/orders/:id` | Buyurtma holati |
-
-## 🎨 Dizayn Tizimi
-
-| Element | Rang |
-|---------|------|
-| Asosiy rang | `#1a237e` (Primary) |
-| Urg'u rangi | `#ffc107` (Accent) |
-| Fon | `#0f0f1a` (Dark) |
-| Karta | `#1a1a2e` (Dark Card) |
-| Chegara | `#2a2a4a` (Dark Border) |
-
-## 🔌 Socket.io Events
-
-| Event | Tavsif |
-|-------|--------|
-| `driver:location` | Haydovchi joylashuvini yangilash |
-| `ride:status` | Sayohat holat o'zgarishi |
-| `delivery:status` | Yetkazib berish holati |
-| `courier:location` | Kuryer joylashuvi |
-
-## 📱 Sahifalar
-
-- `/` — Bosh sahifa (Hub)
-- `/login` — Login (telefon + OTP)
-- `/taxi` — Taksi buyurtma
-- `/market` — Mahsulotlar katalogi
-- `/market/cart` — Savat
-- `/market/checkout` — Checkout
-- `/delivery` — Restoran/do'konlar
-- `/delivery/:id` — Do'kon menyusi
-- `/profile` — Foydalanuvchi profili
-
-## 👥 Rollar
-
-- **customer** — Taksi, market, yetkazib berish
-- **driver** — Taksi haydovchi paneli
-- **courier** — Kuryer paneli
-- **seller** — Do'kon paneli
-
-## 📄 Litsenziya
-
-MIT © 2024 UzGo Team

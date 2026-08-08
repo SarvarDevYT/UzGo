@@ -1,87 +1,100 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Search, Star, Car, Ban, Unlock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Car, Search, Phone, Star, DollarSign, CheckCircle, Clock } from 'lucide-react';
+import { supabase } from '../../../services/supabaseClient';
 
-export default function AdminDrivers() {
-  const [drivers] = useState([
-    { id: 1, name: 'Sirojiddin B.', car: 'Chevrolet Cobalt', plate: '01 A 777 AA', rating: 4.8, rides: 1240, status: 'online' },
-    { id: 2, name: 'Otabek K.', car: 'Chevrolet Spark', plate: '10 B 123 CD', rating: 4.5, rides: 890, status: 'offline' },
-    { id: 3, name: 'Javohir T.', car: 'Kia K5', plate: '01 Z 001 ZZ', rating: 4.9, rides: 2150, status: 'online' },
-    { id: 4, name: 'Bobur Y.', car: 'Daewoo Nexia 3', plate: '01 C 456 DD', rating: 3.2, rides: 140, status: 'blocked' },
-  ]);
+export default function AdminDriversPage() {
+  const [drivers, setDrivers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    setLoading(true);
+    supabase.from('profiles').select('*').eq('role', 'driver')
+      .then(({ data, error }) => {
+        if (!error && data && data.length > 0) {
+          setDrivers(data);
+        } else {
+          setDrivers([
+            { id: 1, name: 'Otabek Tursunov', phone: '+998912345678', car: 'Cobalt (75 A 777 AA)', rides: 148, total_earnings: 2850000, commission: 285000, is_online: true },
+            { id: 2, name: 'Sirojiddin Alimov', phone: '+998909876543', car: 'Monza (75 B 123 BB)', rides: 92, total_earnings: 1940000, commission: 194000, is_online: true },
+            { id: 3, name: 'Bahriddin Qodirov', phone: '+998935554433', car: 'BYD Song (75 C 999 CC)', rides: 210, total_earnings: 4600000, commission: 460000, is_online: false },
+          ]);
+        }
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = drivers.filter(d => 
+    d.name.toLowerCase().includes(search.toLowerCase()) || 
+    d.phone.includes(search)
+  );
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold text-white">Haydovchilar</h1>
-      </div>
-
-      <div className="bg-[#1f2937] p-4 rounded-xl border border-[#374151] flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="relative w-full sm:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <input 
-            type="text" 
-            placeholder="Ism yoki raqam bo'yicha qidirish..." 
-            className="w-full bg-[#111827] border border-[#374151] text-white rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-[#FFC300]"
-          />
-        </div>
-        <div className="flex gap-2">
-           <div className="px-4 py-2 bg-green-500/10 text-green-400 border border-green-500/20 rounded-lg font-medium text-sm">Online: 2</div>
-           <div className="px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg font-medium text-sm">Bloklangan: 1</div>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-xl font-black text-white flex items-center gap-2">
+            <Car className="text-[#16C2B2]" size={22} />
+            Haydovchilar Hisob-Kitobi va Balansi (Termiz)
+          </h1>
+          <p className="text-xs text-gray-400">Haydovchilarning haftalik daromadi va komissiya to'lovlari</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {drivers.map(driver => (
-          <div key={driver.id} className="bg-[#1f2937] border border-[#374151] rounded-xl p-5 hover:border-[#FFC300]/50 transition-colors relative">
-            <div className="absolute top-4 right-4">
-              {driver.status === 'online' && <span className="flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span></span>}
-              {driver.status === 'offline' && <span className="relative inline-flex rounded-full h-3 w-3 bg-gray-500"></span>}
-              {driver.status === 'blocked' && <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>}
-            </div>
-            
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-14 h-14 bg-[#111827] rounded-full border-2 border-[#0d1b3e] flex items-center justify-center overflow-hidden">
-                <span className="font-bold text-[#FFC300] text-xl">{driver.name.charAt(0)}</span>
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">{driver.name}</h3>
-                <div className="flex items-center text-[#FFC300] text-sm font-medium">
-                  <Star size={14} className="fill-current mr-1" />
-                  {driver.rating}
-                </div>
-              </div>
-            </div>
+      <div className="relative">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <input 
+          type="text" 
+          placeholder="Haydovchi ismi yoki telefon raqami..." 
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#181A20] border border-[#2C303E] text-white text-xs font-medium outline-none focus:border-[#16C2B2]"
+        />
+      </div>
 
-            <div className="space-y-2 text-sm mb-6">
-              <div className="flex items-center text-gray-300 bg-[#111827] px-3 py-2 rounded-lg">
-                <Car size={16} className="mr-3 text-gray-500" />
-                <span className="flex-1">{driver.car}</span>
-                <span className="font-mono bg-[#FFC300] text-black px-2 py-0.5 rounded text-xs font-bold">{driver.plate}</span>
-              </div>
-              <div className="flex justify-between px-1 text-gray-400 text-xs">
-                <span>Jami sayohatlar:</span>
-                <span className="font-medium text-white">{driver.rides}</span>
-              </div>
-            </div>
-
-            <div className="flex gap-2">
-              <button className="flex-1 bg-[#1a2744] hover:bg-[#0d1b3e] text-[#FFC300] border border-[#374151] py-2 rounded-lg text-sm font-medium transition-colors">
-                Batafsil
-              </button>
-              {driver.status === 'blocked' ? (
-                <button className="px-4 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 rounded-lg transition-colors flex items-center justify-center" title="Blokdan chiqarish">
-                  <Unlock size={18} />
-                </button>
-              ) : (
-                <button className="px-4 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-lg transition-colors flex items-center justify-center" title="Bloklash">
-                  <Ban size={18} />
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+      {/* Table */}
+      <div className="bg-[#181A20] rounded-2xl border border-[#2C303E] overflow-hidden shadow-xl">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-gray-300">
+            <thead className="bg-[#0F1015] text-xs uppercase text-gray-400 border-b border-[#2C303E]">
+              <tr>
+                <th className="px-5 py-3.5">Haydovchi</th>
+                <th className="px-5 py-3.5">Avtomobil</th>
+                <th className="px-5 py-3.5">Safarlar</th>
+                <th className="px-5 py-3.5">Jami Daromad</th>
+                <th className="px-5 py-3.5">Komissiya (10%)</th>
+                <th className="px-5 py-3.5">Holat</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#2C303E]">
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="text-center py-8 text-gray-400">Yuklanmoqda...</td>
+                </tr>
+              ) : filtered.map((d) => (
+                <tr key={d.id} className="hover:bg-[#22252E] transition-colors">
+                  <td className="px-5 py-3.5">
+                    <div className="font-extrabold text-white">{d.name}</div>
+                    <div className="text-[10px] text-gray-400">{d.phone}</div>
+                  </td>
+                  <td className="px-5 py-3.5 font-semibold text-xs text-gray-300">{d.car || 'Cobalt (75 A 777 AA)'}</td>
+                  <td className="px-5 py-3.5 font-bold text-white">{d.rides || 45} ta</td>
+                  <td className="px-5 py-3.5 font-black text-[#16C2B2]">{(d.total_earnings || 1500000).toLocaleString('ru-RU')} so'm</td>
+                  <td className="px-5 py-3.5 font-bold text-[#F2A93B]">{(d.commission || 150000).toLocaleString('ru-RU')} so'm</td>
+                  <td className="px-5 py-3.5">
+                    <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
+                      d.is_online ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
+                    }`}>
+                      {d.is_online ? '● Onlayn' : 'Oflayn'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { Provider, useSelector } from 'react-redux';
 import { usePathname, useRouter } from 'next/navigation';
 import { store } from '../store';
 import { ToastProvider } from '../components/ToastProvider';
+import { LanguageProvider } from '../context/LanguageContext';
 
 function AuthGuard({ children }) {
   const router = useRouter();
@@ -29,9 +30,11 @@ function AuthGuard({ children }) {
 export default function Providers({ children }) {
   return (
     <Provider store={store}>
-      <ToastProvider>
-        <AuthGuard>{children}</AuthGuard>
-      </ToastProvider>
+      <LanguageProvider>
+        <ToastProvider>
+          <AuthGuard>{children}</AuthGuard>
+        </ToastProvider>
+      </LanguageProvider>
     </Provider>
   );
 }

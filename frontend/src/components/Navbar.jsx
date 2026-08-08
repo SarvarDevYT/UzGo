@@ -4,11 +4,13 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { User, Bell, Car, ShoppingBag, Package } from 'lucide-react';
+import { User, Bell, Car, ShoppingBag, Package, Globe } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth || { user: null });
   const pathname = usePathname();
+  const { lang, toggleLanguage, t } = useLanguage();
 
   if (pathname === '/login' || pathname?.startsWith('/admin')) {
     return null;
@@ -39,7 +41,7 @@ const Navbar = () => {
                     : 'text-gray-300 hover:bg-[#22252E] hover:text-white'
                 }`}
               >
-                <Car size={16} /> Taksi
+                <Car size={16} /> {t('taxi')}
               </Link>
               <Link 
                 href="/market" 
@@ -49,7 +51,7 @@ const Navbar = () => {
                     : 'text-gray-300 hover:bg-[#22252E] hover:text-white'
                 }`}
               >
-                <ShoppingBag size={16} /> Market
+                <ShoppingBag size={16} /> {t('market')}
               </Link>
               <Link 
                 href="/delivery" 
@@ -59,15 +61,25 @@ const Navbar = () => {
                     : 'text-gray-300 hover:bg-[#22252E] hover:text-white'
                 }`}
               >
-                <Package size={16} /> Yetkazish
+                <Package size={16} /> {t('delivery')}
               </Link>
             </div>
           </div>
 
           {/* Right section */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
+            {/* Language Switcher Toggle */}
+            <button 
+              onClick={() => toggleLanguage()}
+              className="flex items-center gap-1 text-xs font-black bg-[#22252E] border border-[#2C303E] text-[#16C2B2] px-2.5 py-1.5 rounded-xl hover:border-[#16C2B2] transition-colors"
+              title="Tilni almashtirish / Сменить язык"
+            >
+              <Globe size={14} />
+              <span>{lang === 'uz' ? 'O\'Z' : 'РУ'}</span>
+            </button>
+
             <button className="text-gray-300 hover:text-[#16C2B2] p-2 rounded-xl hover:bg-[#22252E] transition-colors" aria-label="Bildirishnomalar">
-              <Bell size={20} />
+              <Bell size={18} />
             </button>
             
             {user ? (
@@ -78,7 +90,7 @@ const Navbar = () => {
                 <span className="hidden md:block text-xs font-bold text-white">{user.name || 'Foydalanuvchi'}</span>
               </Link>
             ) : (
-              <Link href="/login" className="bg-[#16C2B2] hover:bg-[#13B0A2] text-[#0F1015] px-5 py-2 rounded-xl text-sm font-bold transition-all shadow-md shadow-[#16C2B2]/20">
+              <Link href="/login" className="bg-[#16C2B2] hover:bg-[#13B0A2] text-[#0F1015] px-4 py-1.5 rounded-xl text-xs font-black transition-all shadow-md shadow-[#16C2B2]/20">
                 Kirish
               </Link>
             )}
