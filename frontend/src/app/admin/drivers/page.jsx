@@ -276,7 +276,6 @@ export default function AdminDriversPage() {
                   onChange={e => setTariff(e.target.value)}
                   className="w-full bg-[#0F1015] border border-[#2C303E] text-white p-3 rounded-xl text-xs outline-none"
                 >
-                  <option value="mototaxi">🛵 Mototaksi (8,000 so'm)</option>
                   <option value="economy">🚗 Ekonom (12,000 so'm)</option>
                   <option value="comfort">🚙 Komfort (18,000 so'm)</option>
                   <option value="business">👑 Business (40,000 so'm)</option>

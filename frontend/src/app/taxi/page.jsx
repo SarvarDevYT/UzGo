@@ -20,7 +20,6 @@ const TERMIZ_DISTRICTS = [
 ];
 
 const TARIFFS = [
-  { id: 'mototaxi', name: 'Mototaksi', price: 8000, duration: '~2 min', car: 'Kavasaki / Bajaj 150cc', icon: '🛵' },
   { id: 'economy', name: 'Ekonom', price: 12000, duration: '~3 min', car: 'Chevrolet Cobalt', icon: '🚗' },
   { id: 'comfort', name: 'Komfort', price: 18000, duration: '~4 min', car: 'Chevrolet Monza', icon: '🚙' },
   { id: 'comfort_plus', name: 'Komfort+', price: 25000, duration: '~5 min', car: 'BYD Song Plus', icon: '🏎️' },
@@ -43,7 +42,7 @@ export default function TaxiPage() {
   const [loadingGps, setLoadingGps] = useState(false);
   const [showFromDropdown, setShowFromDropdown] = useState(false);
   const [showToDropdown, setShowToDropdown] = useState(false);
-  const [selectedTariff, setSelectedTariff] = useState('mototaxi');
+  const [selectedTariff, setSelectedTariff] = useState('economy');
   const [status, setStatus] = useState('idle'); // idle | searching | found
   const [scheduledTime, setScheduledTime] = useState('');
   const [showScheduleModal, setShowScheduleModal] = useState(false);
@@ -248,9 +247,9 @@ export default function TaxiPage() {
               </div>
             </div>
 
-            {/* Horizontal Tariff Selector Slider (Mototaksi included) */}
+            {/* Horizontal Tariff Selector Slider */}
             <h3 className="text-xs font-bold text-[#8B8D98] uppercase tracking-wider mb-2">Tarifni tanlang</h3>
-            <div className="grid grid-cols-5 gap-1.5 mb-4">
+            <div className="grid grid-cols-4 gap-2 mb-4">
               {TARIFFS.map((t) => {
                 const isSelected = selectedTariff === t.id;
                 return (

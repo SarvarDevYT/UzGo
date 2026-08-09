@@ -5,7 +5,7 @@ import { Car, Navigation, Phone, DollarSign, Check, X, Shield, MapPin, BellRing,
 import YandexMap from '../../components/YandexMap';
 
 const MOCK_INCOMING_ORDERS = [
-  { id: 'ORD-771', type: 'taxi', tariff: 'Mototaksi', price: 12000, from: 'Termiz Markaz (Al-Hakim at-Tirmiziy)', to: 'TerDU Campus', distance: '3.2 km', client: 'Jamshidbek' },
+  { id: 'ORD-771', type: 'taxi', tariff: 'Ekonom', price: 12000, from: 'Termiz Markaz (Al-Hakim at-Tirmiziy)', to: 'TerDU Campus', distance: '3.2 km', client: 'Jamshidbek' },
   { id: 'ORD-772', type: 'delivery', store: 'Termiz Fast Food', price: 18000, from: 'Navoiy ko\'chasi, 12', to: 'Indorama MFY', distance: '4.8 km', client: 'Dilnoza' },
 ];
 

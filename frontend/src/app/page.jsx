@@ -113,7 +113,7 @@ export default function HomePage() {
                 🚕
               </div>
               <span className="text-[9px] font-black bg-[#FF5B4C]/20 text-[#FF5B4C] border border-[#FF5B4C]/40 px-2 py-0.5 rounded-full uppercase">
-                🛵 Mototaksi
+                Tezkor Taksi
               </span>
             </div>
 
