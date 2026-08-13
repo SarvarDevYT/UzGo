@@ -13,16 +13,16 @@ const BottomNav = () => {
   }
 
   const navItems = [
-    { path: '/', label: 'Bosh', icon: Home, activeColor: 'text-[#16C2B2]' },
-    { path: '/taxi', label: 'Taksi', icon: Car, activeColor: 'text-[#FF5B4C]' },
-    { path: '/market', label: 'Market', icon: ShoppingBag, activeColor: 'text-[#F2A93B]' },
-    { path: '/delivery', label: 'Yetkazish', icon: Package, activeColor: 'text-[#22C55E]' },
-    { path: '/profile', label: 'Profil', icon: User, activeColor: 'text-[#16C2B2]' },
+    { path: '/', label: 'Bosh', icon: Home, activeColor: 'text-[#16C2B2]', glowColor: 'bg-[#16C2B2]' },
+    { path: '/taxi', label: 'Taksi', icon: Car, activeColor: 'text-[#FF5B4C]', glowColor: 'bg-[#FF5B4C]' },
+    { path: '/market', label: 'Market', icon: ShoppingBag, activeColor: 'text-[#F2A93B]', glowColor: 'bg-[#F2A93B]' },
+    { path: '/delivery', label: 'Yetkazish', icon: Package, activeColor: 'text-[#22C55E]', glowColor: 'bg-[#22C55E]' },
+    { path: '/profile', label: 'Profil', icon: User, activeColor: 'text-[#16C2B2]', glowColor: 'bg-[#16C2B2]' },
   ];
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 w-full bg-[#181A20]/95 backdrop-blur-xl border-t border-[#2C303E] pb-safe">
-      <div className="flex justify-around items-center h-16 px-2">
+    <div className="fixed bottom-3 left-4 right-4 z-50 max-w-lg mx-auto">
+      <div className="bg-[#181A20]/90 backdrop-blur-2xl border border-[#2C303E] rounded-3xl p-1.5 shadow-2xl shadow-black/80 flex justify-around items-center h-16">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.path || 
@@ -32,14 +32,17 @@ const BottomNav = () => {
             <Link 
               key={item.path} 
               href={item.path}
-              className={`flex flex-col items-center justify-center w-16 h-full space-y-1 transition-all ${
+              className={`relative flex flex-col items-center justify-center flex-1 h-full transition-all group ${
                 isActive ? item.activeColor : 'text-gray-400 hover:text-gray-200'
               }`}
             >
-              <div className={`p-1 rounded-xl transition-all ${isActive ? 'bg-[#181A20]' : ''}`}>
-                <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+              {isActive && (
+                <span className={`absolute -top-1 w-1.5 h-1.5 rounded-full ${item.glowColor} shadow-lg shadow-current animate-pulse`}></span>
+              )}
+              <div className={`p-1.5 rounded-2xl transition-all ${isActive ? 'bg-[#222530] scale-110 shadow-inner' : 'group-hover:scale-105'}`}>
+                <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
               </div>
-              <span className={`text-[10px] font-bold ${isActive ? item.activeColor : 'text-gray-400'}`}>
+              <span className={`text-[10px] font-extrabold transition-colors ${isActive ? item.activeColor : 'text-gray-400'}`}>
                 {item.label}
               </span>
             </Link>
@@ -51,3 +54,4 @@ const BottomNav = () => {
 };
 
 export default BottomNav;
+
