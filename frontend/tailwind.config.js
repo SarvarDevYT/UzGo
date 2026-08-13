@@ -6,43 +6,39 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          DEFAULT: '#16C2B2',
-          hover: '#13B0A2',
-          light: '#20E3D1',
-        },
         gold: {
-          DEFAULT: '#F2A93B',
-          hover: '#E0982A',
-        },
-        coral: {
-          DEFAULT: '#FF5B4C',
-          hover: '#E5493A',
-        },
-        emerald: {
-          DEFAULT: '#22C55E',
-          hover: '#16A34A',
+          DEFAULT: '#F59E0B',
+          light: '#FEF3C7',
+          dark: '#D97706',
+          accent: '#FBBF24',
         },
         uzgo: {
-          bg: '#0F1015',
-          card: '#181A20',
-          cardHover: '#22252E',
-          border: '#2C303E',
-          text: '#F5F5F7',
-          soft: '#8B8D98',
-          faint: '#5A5D6B',
+          black: '#0F1015',
+          gold: '#F59E0B',
+          bg: '#FAFAFC',
+          card: '#FFFFFF',
+          border: '#E5E7EB',
+          text: '#111827',
+          soft: '#6B7280',
+          muted: '#9CA3AF',
+        },
+        brand: {
+          DEFAULT: '#F59E0B',
+          hover: '#D97706',
+          light: '#FEF3C7',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       boxShadow: {
-        'brand': '0 8px 30px rgba(22, 194, 178, 0.25)',
-        'coral': '0 8px 30px rgba(255, 91, 76, 0.25)',
-        'gold': '0 8px 30px rgba(242, 169, 59, 0.25)',
-        'card': '0 4px 20px rgba(0, 0, 0, 0.6)',
+        'apple': '0 8px 30px rgba(0, 0, 0, 0.04)',
+        'apple-hover': '0 20px 40px rgba(0, 0, 0, 0.08)',
+        'gold': '0 8px 25px rgba(245, 158, 11, 0.25)',
+        'dock': '0 12px 40px rgba(0, 0, 0, 0.12)',
       },
     },
   },
   plugins: [],
 };
+
