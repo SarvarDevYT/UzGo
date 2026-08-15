@@ -4,13 +4,22 @@ import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
 
 export const metadata = {
-  title: "UzGo — Ko'p Xizmatli Platforma (Super-App)",
+  title: "UzGo — Ko'p Xizmatli Platforma",
   description: "O'zbekiston uchun bitta platformada uchta xizmat: Taksi, Market va Yetkazib berish",
+  icons: {
+    icon: '/logo.jpg',
+    shortcut: '/logo.jpg',
+    apple: '/logo.jpg',
+  },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="uz" className="bg-[#FAFAFC]">
+      <head>
+        <link rel="icon" href="/logo.jpg" type="image/jpeg" />
+        <link rel="apple-touch-icon" href="/logo.jpg" />
+      </head>
       <body className="min-h-screen font-sans flex flex-col antialiased bg-[#FAFAFC] text-[#111827]">
         <Providers>
           <Navbar />
@@ -23,4 +32,5 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
 
