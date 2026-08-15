@@ -7,6 +7,7 @@ import { store } from '../store';
 import { ToastProvider } from '../components/ToastProvider';
 import { LanguageProvider } from '../context/LanguageContext';
 import { WalletProvider } from '../context/WalletContext';
+import { ThemeProvider } from '../context/ThemeContext';
 
 function AuthGuard({ children }) {
   const router = useRouter();
@@ -31,13 +32,16 @@ function AuthGuard({ children }) {
 export default function Providers({ children }) {
   return (
     <Provider store={store}>
-      <LanguageProvider>
-        <WalletProvider>
-          <ToastProvider>
-            <AuthGuard>{children}</AuthGuard>
-          </ToastProvider>
-        </WalletProvider>
-      </LanguageProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <WalletProvider>
+            <ToastProvider>
+              <AuthGuard>{children}</AuthGuard>
+            </ToastProvider>
+          </WalletProvider>
+        </LanguageProvider>
+      </ThemeProvider>
     </Provider>
   );
 }
+

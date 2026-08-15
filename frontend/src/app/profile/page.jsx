@@ -19,16 +19,20 @@ import {
   Car,
   Check,
   Sparkles,
-  Phone
+  Phone,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { logout } from '../../store/authSlice';
 import { useLanguage } from '../../context/LanguageContext';
 import { useWallet } from '../../context/WalletContext';
+import { useTheme } from '../../context/ThemeContext';
 
 export default function ProfilePage() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { lang, toggleLanguage, t } = useLanguage();
+  const { isDark, toggleTheme } = useTheme();
   const reduxUser = useSelector((state) => state.auth?.user);
   const { walletBalance, cashbackBalance } = useWallet() || { walletBalance: 150000, cashbackBalance: 25000 };
 
@@ -152,6 +156,27 @@ export default function ProfilePage() {
             </div>
             <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-black transition-all" />
           </Link>
+        </div>
+
+        {/* Theme Switcher */}
+        <div className="bg-white rounded-3xl border border-gray-200/80 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
+          <div 
+            onClick={() => toggleTheme()}
+            className="flex items-center justify-between p-3.5 hover:bg-gray-50 rounded-2xl transition-colors cursor-pointer group apple-card-press"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-[#F59E0B] flex items-center justify-center shrink-0">
+                {isDark ? <Sun className="w-5 h-5 text-[#F59E0B]" /> : <Moon className="w-5 h-5 text-gray-700" />}
+              </div>
+              <div>
+                <h3 className="font-extrabold text-sm text-[#0F1015]">Yoritish Rejimi</h3>
+                <p className="text-[11px] text-gray-500 font-extrabold">{isDark ? 'Qorong\'u (Dark Mode) 🌙' : 'Yoritilgan (Light Mode) ☀️'}</p>
+              </div>
+            </div>
+            <span className="text-xs font-black text-[#0F1015] bg-gray-100 border border-gray-200 px-3 py-1 rounded-xl">
+              Almashtirish ⇄
+            </span>
+          </div>
         </div>
 
         {/* Language Switcher */}
