@@ -67,9 +67,9 @@ export default function AdminLoginPage() {
       <div className="max-w-md w-full space-y-8 bg-[#181A20] p-8 md:p-10 rounded-3xl shadow-2xl border border-[#2C303E]">
         
         <div className="text-center">
-          <img src="/logo.png" alt="UzGo Admin Logo" className="w-16 h-16 object-contain mx-auto mb-3 rounded-2xl shadow-lg shadow-[#16C2B2]/20" />
-          <h2 className="text-3xl font-black text-white">Uz<span className="text-[#16C2B2]">Go</span> Admin</h2>
-          <p className="mt-1 text-xs text-[#16C2B2] font-bold uppercase tracking-widest">Termiz Super-App Boshqaruv Paneli</p>
+          <img src="/logo.jpg" alt="UzGo Admin Logo" className="w-16 h-16 object-cover mx-auto mb-3 rounded-2xl shadow-lg border border-gray-700" />
+          <h2 className="text-3xl font-black text-white">Uz<span className="text-[#F59E0B]">Go</span> Admin</h2>
+          <p className="mt-1 text-xs text-[#F59E0B] font-bold uppercase tracking-widest">Termiz Super-App Boshqaruv Paneli</p>
         </div>
 
         <form className="mt-8 space-y-5" onSubmit={handleLogin}>

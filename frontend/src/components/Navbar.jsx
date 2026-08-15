@@ -23,7 +23,12 @@ const Navbar = () => {
           
           {/* Logo UzGo Style */}
           <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center gap-2 group">
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <img 
+                src="/logo.jpg" 
+                alt="UzGo Logo" 
+                className="w-9 h-9 object-cover rounded-xl shadow-sm border border-gray-200 group-hover:scale-105 transition-transform" 
+              />
               <span className="font-black text-2xl tracking-tight text-[#0F1015] group-hover:scale-105 transition-transform">
                 Uz<span className="text-[#F59E0B]">Go</span>
               </span>
@@ -31,6 +36,7 @@ const Navbar = () => {
                 Super App
               </span>
             </Link>
+
 
             {/* Desktop Navigation Links */}
             <div className="hidden md:flex items-center gap-1.5">
