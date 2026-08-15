@@ -32,10 +32,8 @@ const Navbar = () => {
               <span className="font-black text-2xl tracking-tight text-[#0F1015] group-hover:scale-105 transition-transform">
                 Uz<span className="text-[#F59E0B]">Go</span>
               </span>
-              <span className="bg-[#0F1015] text-[#F59E0B] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
-                Super App
-              </span>
             </Link>
+
 
 
             {/* Desktop Navigation Links */}

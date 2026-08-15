@@ -73,7 +73,7 @@ export default function HomePage() {
       id: 'all', 
       title: 'Barchasi', 
       subtitle: 'Barcha xizmatlar', 
-      badge: 'SuperApp',
+      badge: 'Xizmatlar',
       icon: <Grid className="w-8 h-8 text-[#0F1015]" />, 
       bg: 'bg-gray-500/10 border-gray-300 hover:border-[#0F1015]',
       badgeBg: 'bg-[#0F1015] text-white',
