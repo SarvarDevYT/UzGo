@@ -10,11 +10,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="uz">
-      <body className="min-h-screen font-sans flex flex-col antialiased" style={{ background: '#0a0f1e', color: '#f9fafb' }}>
+    <html lang="uz" className="bg-[#FAFAFC]">
+      <body className="min-h-screen font-sans flex flex-col antialiased bg-[#FAFAFC] text-[#111827]">
         <Providers>
           <Navbar />
-          <main className="flex-1 pb-16 md:pb-0">
+          <main className="flex-1">
             {children}
           </main>
           <BottomNav />
@@ -23,3 +23,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
