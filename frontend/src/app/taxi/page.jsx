@@ -116,7 +116,7 @@ export default function TaxiPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] bg-[#0F1015] overflow-hidden relative">
+    <div className="flex flex-col min-h-[calc(100vh-64px)] bg-[#FAFAFC] relative">
       {/* Real Yandex Maps Integration (Termiz) */}
       <div className="absolute inset-0 z-0">
         <YandexMap 
@@ -130,10 +130,11 @@ export default function TaxiPage() {
       </div>
 
       {/* Taxi Bottom Sheet Container */}
-      <div className="flex-1 overflow-y-auto p-4 z-10 flex flex-col justify-end max-w-lg mx-auto w-full">
+      <div className="flex-1 overflow-y-auto p-4 pb-28 md:pb-6 z-10 flex flex-col justify-end max-w-lg mx-auto w-full">
         
         {status === 'idle' && (
-          <div className="bg-white rounded-3xl p-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] border border-gray-200/80 backdrop-blur-xl animate-slide-up">
+          <div className="bg-white rounded-3xl p-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] border border-gray-200/80 backdrop-blur-xl animate-slide-up space-y-3">
+
             
             <div className="flex justify-between items-center mb-4">
               <div>
