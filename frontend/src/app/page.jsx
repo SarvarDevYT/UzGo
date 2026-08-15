@@ -89,16 +89,16 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] text-[#111827] pb-28 font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-[#FAFAFC] dark:bg-[#0F1015] text-[#111827] dark:text-[#F5F5F7] pb-28 font-sans overflow-x-hidden transition-colors">
        {/* Main Container */}
       <main className="max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-4 pt-6 space-y-6">
 
         {/* Location & Destination Search Field */}
-        <div className="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100/80 space-y-3">
+        <div className="bg-white dark:bg-[#181A20] rounded-3xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100/80 dark:border-gray-800 space-y-3">
           
           {/* Location Selector */}
-          <div className="flex items-center justify-between text-xs font-semibold text-gray-500 px-1">
-            <div className="flex items-center gap-1.5 text-[#0F1015]">
+          <div className="flex items-center justify-between text-xs font-semibold text-gray-500 dark:text-gray-400 px-1">
+            <div className="flex items-center gap-1.5 text-[#0F1015] dark:text-white">
               <Navigation size={14} className="text-[#F59E0B] fill-[#F59E0B]" />
               <span className="font-extrabold text-sm">{selectedLocation}</span>
             </div>
@@ -108,11 +108,11 @@ export default function HomePage() {
           {/* Large Search Input */}
           <div 
             onClick={() => router.push('/taxi')}
-            className="bg-gray-50 hover:bg-gray-100/80 border border-gray-200/70 hover:border-[#F59E0B] rounded-2xl p-4 flex items-center gap-3 cursor-pointer transition-all duration-200 apple-card-press group"
+            className="bg-gray-50 dark:bg-gray-800/60 hover:bg-gray-100/80 dark:hover:bg-gray-800 border border-gray-200/70 dark:border-gray-700 hover:border-[#F59E0B] rounded-2xl p-4 flex items-center gap-3 cursor-pointer transition-all duration-200 apple-card-press group"
           >
             <Search size={22} className="text-gray-400 group-hover:text-[#F59E0B] transition-colors" />
-            <span className="text-gray-400 font-medium text-sm flex-1">Qayerga boramiz?</span>
-            <div className="bg-[#0F1015] text-[#F59E0B] px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1 shadow-md shadow-black/10">
+            <span className="text-gray-400 dark:text-gray-300 font-medium text-sm flex-1">Qayerga boramiz?</span>
+            <div className="bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1 shadow-md shadow-black/10">
               Taksi <ChevronRight size={14} />
             </div>
           </div>
@@ -125,10 +125,10 @@ export default function HomePage() {
             <div 
               key={srv.id}
               onClick={() => router.push(srv.link)}
-              className={`bg-white rounded-3xl p-4 border shadow-[0_8px_25px_rgba(0,0,0,0.03)] cursor-pointer transition-all duration-300 flex flex-col justify-between h-36 apple-card-press relative overflow-hidden group ${srv.bg}`}
+              className={`bg-white dark:bg-[#181A20] rounded-3xl p-4 border border-gray-100 dark:border-gray-800 shadow-[0_8px_25px_rgba(0,0,0,0.03)] cursor-pointer transition-all duration-300 flex flex-col justify-between h-36 apple-card-press relative overflow-hidden group ${srv.bg}`}
             >
               <div className="flex justify-between items-start">
-                <div className="p-2.5 rounded-2xl bg-white shadow-sm border border-gray-100 group-hover:scale-110 transition-transform">
+                <div className="p-2.5 rounded-2xl bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 group-hover:scale-110 transition-transform">
                   {srv.icon}
                 </div>
                 <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm ${srv.badgeBg}`}>
@@ -138,10 +138,10 @@ export default function HomePage() {
 
               <div>
                 <div className="flex items-center justify-between">
-                  <h3 className="font-extrabold text-sm md:text-base text-[#0F1015] group-hover:text-[#F59E0B] transition-colors">{srv.title}</h3>
+                  <h3 className="font-extrabold text-sm md:text-base text-[#0F1015] dark:text-white group-hover:text-[#F59E0B] transition-colors">{srv.title}</h3>
                   <ArrowUpRight size={16} className="text-gray-400 group-hover:text-[#F59E0B] transition-colors" />
                 </div>
-                <p className="text-[11px] text-gray-500 font-medium mt-0.5 truncate">{srv.subtitle}</p>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-0.5 truncate">{srv.subtitle}</p>
               </div>
             </div>
           ))}
@@ -149,92 +149,92 @@ export default function HomePage() {
 
         {/* Promotional Cashback Banner */}
         <div className="rounded-3xl p-5 bg-gradient-to-r from-[#0F1015] via-[#1C1E26] to-[#0F1015] text-white shadow-xl shadow-black/10 border border-gray-800 relative overflow-hidden group">
-          <div className="absolute right-0 top-0 bottom-0 w-36 bg-gradient-to-l from-[#F59E0B]/20 to-transparent pointer-events-none"></div>
-          
-          <div className="relative z-10 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-1.5 text-xs font-black text-[#F59E0B] uppercase tracking-wider mb-1">
-                <Sparkles size={14} /> BUGUNGI KESHBEK
+          <div className="flex justify-between items-center relative z-10">
+            <div className="space-y-1 max-w-[70%]">
+              <div className="flex items-center gap-1.5 text-xs font-black text-[#F59E0B] uppercase tracking-wider">
+                <Sparkles size={14} className="animate-spin" />
+                <span>BUGUNGI KESHBЕK</span>
               </div>
-              <h4 className="text-sm font-extrabold text-white max-w-[200px]">
+              <h2 className="text-sm md:text-base font-extrabold text-white leading-tight">
                 Har bir buyurtmangizdan 10% keshbek oling!
-              </h4>
+              </h2>
             </div>
 
-            <div className="bg-gradient-to-br from-[#F59E0B] to-[#D97706] text-[#0F1015] px-4 py-2.5 rounded-2xl font-black text-xl shadow-lg shadow-[#F59E0B]/30 flex flex-col items-center">
-              <span>+10%</span>
-              <span className="text-[9px] uppercase font-bold tracking-tighter">Keshbek</span>
+            <div className="bg-[#F59E0B] text-[#0F1015] p-3 rounded-2xl flex flex-col items-center justify-center font-black text-center shadow-lg shadow-[#F59E0B]/20 group-hover:scale-105 transition-transform">
+              <span className="text-base font-black">+10%</span>
+              <span className="text-[9px] uppercase tracking-tighter">KESHBEK</span>
             </div>
           </div>
+
+          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#F59E0B]/10 rounded-full blur-2xl pointer-events-none" />
         </div>
 
         {/* Quick Benefits Section */}
-        <div className="space-y-2.5">
-          <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider px-1">Afzalliklarimiz</h3>
-          <div className="grid grid-cols-2 gap-2.5">
-            {quickBenefits.map((b, i) => (
-              <div 
-                key={i} 
-                className="bg-white rounded-2xl p-3 border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-3"
-              >
-                <div className="p-2 rounded-xl bg-gray-50 shrink-0">
-                  {b.icon}
+        <div className="space-y-3">
+          <h3 className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider px-1">Afzalliklarimiz</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {quickBenefits.map((item, idx) => (
+              <div key={idx} className="bg-white dark:bg-[#181A20] rounded-2xl p-3.5 border border-gray-100/80 dark:border-gray-800 shadow-sm flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+                  {item.icon}
                 </div>
-                <div className="overflow-hidden">
-                  <div className="font-extrabold text-xs text-[#0F1015] truncate">{b.title}</div>
-                  <div className="text-[10px] text-gray-400 truncate">{b.desc}</div>
+                <div>
+                  <h4 className="font-extrabold text-xs text-[#0F1015] dark:text-white">{item.title}</h4>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">{item.desc}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Tezkor Xizmatlar Section */}
-        <div className="space-y-2.5 pt-1">
+        {/* Quick Services List */}
+        <div className="space-y-3">
           <div className="flex justify-between items-center px-1">
-            <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider">Tezkor xizmatlar</h3>
-            <span className="text-xs font-bold text-[#F59E0B] cursor-pointer hover:underline">Barchasi</span>
+            <h3 className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Tezkor xizmatlar</h3>
+            <span 
+              onClick={() => router.push('/market')}
+              className="text-xs font-extrabold text-[#F59E0B] cursor-pointer hover:underline"
+            >
+              Barchasi
+            </span>
           </div>
 
-          <div className="bg-white rounded-3xl p-3 border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] space-y-2">
+          <div className="bg-white dark:bg-[#181A20] rounded-3xl border border-gray-100/80 dark:border-gray-800 shadow-[0_8px_25px_rgba(0,0,0,0.03)] divide-y divide-gray-100 dark:divide-gray-800 overflow-hidden">
             <div 
               onClick={() => router.push('/taxi')}
-              className="p-3 rounded-2xl hover:bg-gray-50 flex items-center justify-between cursor-pointer transition-colors apple-card-press"
+              className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 flex items-center justify-between cursor-pointer transition-colors group"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-[#F59E0B] font-bold">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-xl">
                   🚕
                 </div>
                 <div>
-                  <div className="font-extrabold text-xs text-[#0F1015]">Termiz markaziga taksi</div>
-                  <div className="text-[11px] text-gray-400">Taxminan 12,000 so'm • 3 daqiqa</div>
+                  <h4 className="font-black text-sm text-[#0F1015] dark:text-white group-hover:text-[#F59E0B] transition-colors">Termiz markaziga taksi</h4>
+                  <p className="text-xs text-gray-400 font-medium mt-0.5">Taxminan 12,000 so'm • 3 daqiqa</p>
                 </div>
               </div>
-              <ChevronRight size={16} className="text-gray-400" />
+              <ChevronRight size={18} className="text-gray-300 dark:text-gray-600 group-hover:text-[#F59E0B] transition-colors" />
             </div>
-
-            <div className="h-px bg-gray-100 mx-2"></div>
 
             <div 
               onClick={() => router.push('/delivery')}
-              className="p-3 rounded-2xl hover:bg-gray-50 flex items-center justify-between cursor-pointer transition-colors apple-card-press"
+              className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 flex items-center justify-between cursor-pointer transition-colors group"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-[#10B981] font-bold">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xl">
                   🥟
                 </div>
                 <div>
-                  <div className="font-extrabold text-xs text-[#0F1015]">Surxon Somsa va Fast Food</div>
-                  <div className="text-[11px] text-gray-400">Yetkazish 15 daqiqada • 5,000 so'm</div>
+                  <h4 className="font-black text-sm text-[#0F1015] dark:text-white group-hover:text-[#F59E0B] transition-colors">Surxon Somsa va Fast Food</h4>
+                  <p className="text-xs text-gray-400 font-medium mt-0.5">Yetkazish 15 daqiqada • 5,000 so'm</p>
                 </div>
               </div>
-              <ChevronRight size={16} className="text-gray-400" />
+              <ChevronRight size={18} className="text-gray-300 dark:text-gray-600 group-hover:text-[#F59E0B] transition-colors" />
             </div>
           </div>
         </div>
 
       </main>
-
     </div>
   );
 }

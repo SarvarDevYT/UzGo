@@ -36,8 +36,8 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="flex flex-col overflow-hidden group bg-white border border-gray-200/80 hover:border-[#F59E0B] rounded-3xl transition-all duration-300 shadow-[0_8px_25px_rgba(0,0,0,0.03)] apple-card-press">
-      <div className="relative overflow-hidden bg-gray-50">
+    <div className="flex flex-col overflow-hidden group bg-white dark:bg-[#181A20] border border-gray-200/80 dark:border-gray-800 hover:border-[#F59E0B] rounded-3xl transition-all duration-300 shadow-[0_8px_25px_rgba(0,0,0,0.03)] apple-card-press">
+      <div className="relative overflow-hidden bg-gray-50 dark:bg-gray-800">
         <img
           src={product.image_url}
           alt={product.name}
@@ -57,10 +57,10 @@ const ProductCard = ({ product }) => {
       </div>
 
       <div className="p-4 flex flex-col flex-1">
-        <h3 className="text-sm font-extrabold text-[#0F1015] line-clamp-2 mb-1 leading-snug">
+        <h3 className="text-sm font-extrabold text-[#0F1015] dark:text-white line-clamp-2 mb-1 leading-snug">
           {product.name}
         </h3>
-        <p className="text-xs text-gray-500 line-clamp-1 mb-2 font-medium">{product.description}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mb-2 font-medium">{product.description}</p>
 
         <div className="flex items-center gap-1 mb-3">
           <Star className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
@@ -69,7 +69,7 @@ const ProductCard = ({ product }) => {
         </div>
 
         <div className="mt-auto mb-3">
-          <div className="text-lg font-black text-[#0F1015]">
+          <div className="text-lg font-black text-[#0F1015] dark:text-white">
             {formatPrice(product.price)}
           </div>
           {product.old_price && (
@@ -83,7 +83,7 @@ const ProductCard = ({ product }) => {
           className={`w-full py-3 rounded-2xl text-xs font-black transition-all duration-200 apple-card-press flex items-center justify-center gap-2 ${
             added
               ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/30'
-              : 'bg-[#0F1015] text-[#F59E0B] hover:bg-[#1C1E26] shadow-md shadow-black/10'
+              : 'bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] hover:bg-[#1C1E26] shadow-md shadow-black/10'
           }`}
         >
           <ShoppingCart className="w-4 h-4" />

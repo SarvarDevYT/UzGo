@@ -64,105 +64,99 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] text-[#111827] pb-28 font-sans">
+    <div className="min-h-screen bg-[#FAFAFC] dark:bg-[#0F1015] text-[#111827] dark:text-[#F5F5F7] pb-28 font-sans transition-colors">
       {/* Header Profile Section */}
-      <div className="bg-white border-b border-gray-100 pt-10 pb-8 px-4 relative overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-[#181A20] border-b border-gray-100 dark:border-gray-800 pt-10 pb-8 px-4 relative overflow-hidden shadow-sm">
         <div className="max-w-md mx-auto relative z-10 flex flex-col items-center">
           <div className="relative group">
-            <div className="w-24 h-24 rounded-3xl bg-[#0F1015] text-[#F59E0B] flex items-center justify-center shadow-xl border-4 border-white">
+            <div className="w-24 h-24 rounded-3xl bg-[#0F1015] dark:bg-white text-[#F59E0B] dark:text-[#0F1015] flex items-center justify-center shadow-xl border-4 border-white dark:border-gray-800">
               <span className="text-4xl font-black">
                 {getInitial(user.name)}
               </span>
             </div>
-            <button className="absolute -bottom-1 -right-1 p-2 bg-white border border-gray-200 rounded-2xl text-gray-700 hover:text-[#F59E0B] transition-colors shadow-sm apple-card-press">
+            <button className="absolute -bottom-1 -right-1 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-700 dark:text-gray-200 hover:text-[#F59E0B] transition-colors shadow-sm apple-card-press">
               <Camera className="w-4 h-4" />
             </button>
           </div>
           
           <div className="mt-4 text-center flex items-center gap-2">
-            <h1 className="text-2xl font-black text-[#0F1015]">{user.name}</h1>
+            <h1 className="text-2xl font-black text-[#0F1015] dark:text-white">{user.name}</h1>
             <button 
               onClick={() => setIsEditModalOpen(true)}
-              className="p-1.5 text-gray-500 hover:text-[#F59E0B] rounded-xl bg-gray-100 border border-gray-200 transition-colors apple-card-press"
+              className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-[#F59E0B] rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-colors apple-card-press"
             >
               <Edit2 className="w-3.5 h-3.5" />
             </button>
           </div>
-
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-xs text-gray-500 font-semibold">{user.phone}</span>
-            <span className="bg-[#0F1015] text-[#F59E0B] text-[9px] px-2 py-0.5 rounded-full font-black uppercase shadow-sm">
-              {user.role === 'admin' ? 'Super Admin' : user.role === 'driver' ? 'Haydovchi' : 'Mijoz'}
-            </span>
-          </div>
+          
+          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1 mt-1">
+            <Phone className="w-3 h-3 text-[#F59E0B]" /> {user.phone}
+          </p>
         </div>
       </div>
 
-      <div className="max-w-md mx-auto px-4 py-6 space-y-4">
-
-        {/* UzGo Wallet Card */}
-        <div className="bg-white rounded-3xl border border-gray-200/80 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] space-y-3">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-[#F59E0B]">
-                <Wallet size={20} />
-              </div>
-              <div>
-                <h3 className="font-extrabold text-sm text-[#0F1015]">UzGo Hamyon Balansi</h3>
-                <span className="text-[10px] text-[#D97706] font-bold flex items-center gap-1">
-                  <Sparkles size={10} /> +{(cashbackBalance || 0).toLocaleString('ru-RU')} so'm Keshbek
-                </span>
-              </div>
+      <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
+        {/* Wallet & Balance Overview Card */}
+        <div className="bg-gradient-to-br from-[#0F1015] via-[#1C1E26] to-[#0F1015] text-white rounded-3xl p-5 shadow-xl border border-gray-800 relative overflow-hidden space-y-4">
+          <div className="flex justify-between items-center relative z-10">
+            <div className="flex items-center gap-2 text-xs font-black text-[#F59E0B]">
+              <Wallet className="w-4 h-4" />
+              <span>UzGo Hamyon</span>
             </div>
-            <Link 
-              href="/wallet"
-              className="bg-[#0F1015] text-[#F59E0B] font-black text-xs px-3.5 py-2 rounded-2xl shadow-sm apple-card-press"
+            <button 
+              onClick={() => router.push('/wallet')}
+              className="text-[10px] bg-[#F59E0B] text-[#0F1015] font-black px-3 py-1 rounded-xl shadow-sm hover:scale-105 transition-transform"
             >
-              Boshqarish
-            </Link>
+              To'ldirish +
+            </button>
           </div>
-          <div className="text-2xl font-black text-[#0F1015]">
-            {(walletBalance || 0).toLocaleString('ru-RU')} <span className="text-xs text-gray-400 font-medium">so'm</span>
+
+          <div className="grid grid-cols-2 gap-4 relative z-10 pt-1">
+            <div>
+              <p className="text-[10px] text-gray-400 font-bold uppercase">Asosiy Balans</p>
+              <h2 className="text-xl font-black text-white">{walletBalance.toLocaleString('ru-RU')} so'm</h2>
+            </div>
+            <div>
+              <p className="text-[10px] text-amber-400 font-bold uppercase">Keshbek Balans</p>
+              <h2 className="text-xl font-black text-[#F59E0B]">{cashbackBalance.toLocaleString('ru-RU')} so'm</h2>
+            </div>
           </div>
         </div>
 
-        {/* Driver Mode Button */}
-        <div className="bg-white rounded-3xl border border-gray-200/80 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
-          <Link href="/driver" className="flex items-center justify-between p-3.5 hover:bg-gray-50 rounded-2xl transition-colors group apple-card-press">
+        {/* Quick Services Menu */}
+        <div className="bg-white dark:bg-[#181A20] rounded-3xl border border-gray-200/80 dark:border-gray-800 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)] divide-y divide-gray-100 dark:divide-gray-800">
+          <Link href="/taxi" className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-2xl transition-colors group apple-card-press">
             <div className="flex items-center gap-3.5">
               <div className="w-10 h-10 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-[#F59E0B] flex items-center justify-center shrink-0">
                 <Car className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-[#0F1015]">Haydovchi va Kuryer Rejimi</h3>
-                <p className="text-[11px] text-gray-500">Buyurtmalarni qabul qilish va daromad</p>
+                <h3 className="font-extrabold text-sm text-[#0F1015] dark:text-white group-hover:text-[#F59E0B] transition-colors">Taksi Safarlari</h3>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">Safarlar tarixi va faol buyurtmalar</p>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-black transition-all" />
+            <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600 group-hover:text-[#F59E0B] transition-all" />
           </Link>
-        </div>
 
-        {/* Orders Section */}
-        <div className="bg-white rounded-3xl border border-gray-200/80 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
-          <Link href="/market/cart" className="flex items-center justify-between p-3.5 hover:bg-gray-50 rounded-2xl transition-colors group apple-card-press">
+          <Link href="/market/cart" className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-2xl transition-colors group apple-card-press">
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-2xl text-blue-600 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-2xl text-blue-500 flex items-center justify-center shrink-0">
                 <Package className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-[#0F1015]">Mening Buyurtmalarim</h3>
-                <p className="text-[11px] text-gray-500">Savat va buyurtmalar tarixi</p>
+                <h3 className="font-extrabold text-sm text-[#0F1015] dark:text-white group-hover:text-[#F59E0B] transition-colors">UzGo Market Savati</h3>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">Savat va buyurtmalar tarixi</p>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-black transition-all" />
+            <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600 group-hover:text-[#F59E0B] transition-all" />
           </Link>
         </div>
 
         {/* Theme Switcher */}
-        <div className="bg-white rounded-3xl border border-gray-200/80 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
+        <div className="bg-white dark:bg-[#181A20] rounded-3xl border border-gray-200/80 dark:border-gray-800 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
           <div 
             onClick={() => toggleTheme()}
-            className="flex items-center justify-between p-3.5 hover:bg-gray-50 rounded-2xl transition-colors cursor-pointer group apple-card-press"
+            className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-2xl transition-colors cursor-pointer group apple-card-press"
           >
             <div className="flex items-center gap-3.5">
               <div className="w-10 h-10 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-[#F59E0B] flex items-center justify-center shrink-0">
@@ -221,12 +215,12 @@ export default function ProfilePage() {
         {/* Logout Button */}
         <button 
           onClick={handleLogout}
-          className="w-full mt-6 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-3xl p-4 font-black text-sm transition-all flex items-center justify-center gap-2 shadow-sm apple-card-press"
+          className="w-full mt-6 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 rounded-3xl p-4 font-black text-sm transition-all flex items-center justify-center gap-2 shadow-sm apple-card-press"
         >
           <LogOut className="w-4 h-4" />
           Tizimdan Chiqish
         </button>
-      </div>
+      </main>
 
       {/* Edit Profile Modal */}
       {isEditModalOpen && (
