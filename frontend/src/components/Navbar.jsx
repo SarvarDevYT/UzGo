@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { User, Bell, Car, ShoppingBag, Package, Globe } from 'lucide-react';
+import { User, Bell, Car, ShoppingBag, Package, Globe, Wallet } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const Navbar = () => {
@@ -17,104 +17,109 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-[#181A20]/90 backdrop-blur-xl border-b border-[#2C303E]">
+    <nav className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-2xl border-b border-gray-200/80 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo UzGo Official Style */}
+          
+          {/* Logo UzGo Style */}
           <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <img 
-                src="/logo.png" 
-                alt="UzGo Logo" 
-                className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-[#16C2B2]/20 group-hover:scale-105 transition-transform" 
-              />
-              <span className="font-extrabold text-xl text-white tracking-wide">
-                Uz<span className="text-[#16C2B2]">Go</span>
+            <Link href="/" className="flex items-center gap-2 group">
+              <span className="font-black text-2xl tracking-tight text-[#0F1015] group-hover:scale-105 transition-transform">
+                Uz<span className="text-[#F59E0B]">Go</span>
+              </span>
+              <span className="bg-[#0F1015] text-[#F59E0B] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                Super App
               </span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-2">
+            {/* Desktop Navigation Links */}
+            <div className="hidden md:flex items-center gap-1.5">
               <Link 
                 href="/taxi" 
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-black transition-all ${
                   pathname === '/taxi' 
-                    ? 'bg-[#FF5B4C] text-white shadow-md shadow-[#FF5B4C]/25' 
-                    : 'text-gray-300 hover:bg-[#22252E] hover:text-white'
+                    ? 'bg-[#0F1015] text-[#F59E0B] shadow-md' 
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-black'
                 }`}
               >
-                <Car size={16} /> {t('taxi')}
+                <Car size={15} /> {t('taxi')}
               </Link>
               <Link 
                 href="/market" 
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-black transition-all ${
                   pathname?.startsWith('/market') 
-                    ? 'bg-[#F2A93B] text-[#0F1015] shadow-md shadow-[#F2A93B]/25' 
-                    : 'text-gray-300 hover:bg-[#22252E] hover:text-white'
+                    ? 'bg-[#0F1015] text-[#F59E0B] shadow-md' 
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-black'
                 }`}
               >
-                <ShoppingBag size={16} /> {t('market')}
+                <ShoppingBag size={15} /> {t('market')}
               </Link>
               <Link 
                 href="/delivery" 
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-black transition-all ${
                   pathname?.startsWith('/delivery') 
-                    ? 'bg-[#22C55E] text-[#0F1015] shadow-md shadow-[#22C55E]/25' 
-                    : 'text-gray-300 hover:bg-[#22252E] hover:text-white'
+                    ? 'bg-[#0F1015] text-[#F59E0B] shadow-md' 
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-black'
                 }`}
               >
-                <Package size={16} /> {t('delivery')}
+                <Package size={15} /> {t('delivery')}
               </Link>
             </div>
           </div>
 
-          {/* Right section */}
-          <div className="flex items-center space-x-2">
+          {/* Right Section Actions */}
+          <div className="flex items-center gap-2">
+            
             {/* Wallet Button */}
             <Link 
               href="/wallet"
-              className="flex items-center gap-1.5 text-xs font-black bg-[#22252E] border border-[#2C303E] text-[#16C2B2] px-3 py-1.5 rounded-xl hover:border-[#16C2B2] transition-colors"
+              className="bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 px-3 py-1.5 rounded-2xl flex items-center gap-1.5 text-xs font-black text-[#D97706] transition-colors apple-card-press"
               title="UzGo Hamyon va Keshbek"
             >
-              💳 <span className="hidden sm:inline">Hamyon</span>
+              <Wallet size={14} className="text-[#F59E0B]" />
+              <span className="hidden sm:inline">145,000 so'm</span>
             </Link>
 
             {/* Driver Mode Button */}
             <Link 
               href="/driver"
-              className="flex items-center gap-1 text-xs font-black bg-[#FF5B4C]/15 border border-[#FF5B4C]/30 text-[#FF5B4C] px-3 py-1.5 rounded-xl hover:bg-[#FF5B4C]/25 transition-colors"
+              className="hidden sm:flex items-center gap-1 text-xs font-black bg-gray-100 border border-gray-200 text-[#0F1015] px-3 py-1.5 rounded-2xl hover:bg-gray-200/80 transition-colors"
               title="Haydovchi Rejimi"
             >
-              🚖 <span className="hidden sm:inline">Haydovchi</span>
+              🚖 <span>{t('driver')}</span>
             </Link>
 
-            {/* Language Switcher Toggle */}
+            {/* 100% Working Language Switcher Button */}
             <button 
               onClick={() => toggleLanguage()}
-              className="flex items-center gap-1 text-xs font-black bg-[#22252E] border border-[#2C303E] text-[#16C2B2] px-2.5 py-1.5 rounded-xl hover:border-[#16C2B2] transition-colors"
+              className="flex items-center gap-1.5 text-xs font-black bg-[#0F1015] text-[#F59E0B] px-3 py-1.5 rounded-2xl hover:bg-[#1E212B] transition-colors shadow-sm"
               title="Tilni almashtirish / Сменить язык"
             >
-              <Globe size={14} />
-              <span>{lang === 'uz' ? 'O\'Z' : 'РУ'}</span>
+              <Globe size={14} className="text-[#F59E0B]" />
+              <span>{lang === 'uz' ? 'O\'Z 🇺🇿' : 'РУ 🇷🇺'}</span>
             </button>
 
-            <button className="text-gray-300 hover:text-[#16C2B2] p-2 rounded-xl hover:bg-[#22252E] transition-colors" aria-label="Bildirishnomalar">
+            {/* Notification Bell */}
+            <button className="relative w-9 h-9 rounded-2xl bg-gray-100 hover:bg-gray-200/80 flex items-center justify-center text-gray-700 transition-colors apple-card-press" aria-label="Bildirishnomalar">
               <Bell size={18} />
+              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
             </button>
             
+            {/* User Profile Avatar */}
             {user ? (
-              <Link href="/profile" className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors bg-[#22252E] px-3 py-1.5 rounded-full border border-[#2C303E] hover:border-[#16C2B2]/50">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-r from-[#16C2B2] to-[#FFE066] flex items-center justify-center text-[#0F1015] font-extrabold text-xs">
+              <Link href="/profile" className="flex items-center gap-2 text-gray-700 hover:text-black transition-colors bg-gray-100 px-3 py-1.5 rounded-2xl border border-gray-200 hover:border-gray-300">
+                <div className="w-7 h-7 rounded-xl bg-[#0F1015] text-[#F59E0B] flex items-center justify-center font-black text-xs shadow-sm">
                   {user.name ? user.name.charAt(0).toUpperCase() : <User size={14} />}
                 </div>
-                <span className="hidden md:block text-xs font-bold text-white">{user.name || 'Foydalanuvchi'}</span>
+                <span className="hidden md:block text-xs font-extrabold text-[#0F1015]">{user.name || 'Foydalanuvchi'}</span>
               </Link>
             ) : (
-              <Link href="/login" className="bg-[#16C2B2] hover:bg-[#13B0A2] text-[#0F1015] px-4 py-1.5 rounded-xl text-xs font-black transition-all shadow-md shadow-[#16C2B2]/20">
+              <Link href="/login" className="bg-[#0F1015] hover:bg-[#1E212B] text-[#F59E0B] px-4 py-1.5 rounded-2xl text-xs font-black transition-all shadow-md">
                 Kirish
               </Link>
             )}
           </div>
+
         </div>
       </div>
     </nav>
@@ -122,3 +127,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

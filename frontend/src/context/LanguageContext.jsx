@@ -15,7 +15,7 @@ const translations = {
     callTaxi: "Chaqirish",
     promoCode: "Promo-kod",
     cashback: "Bugungi keshbek",
-    home: "Bosh",
+    home: "Bosh sahifa",
     profile: "Profil",
     orders: "Buyurtmalar",
     admin: "Admin Panel",
@@ -26,6 +26,17 @@ const translations = {
     enterPromo: "Promo-kodni kiriting",
     apply: "Qo'llash",
     termiz: "Termiz shahri",
+    balance: "Hamyon",
+    driver: "Haydovchi",
+    todayCashback: "BUGUNGI KESHBEK",
+    cashbackText: "Har bir buyurtmangizdan 10% keshbek oling!",
+    fastDelivery: "Tez yetkazish",
+    safePayment: "Xavfsiz to‘lov",
+    support24: "24/7 yordam",
+    bonuses: "Bonuslar",
+    quickServices: "Tezkor xizmatlar",
+    allServices: "Barchasi",
+    change: "O'zgartirish",
   },
   ru: {
     welcome: "Добро пожаловать",
@@ -50,6 +61,17 @@ const translations = {
     enterPromo: "Введите промокод",
     apply: "Применить",
     termiz: "Город Термез",
+    balance: "Кошелек",
+    driver: "Водитель",
+    todayCashback: "КЭШБЭК ДНЯ",
+    cashbackText: "Получайте 10% кэшбэка с каждого заказа!",
+    fastDelivery: "Быстрая доставка",
+    safePayment: "Безопасная оплата",
+    support24: "Поддержка 24/7",
+    bonuses: "Бонусы",
+    quickServices: "Быстрые услуги",
+    allServices: "Все",
+    change: "Изменить",
   }
 };
 
@@ -65,10 +87,10 @@ export function LanguageProvider({ children }) {
     }
   }, []);
 
-  const toggleLanguage = (newLang) => {
-    const target = newLang || (lang === 'uz' ? 'ru' : 'uz');
-    setLang(target);
-    localStorage.setItem('uzgo_lang', target);
+  const toggleLanguage = (targetLang) => {
+    const next = targetLang || (lang === 'uz' ? 'ru' : 'uz');
+    setLang(next);
+    localStorage.setItem('uzgo_lang', next);
   };
 
   const t = (key) => {
@@ -76,12 +98,25 @@ export function LanguageProvider({ children }) {
   };
 
   return (
-    <LanguageContext.Provider value={{ lang, toggleLanguage, t }}>
+    <LanguageContext.Provider value={{ 
+      lang, 
+      language: lang, 
+      toggleLanguage, 
+      changeLanguage: toggleLanguage, 
+      t 
+    }}>
       {children}
     </LanguageContext.Provider>
   );
 }
 
 export function useLanguage() {
-  return useContext(LanguageContext) || { lang: 'uz', toggleLanguage: () => {}, t: (k) => k };
+  return useContext(LanguageContext) || { 
+    lang: 'uz', 
+    language: 'uz', 
+    toggleLanguage: () => {}, 
+    changeLanguage: () => {}, 
+    t: (k) => k 
+  };
 }
+

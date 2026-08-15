@@ -91,59 +91,11 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#FAFAFC] text-[#111827] pb-28 font-sans overflow-x-hidden">
       
-      {/* Top Header Bar */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-4 py-3 shadow-sm">
-        <div className="max-w-md mx-auto flex items-center justify-between">
-          
-          {/* Hamburger Menu & Brand */}
-          <div className="flex items-center gap-3">
-            <button className="w-10 h-10 rounded-2xl bg-gray-100 hover:bg-gray-200/80 flex items-center justify-center text-gray-700 transition-colors apple-card-press">
-              <Menu size={20} />
-            </button>
-            <div className="flex items-center gap-1.5">
-              <span className="font-black text-xl tracking-tight text-[#0F1015]">
-                Uz<span className="text-[#F59E0B]">Go</span>
-              </span>
-              <span className="bg-[#0F1015] text-[#F59E0B] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
-                Super App
-              </span>
-            </div>
-          </div>
-
-          {/* Right Controls: Balance, Notification & Profile */}
-          <div className="flex items-center gap-2">
-            
-            {/* Balance/Wallet Button */}
-            <Link 
-              href="/wallet"
-              className="bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 px-3 py-1.5 rounded-2xl flex items-center gap-1.5 text-xs font-black text-[#D97706] transition-colors apple-card-press"
-            >
-              <Wallet size={14} className="text-[#F59E0B]" />
-              <span>145,000 so'm</span>
-            </Link>
-
-            {/* Notification Bell */}
-            <button className="relative w-9 h-9 rounded-2xl bg-gray-100 hover:bg-gray-200/80 flex items-center justify-center text-gray-700 transition-colors apple-card-press">
-              <Bell size={18} />
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-            </button>
-
-            {/* Profile Avatar */}
-            <Link 
-              href="/profile" 
-              className="w-9 h-9 rounded-2xl bg-[#0F1015] text-[#F59E0B] font-black text-xs flex items-center justify-center shadow-md shadow-[#0F1015]/10 hover:scale-105 transition-transform"
-            >
-              {userName.charAt(0).toUpperCase()}
-            </Link>
-          </div>
-
-        </div>
-      </header>
-
       {/* Main Container */}
       <main className="max-w-md mx-auto px-4 pt-4 space-y-5">
 
         {/* Location & Destination Search Field */}
+
         <div className="bg-white rounded-3xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100/80 space-y-3">
           
           {/* Location Selector */}
