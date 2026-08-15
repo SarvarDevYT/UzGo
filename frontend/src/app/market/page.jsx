@@ -149,15 +149,15 @@ export default function MarketPage() {
   }, [products, activeCategory, search]);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] text-[#111827] pb-28">
+    <div className="min-h-screen bg-[#FAFAFC] dark:bg-[#0F1015] text-[#111827] dark:text-[#F5F5F7] pb-28 transition-colors">
       {/* Market Hero Banner */}
-      <div className="relative py-8 px-4 bg-white border-b border-gray-100 shadow-sm">
+      <div className="relative py-8 px-4 bg-white dark:bg-[#181A20] border-b border-gray-100 dark:border-gray-800 shadow-sm transition-colors">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <span className="text-3xl">🛍️</span>
             <div>
-              <h1 className="text-2xl font-black text-[#0F1015]">UzGo Market</h1>
-              <p className="text-xs text-gray-500 font-medium">Minglab sifatli mahsulotlar onlayn do'koni</p>
+              <h1 className="text-2xl font-black text-[#0F1015] dark:text-white">UzGo Market</h1>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Minglab sifatli mahsulotlar onlayn do'koni</p>
             </div>
           </div>
 
@@ -167,7 +167,7 @@ export default function MarketPage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Mahsulotlarni qidiring..."
-              className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-[#0F1015] font-medium outline-none focus:border-[#F59E0B] transition-colors"
+              className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-[#0F1015] dark:text-white font-medium outline-none focus:border-[#F59E0B] transition-colors"
             />
           </div>
         </div>
@@ -180,10 +180,10 @@ export default function MarketPage() {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+              className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black transition-all ${
                 activeCategory === cat.id
-                  ? 'bg-[#0F1015] text-[#F59E0B] shadow-md'
-                  : 'bg-white border border-gray-200 text-gray-600 hover:text-black'
+                  ? 'bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] shadow-md'
+                  : 'bg-white dark:bg-[#181A20] border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white'
               }`}
             >
               <span>{cat.icon}</span>
@@ -209,7 +209,7 @@ export default function MarketPage() {
         <div className="fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 z-40 animate-slide-up w-full max-w-md px-4">
           <button
             onClick={() => router.push('/market/cart')}
-            className="w-full flex items-center justify-between px-6 py-4 rounded-3xl shadow-2xl font-black text-sm transition-all hover:scale-105 active:scale-95 bg-[#0F1015] text-[#F59E0B] shadow-black/20"
+            className="w-full flex items-center justify-between px-6 py-4 rounded-3xl shadow-2xl font-black text-sm transition-all hover:scale-105 active:scale-95 bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] shadow-black/20"
           >
             <div className="flex items-center gap-2">
               <ShoppingCart className="w-5 h-5" />
