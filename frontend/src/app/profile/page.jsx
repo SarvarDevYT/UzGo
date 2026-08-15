@@ -60,36 +60,34 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F1015] text-[#F5F5F7] pb-24 font-sans">
+    <div className="min-h-screen bg-[#FAFAFC] text-[#111827] pb-28 font-sans">
       {/* Header Profile Section */}
-      <div className="bg-[#181A20] border-b border-[#2C303E] pt-10 pb-8 px-4 relative overflow-hidden">
-        <div className="absolute top-[-20%] left-[-10%] w-72 h-72 bg-[#16C2B2] rounded-full filter blur-[120px] opacity-20 pointer-events-none"></div>
-        
+      <div className="bg-white border-b border-gray-100 pt-10 pb-8 px-4 relative overflow-hidden shadow-sm">
         <div className="max-w-md mx-auto relative z-10 flex flex-col items-center">
           <div className="relative group">
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-[#16C2B2] via-[#20E3D1] to-[#FFE066] flex items-center justify-center shadow-xl shadow-[#16C2B2]/20 border-4 border-[#0F1015]">
-              <span className="text-4xl font-black text-[#0F1015]">
+            <div className="w-24 h-24 rounded-3xl bg-[#0F1015] text-[#F59E0B] flex items-center justify-center shadow-xl border-4 border-white">
+              <span className="text-4xl font-black">
                 {getInitial(user.name)}
               </span>
             </div>
-            <button className="absolute -bottom-1 -right-1 p-2 bg-[#181A20] border border-[#2C303E] rounded-2xl text-white hover:text-[#16C2B2] transition-colors shadow-lg">
+            <button className="absolute -bottom-1 -right-1 p-2 bg-white border border-gray-200 rounded-2xl text-gray-700 hover:text-[#F59E0B] transition-colors shadow-sm apple-card-press">
               <Camera className="w-4 h-4" />
             </button>
           </div>
           
           <div className="mt-4 text-center flex items-center gap-2">
-            <h1 className="text-2xl font-black text-white">{user.name}</h1>
+            <h1 className="text-2xl font-black text-[#0F1015]">{user.name}</h1>
             <button 
               onClick={() => setIsEditModalOpen(true)}
-              className="p-1.5 text-gray-400 hover:text-[#16C2B2] rounded-xl bg-[#0F1015] border border-[#2C303E] transition-colors"
+              className="p-1.5 text-gray-500 hover:text-[#F59E0B] rounded-xl bg-gray-100 border border-gray-200 transition-colors apple-card-press"
             >
               <Edit2 className="w-3.5 h-3.5" />
             </button>
           </div>
 
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-xs text-gray-400 font-medium">{user.phone}</span>
-            <span className="bg-[#16C2B2]/20 text-[#16C2B2] border border-[#16C2B2]/40 text-[9px] px-2 py-0.5 rounded-full font-black uppercase">
+            <span className="text-xs text-gray-500 font-semibold">{user.phone}</span>
+            <span className="bg-[#0F1015] text-[#F59E0B] text-[9px] px-2 py-0.5 rounded-full font-black uppercase shadow-sm">
               {user.role === 'admin' ? 'Super Admin' : user.role === 'driver' ? 'Haydovchi' : 'Mijoz'}
             </span>
           </div>
@@ -99,79 +97,79 @@ export default function ProfilePage() {
       <div className="max-w-md mx-auto px-4 py-6 space-y-4">
 
         {/* UzGo Wallet Card */}
-        <div className="bg-gradient-to-br from-[#181A20] via-[#1F2330] to-[#181A20] rounded-3xl border border-[#2C303E] p-5 shadow-2xl space-y-3">
+        <div className="bg-white rounded-3xl border border-gray-200/80 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] space-y-3">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-2xl bg-[#16C2B2]/15 border border-[#16C2B2]/30 flex items-center justify-center text-[#16C2B2]">
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-[#F59E0B]">
                 <Wallet size={20} />
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-white">UzGo Hamyon Balansi</h3>
-                <span className="text-[10px] text-[#F2A93B] font-bold flex items-center gap-1">
+                <h3 className="font-extrabold text-sm text-[#0F1015]">UzGo Hamyon Balansi</h3>
+                <span className="text-[10px] text-[#D97706] font-bold flex items-center gap-1">
                   <Sparkles size={10} /> +{(cashbackBalance || 0).toLocaleString('ru-RU')} so'm Keshbek
                 </span>
               </div>
             </div>
             <Link 
               href="/wallet"
-              className="bg-[#16C2B2] text-[#0F1015] font-black text-xs px-3.5 py-2 rounded-xl shadow-md shadow-[#16C2B2]/20"
+              className="bg-[#0F1015] text-[#F59E0B] font-black text-xs px-3.5 py-2 rounded-2xl shadow-sm apple-card-press"
             >
               Boshqarish
             </Link>
           </div>
-          <div className="text-2xl font-black text-white">
+          <div className="text-2xl font-black text-[#0F1015]">
             {(walletBalance || 0).toLocaleString('ru-RU')} <span className="text-xs text-gray-400 font-medium">so'm</span>
           </div>
         </div>
 
         {/* Driver Mode Button */}
-        <div className="bg-[#181A20] rounded-3xl border border-[#2C303E] p-2 shadow-xl">
-          <Link href="/driver" className="flex items-center justify-between p-3.5 hover:bg-[#22252E] rounded-2xl transition-colors group">
+        <div className="bg-white rounded-3xl border border-gray-200/80 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
+          <Link href="/driver" className="flex items-center justify-between p-3.5 hover:bg-gray-50 rounded-2xl transition-colors group apple-card-press">
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 bg-[#FF5B4C]/15 border border-[#FF5B4C]/30 rounded-2xl text-[#FF5B4C] flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-[#F59E0B] flex items-center justify-center shrink-0">
                 <Car className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-white">Haydovchi va Kuryer Rejimi</h3>
-                <p className="text-[11px] text-gray-400">Buyurtmalarni qabul qilish va daromad</p>
+                <h3 className="font-extrabold text-sm text-[#0F1015]">Haydovchi va Kuryer Rejimi</h3>
+                <p className="text-[11px] text-gray-500">Buyurtmalarni qabul qilish va daromad</p>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-white transition-all" />
+            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-black transition-all" />
           </Link>
         </div>
 
         {/* Orders Section */}
-        <div className="bg-[#181A20] rounded-3xl border border-[#2C303E] p-2 shadow-xl">
-          <Link href="/market/cart" className="flex items-center justify-between p-3.5 hover:bg-[#22252E] rounded-2xl transition-colors group">
+        <div className="bg-white rounded-3xl border border-gray-200/80 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
+          <Link href="/market/cart" className="flex items-center justify-between p-3.5 hover:bg-gray-50 rounded-2xl transition-colors group apple-card-press">
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 bg-blue-500/15 border border-blue-500/30 rounded-2xl text-blue-400 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-2xl text-blue-600 flex items-center justify-center shrink-0">
                 <Package className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-white">Mening Buyurtmalarim</h3>
-                <p className="text-[11px] text-gray-400">Savat va buyurtmalar tarixi</p>
+                <h3 className="font-extrabold text-sm text-[#0F1015]">Mening Buyurtmalarim</h3>
+                <p className="text-[11px] text-gray-500">Savat va buyurtmalar tarixi</p>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-white transition-all" />
+            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-black transition-all" />
           </Link>
         </div>
 
         {/* Language Switcher */}
-        <div className="bg-[#181A20] rounded-3xl border border-[#2C303E] p-2 shadow-xl">
+        <div className="bg-white rounded-3xl border border-gray-200/80 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
           <div 
             onClick={toggleLanguage}
-            className="flex items-center justify-between p-3.5 hover:bg-[#22252E] rounded-2xl transition-colors cursor-pointer group"
+            className="flex items-center justify-between p-3.5 hover:bg-gray-50 rounded-2xl transition-colors cursor-pointer group apple-card-press"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 bg-purple-500/15 border border-purple-500/30 rounded-2xl text-purple-400 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-purple-500/10 border border-purple-500/20 rounded-2xl text-purple-600 flex items-center justify-center shrink-0">
                 <Globe className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-white">Ilova Tili</h3>
-                <p className="text-[11px] text-[#16C2B2] font-bold">{lang === 'uz' ? 'O\'zbek tili 🇺🇿' : 'Русский язык 🇷🇺'}</p>
+                <h3 className="font-extrabold text-sm text-[#0F1015]">Ilova Tili</h3>
+                <p className="text-[11px] text-[#D97706] font-extrabold">{lang === 'uz' ? 'O\'zbek tili 🇺🇿' : 'Русский язык 🇷🇺'}</p>
               </div>
             </div>
-            <span className="text-xs font-black text-[#16C2B2] bg-[#16C2B2]/15 border border-[#16C2B2]/30 px-3 py-1 rounded-xl">
+            <span className="text-xs font-black text-[#0F1015] bg-gray-100 border border-gray-200 px-3 py-1 rounded-xl">
               Almashtirish ⇄
             </span>
           </div>
@@ -179,18 +177,18 @@ export default function ProfilePage() {
 
         {/* Admin Panel Link (If admin) */}
         {user.role === 'admin' && (
-          <div className="bg-[#181A20] rounded-3xl border border-[#2C303E] p-2 shadow-xl">
-            <Link href="/admin/dashboard" className="flex items-center justify-between p-3.5 hover:bg-[#22252E] rounded-2xl transition-colors group">
+          <div className="bg-white rounded-3xl border border-gray-200/80 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
+            <Link href="/admin/dashboard" className="flex items-center justify-between p-3.5 hover:bg-gray-50 rounded-2xl transition-colors group apple-card-press">
               <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 bg-amber-500/15 border border-amber-500/30 rounded-2xl text-amber-400 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-600 flex items-center justify-center shrink-0">
                   <Shield className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-sm text-white">Super Admin Panel</h3>
-                  <p className="text-[11px] text-amber-400 font-bold">Termiz platforma boshqaruvi</p>
+                  <h3 className="font-extrabold text-sm text-[#0F1015]">Super Admin Panel</h3>
+                  <p className="text-[11px] text-emerald-600 font-bold">Termiz platforma boshqaruvi</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-white transition-all" />
+              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-black transition-all" />
             </Link>
           </div>
         )}
@@ -198,7 +196,7 @@ export default function ProfilePage() {
         {/* Logout Button */}
         <button 
           onClick={handleLogout}
-          className="w-full mt-6 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 rounded-3xl p-4 font-black text-sm transition-all flex items-center justify-center gap-2 shadow-xl"
+          className="w-full mt-6 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-3xl p-4 font-black text-sm transition-all flex items-center justify-center gap-2 shadow-sm apple-card-press"
         >
           <LogOut className="w-4 h-4" />
           Tizimdan Chiqish
@@ -207,13 +205,13 @@ export default function ProfilePage() {
 
       {/* Edit Profile Modal */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="bg-[#181A20] border border-[#2C303E] rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
-            <div className="flex justify-between items-center border-b border-[#2C303E] pb-3">
-              <h2 className="text-base font-black text-white">Profil Sozlamalarini Tahrirlash</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white border border-gray-200 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
+            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+              <h2 className="text-base font-black text-[#0F1015]">Profil Sozlamalarini Tahrirlash</h2>
               <button 
                 onClick={() => setIsEditModalOpen(false)}
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-black"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -221,26 +219,26 @@ export default function ProfilePage() {
             
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-bold text-gray-400 mb-1 block">
+                <label className="text-xs font-bold text-gray-500 mb-1 block">
                   Ismingiz
                 </label>
                 <input 
                   type="text" 
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="w-full bg-[#0F1015] border border-[#2C303E] rounded-xl p-3 text-white text-xs outline-none focus:border-[#16C2B2]"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-[#0F1015] text-xs outline-none focus:border-[#F59E0B] font-medium"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-bold text-gray-400 mb-1 block">
+                <label className="text-xs font-bold text-gray-500 mb-1 block">
                   Telefon Raqami
                 </label>
                 <input 
                   type="text" 
                   value={editPhone}
                   onChange={(e) => setEditPhone(e.target.value)}
-                  className="w-full bg-[#0F1015] border border-[#2C303E] rounded-xl p-3 text-white text-xs outline-none focus:border-[#16C2B2]"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-[#0F1015] text-xs outline-none focus:border-[#F59E0B] font-medium"
                 />
               </div>
               
@@ -248,13 +246,13 @@ export default function ProfilePage() {
                 <button 
                   type="button" 
                   onClick={() => setIsEditModalOpen(false)}
-                  className="flex-1 bg-[#0F1015] border border-[#2C303E] text-gray-400 font-bold py-3 rounded-xl text-xs"
+                  className="flex-1 bg-gray-100 border border-gray-200 text-gray-600 font-bold py-3 rounded-xl text-xs"
                 >
                   Bekor qilish
                 </button>
                 <button 
                   onClick={handleSaveProfile}
-                  className="flex-1 bg-[#16C2B2] text-[#0F1015] font-black rounded-xl py-3 text-xs shadow-lg shadow-[#16C2B2]/20"
+                  className="flex-1 bg-[#0F1015] text-[#F59E0B] font-black rounded-xl py-3 text-xs shadow-md"
                 >
                   Saqlash
                 </button>
@@ -266,3 +264,4 @@ export default function ProfilePage() {
     </div>
   );
 }
+

@@ -3,22 +3,25 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Car, ShoppingBag, ShoppingCart, User } from 'lucide-react';
+import { Home, Car, ShoppingBag, Package, User } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const BottomNav = () => {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   if (pathname === '/login' || pathname?.startsWith('/admin')) {
     return null;
   }
 
   const navItems = [
-    { path: '/', label: 'Bosh sahifa', icon: Home },
-    { path: '/taxi', label: 'Taksi', icon: Car },
+    { path: '/', label: t('home') || 'Bosh sahifa', icon: Home },
+    { path: '/taxi', label: t('taxi') || 'Taksi', icon: Car },
     { path: '/market', label: 'Market', icon: ShoppingBag },
-    { path: '/market/cart', label: 'Buyurtmalar', icon: ShoppingCart },
-    { path: '/profile', label: 'Profil', icon: User },
+    { path: '/delivery', label: 'Delivery', icon: Package },
+    { path: '/profile', label: t('profile') || 'Profil', icon: User },
   ];
+
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 max-w-md mx-auto">

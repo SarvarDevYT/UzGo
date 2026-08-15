@@ -36,8 +36,8 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="card flex flex-col overflow-hidden group bg-[#181A20] border border-[#2C303E] hover:border-[#F2A93B]/50 rounded-3xl transition-all duration-300 shadow-xl">
-      <div className="relative overflow-hidden bg-[#0F1015]">
+    <div className="flex flex-col overflow-hidden group bg-white border border-gray-200/80 hover:border-[#F59E0B] rounded-3xl transition-all duration-300 shadow-[0_8px_25px_rgba(0,0,0,0.03)] apple-card-press">
+      <div className="relative overflow-hidden bg-gray-50">
         <img
           src={product.image_url}
           alt={product.name}
@@ -45,45 +45,45 @@ const ProductCard = ({ product }) => {
           onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400'; }}
         />
         {discount > 0 && (
-          <span className="absolute top-2.5 left-2.5 bg-[#FF5B4C] text-white text-xs font-black px-2 py-1 rounded-xl shadow-lg">
+          <span className="absolute top-2.5 left-2.5 bg-[#FF5B4C] text-white text-xs font-black px-2 py-1 rounded-xl shadow-md">
             -{discount}%
           </span>
         )}
         {product.stock <= 3 && product.stock > 0 && (
-          <span className="absolute top-2.5 right-2.5 bg-[#F2A93B] text-[#0F1015] text-xs font-bold px-2 py-0.5 rounded-lg">
+          <span className="absolute top-2.5 right-2.5 bg-[#F59E0B] text-black text-xs font-bold px-2 py-0.5 rounded-lg shadow-sm">
             Kam qoldi
           </span>
         )}
       </div>
 
       <div className="p-4 flex flex-col flex-1">
-        <h3 className="text-sm font-bold text-white line-clamp-2 mb-1 leading-snug">
+        <h3 className="text-sm font-extrabold text-[#0F1015] line-clamp-2 mb-1 leading-snug">
           {product.name}
         </h3>
-        <p className="text-xs text-gray-400 line-clamp-1 mb-2 font-medium">{product.description}</p>
+        <p className="text-xs text-gray-500 line-clamp-1 mb-2 font-medium">{product.description}</p>
 
         <div className="flex items-center gap-1 mb-3">
-          <Star className="w-3.5 h-3.5 fill-[#F2A93B] text-[#F2A93B]" />
-          <span className="text-xs font-bold text-[#F2A93B]">{product.rating || 4.8}</span>
-          <span className="text-xs text-gray-500">({product.reviews_count || 50})</span>
+          <Star className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
+          <span className="text-xs font-black text-[#F59E0B]">{product.rating || 4.8}</span>
+          <span className="text-xs text-gray-400 font-medium">({product.reviews_count || 50})</span>
         </div>
 
         <div className="mt-auto mb-3">
-          <div className="text-lg font-black text-white">
+          <div className="text-lg font-black text-[#0F1015]">
             {formatPrice(product.price)}
           </div>
           {product.old_price && (
-            <div className="text-xs text-gray-500 line-through font-medium">{formatPrice(product.old_price)}</div>
+            <div className="text-xs text-gray-400 line-through font-medium">{formatPrice(product.old_price)}</div>
           )}
         </div>
 
         <button
           onClick={handleAdd}
           disabled={product.stock === 0}
-          className={`w-full py-3 rounded-2xl text-xs font-extrabold transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 ${
+          className={`w-full py-3 rounded-2xl text-xs font-black transition-all duration-200 apple-card-press flex items-center justify-center gap-2 ${
             added
-              ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-              : 'bg-[#F2A93B] text-[#0F1015] hover:bg-[#E0982A] shadow-md shadow-[#F2A93B]/20'
+              ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/30'
+              : 'bg-[#0F1015] text-[#F59E0B] hover:bg-[#1C1E26] shadow-md shadow-black/10'
           }`}
         >
           <ShoppingCart className="w-4 h-4" />
@@ -149,15 +149,15 @@ export default function MarketPage() {
   }, [products, activeCategory, search]);
 
   return (
-    <div className="min-h-screen bg-[#0F1015] text-[#F5F5F7] pb-28">
-      {/* Market Hero Banner (Gold Amber Accent) */}
-      <div className="relative py-8 px-4 bg-gradient-to-r from-[#F2A93B]/20 via-[#181A20] to-[#0F1015] border-b border-[#2C303E]">
+    <div className="min-h-screen bg-[#FAFAFC] text-[#111827] pb-28">
+      {/* Market Hero Banner */}
+      <div className="relative py-8 px-4 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <span className="text-3xl">🛍️</span>
             <div>
-              <h1 className="text-2xl font-black text-white">UzGo Market</h1>
-              <p className="text-xs text-[#F2A93B] font-medium">Minglab sifatli mahsulotlar onlayn do'koni</p>
+              <h1 className="text-2xl font-black text-[#0F1015]">UzGo Market</h1>
+              <p className="text-xs text-gray-500 font-medium">Minglab sifatli mahsulotlar onlayn do'koni</p>
             </div>
           </div>
 
@@ -167,7 +167,7 @@ export default function MarketPage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Mahsulotlarni qidiring..."
-              className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-[#181A20] border border-[#2C303E] text-white font-medium outline-none focus:border-[#F2A93B] transition-colors"
+              className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-[#0F1015] font-medium outline-none focus:border-[#F59E0B] transition-colors"
             />
           </div>
         </div>
@@ -182,8 +182,8 @@ export default function MarketPage() {
               onClick={() => setActiveCategory(cat.id)}
               className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
                 activeCategory === cat.id
-                  ? 'bg-[#F2A93B] text-[#0F1015] shadow-lg shadow-[#F2A93B]/20'
-                  : 'bg-[#181A20] border border-[#2C303E] text-gray-400 hover:text-white'
+                  ? 'bg-[#0F1015] text-[#F59E0B] shadow-md'
+                  : 'bg-white border border-gray-200 text-gray-600 hover:text-black'
               }`}
             >
               <span>{cat.icon}</span>
@@ -206,10 +206,10 @@ export default function MarketPage() {
 
       {/* Floating Checkout Bar */}
       {cartCount > 0 && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-40 animate-slide-up w-full max-w-md px-4">
+        <div className="fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 z-40 animate-slide-up w-full max-w-md px-4">
           <button
             onClick={() => router.push('/market/cart')}
-            className="w-full flex items-center justify-between px-6 py-4 rounded-2xl shadow-2xl font-black text-sm transition-all hover:scale-105 active:scale-95 bg-[#F2A93B] text-[#0F1015] shadow-[#F2A93B]/30"
+            className="w-full flex items-center justify-between px-6 py-4 rounded-3xl shadow-2xl font-black text-sm transition-all hover:scale-105 active:scale-95 bg-[#0F1015] text-[#F59E0B] shadow-black/20"
           >
             <div className="flex items-center gap-2">
               <ShoppingCart className="w-5 h-5" />
@@ -225,3 +225,4 @@ export default function MarketPage() {
     </div>
   );
 }
+
