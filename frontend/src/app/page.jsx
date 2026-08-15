@@ -90,13 +90,11 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFC] text-[#111827] pb-28 font-sans overflow-x-hidden">
-      
-      {/* Main Container */}
-      <main className="max-w-md mx-auto px-4 pt-4 space-y-5">
+       {/* Main Container */}
+      <main className="max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-4 pt-6 space-y-6">
 
         {/* Location & Destination Search Field */}
-
-        <div className="bg-white rounded-3xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100/80 space-y-3">
+        <div className="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100/80 space-y-3">
           
           {/* Location Selector */}
           <div className="flex items-center justify-between text-xs font-semibold text-gray-500 px-1">
@@ -104,17 +102,17 @@ export default function HomePage() {
               <Navigation size={14} className="text-[#F59E0B] fill-[#F59E0B]" />
               <span className="font-extrabold text-sm">{selectedLocation}</span>
             </div>
-            <span className="text-[11px] text-[#F59E0B] font-extrabold cursor-pointer hover:underline">O'zgartirish</span>
+            <span className="text-xs text-[#F59E0B] font-extrabold cursor-pointer hover:underline">O'zgartirish</span>
           </div>
 
           {/* Large Search Input */}
           <div 
             onClick={() => router.push('/taxi')}
-            className="bg-gray-50 hover:bg-gray-100/80 border border-gray-200/70 hover:border-[#F59E0B] rounded-2xl p-3.5 flex items-center gap-3 cursor-pointer transition-all duration-200 apple-card-press group"
+            className="bg-gray-50 hover:bg-gray-100/80 border border-gray-200/70 hover:border-[#F59E0B] rounded-2xl p-4 flex items-center gap-3 cursor-pointer transition-all duration-200 apple-card-press group"
           >
             <Search size={22} className="text-gray-400 group-hover:text-[#F59E0B] transition-colors" />
             <span className="text-gray-400 font-medium text-sm flex-1">Qayerga boramiz?</span>
-            <div className="bg-[#0F1015] text-[#F59E0B] px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 shadow-md shadow-black/10">
+            <div className="bg-[#0F1015] text-[#F59E0B] px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1 shadow-md shadow-black/10">
               Taksi <ChevronRight size={14} />
             </div>
           </div>
@@ -122,7 +120,7 @@ export default function HomePage() {
         </div>
 
         {/* 6 Main Service Bento Cards */}
-        <div className="grid grid-cols-2 gap-3.5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
           {services.map((srv) => (
             <div 
               key={srv.id}
@@ -140,10 +138,10 @@ export default function HomePage() {
 
               <div>
                 <div className="flex items-center justify-between">
-                  <h3 className="font-extrabold text-base text-[#0F1015] group-hover:text-[#F59E0B] transition-colors">{srv.title}</h3>
+                  <h3 className="font-extrabold text-sm md:text-base text-[#0F1015] group-hover:text-[#F59E0B] transition-colors">{srv.title}</h3>
                   <ArrowUpRight size={16} className="text-gray-400 group-hover:text-[#F59E0B] transition-colors" />
                 </div>
-                <p className="text-[11px] text-gray-500 font-medium mt-0.5">{srv.subtitle}</p>
+                <p className="text-[11px] text-gray-500 font-medium mt-0.5 truncate">{srv.subtitle}</p>
               </div>
             </div>
           ))}
