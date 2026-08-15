@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Car, Navigation, Phone, DollarSign, Check, X, Shield, MapPin, BellRing, Compass, Layers } from 'lucide-react';
+import { Car, Navigation, Phone, DollarSign, Check, X, Shield, MapPin, BellRing, Compass, Layers, User } from 'lucide-react';
 import YandexMap from '../../components/YandexMap';
 
 const MOCK_INCOMING_ORDERS = [
@@ -30,23 +30,16 @@ export default function DriverModePage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] bg-[#0F1015] text-[#F5F5F7] overflow-hidden relative">
-      {/* Real Yandex Map Background */}
-      <div className="absolute inset-0 z-0">
-        <YandexMap 
-          fromAddress={activeOrder ? activeOrder.from : 'Termiz Markaz'} 
-          toAddress={activeOrder ? activeOrder.to : 'TerDU Campus'} 
-        />
-      </div>
-
-      {/* Top Status Bar & Earnings Header */}
-      <div className="relative z-10 p-4 max-w-lg mx-auto w-full">
-        <div className="bg-[#181A20]/90 backdrop-blur-xl border border-[#2C303E] rounded-3xl p-4 shadow-2xl flex justify-between items-center">
+    <div className="min-h-screen bg-[#FAFAFC] text-[#111827] pb-28 font-sans">
+      
+      {/* Page Header */}
+      <div className="bg-white border-b border-gray-100 p-4 shadow-sm">
+        <div className="max-w-md md:max-w-4xl lg:max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setIsOnline(!isOnline)}
-              className={`w-12 h-6 rounded-full transition-colors relative flex items-center p-1 ${
-                isOnline ? 'bg-[#22C55E]' : 'bg-[#2C303E]'
+              className={`w-12 h-6 rounded-full transition-colors relative flex items-center p-1 cursor-pointer apple-card-press ${
+                isOnline ? 'bg-emerald-500' : 'bg-gray-300'
               }`}
             >
               <div className={`w-4 h-4 rounded-full bg-white transition-transform ${
@@ -54,103 +47,119 @@ export default function DriverModePage() {
               }`} />
             </button>
             <div>
-              <div className="text-xs font-black text-white">{isOnline ? '● Navbatchilikda (Onlayn)' : '○ Dam olishda'}</div>
-              <div className="text-[10px] text-gray-400">Haydovchi: Otabek Tursunov (75 A 777 AA)</div>
+              <div className="text-sm font-black text-[#0F1015]">{isOnline ? '● Navbatchilikda (Onlayn)' : '○ Dam olishda'}</div>
+              <div className="text-xs text-gray-500 font-medium">Haydovchi: Otabek Tursunov (75 A 777 AA)</div>
             </div>
           </div>
 
-          <div className="text-right">
-            <div className="text-xs text-gray-400 font-bold">Bugungi Ish:</div>
-            <div className="text-base font-black text-[#16C2B2]">{todayEarnings.toLocaleString('ru-RU')} so'm ({completedRides} ta)</div>
+          <div className="flex items-center gap-4 bg-gray-50 border border-gray-200/80 px-4 py-2 rounded-2xl">
+            <div>
+              <div className="text-[10px] text-gray-400 font-bold uppercase">Bugungi Ish:</div>
+              <div className="text-sm font-black text-[#0F1015]">{todayEarnings.toLocaleString('ru-RU')} so'm <span className="text-xs text-emerald-600 font-extrabold">({completedRides} ta safar)</span></div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Sheet for Active Order or Incoming Radar */}
-      <div className="flex-1 overflow-y-auto p-4 z-10 flex flex-col justify-end max-w-lg mx-auto w-full">
-        {activeOrder ? (
-          /* Active Ride Panel */
-          <div className="bg-[#181A20] border border-[#2C303E] rounded-3xl p-5 shadow-2xl space-y-4 animate-slide-up">
-            <div className="flex justify-between items-center border-b border-[#2C303E] pb-3">
-              <div>
-                <span className="text-[10px] bg-[#FF5B4C]/20 text-[#FF5B4C] px-2.5 py-0.5 rounded-full font-black uppercase">
-                  {activeOrder.tariff || 'Taksi'} Safar jarayonda
-                </span>
-                <h3 className="text-sm font-extrabold text-white mt-1">Mijoz: {activeOrder.client}</h3>
+      {/* Main Layout Container (Desktop 2-column / Mobile 1-column) */}
+      <div className="max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-4 pt-6 grid grid-cols-1 md:grid-cols-12 gap-6">
+        
+        {/* Orders / Control Side Panel (5 cols on Desktop) */}
+        <div className="md:col-span-5 space-y-4">
+          {activeOrder ? (
+            /* Active Ride Panel */
+            <div className="bg-white border border-gray-200/80 rounded-3xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] space-y-4 animate-slide-up">
+              <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+                <div>
+                  <span className="text-[10px] bg-amber-500/10 text-[#D97706] border border-amber-500/20 px-2.5 py-0.5 rounded-full font-black uppercase">
+                    {activeOrder.tariff || 'Taksi'} Safar jarayonda
+                  </span>
+                  <h3 className="text-sm font-black text-[#0F1015] mt-1">Mijoz: {activeOrder.client}</h3>
+                </div>
+                <a href="tel:+998912345678" className="bg-[#0F1015] text-[#F59E0B] p-2.5 rounded-2xl font-black flex items-center gap-1 text-xs shadow-sm apple-card-press">
+                  <Phone size={15} /> Qo'ng'iroq
+                </a>
               </div>
-              <a href="tel:+998912345678" className="bg-[#16C2B2] text-[#0F1015] p-3 rounded-2xl font-bold flex items-center gap-1 text-xs">
-                <Phone size={16} /> Qo'ng'iroq
-              </a>
-            </div>
 
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center gap-2 text-gray-300 font-medium">
-                <MapPin size={16} className="text-[#22C55E] shrink-0" />
-                <span className="truncate"><b>Qayerdan:</b> {activeOrder.from}</span>
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center gap-2 text-gray-700 font-medium">
+                  <MapPin size={16} className="text-emerald-500 shrink-0" />
+                  <span className="truncate"><b>Qayerdan:</b> {activeOrder.from}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-700 font-medium">
+                  <Navigation size={16} className="text-[#F59E0B] shrink-0" />
+                  <span className="truncate"><b>Qayerga:</b> {activeOrder.to}</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-gray-300 font-medium">
-                <Navigation size={16} className="text-[#FF5B4C] shrink-0" />
-                <span className="truncate"><b>Qayerga:</b> {activeOrder.to}</span>
+
+              <div className="flex justify-between items-center bg-gray-50 p-3.5 rounded-2xl border border-gray-200">
+                <span className="text-xs text-gray-500 font-semibold">Safardan narx:</span>
+                <span className="text-lg font-black text-[#0F1015]">{activeOrder.price.toLocaleString('ru-RU')} so'm</span>
               </div>
+
+              <button 
+                onClick={handleCompleteOrder}
+                className="w-full py-4 rounded-3xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-sm shadow-md flex items-center justify-center gap-2 apple-card-press"
+              >
+                <Check size={18} /> Safarni Muvaffaqiyatli Yakunlash
+              </button>
             </div>
+          ) : (
+            /* Incoming Radar List */
+            <div className="space-y-3">
+              <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider flex items-center gap-1.5 bg-white p-3 rounded-2xl border border-gray-200/80 shadow-sm">
+                <BellRing className="text-[#F59E0B] animate-bounce" size={16} />
+                Termiz bo'yicha kiruvchi buyurtmalar ({incomingOrders.length} ta)
+              </h3>
 
-            <div className="flex justify-between items-center bg-[#0F1015] p-3 rounded-2xl border border-[#2C303E]">
-              <span className="text-xs text-gray-400 font-bold">Safardan narx:</span>
-              <span className="text-lg font-black text-[#16C2B2]">{activeOrder.price.toLocaleString('ru-RU')} so'm</span>
-            </div>
-
-            <button 
-              onClick={handleCompleteOrder}
-              className="w-full py-4 rounded-2xl bg-[#22C55E] text-white font-black text-sm shadow-xl shadow-[#22C55E]/20 flex items-center justify-center gap-2"
-            >
-              <Check size={18} /> Safarni Muvaffaqiyatli Yakunlash
-            </button>
-          </div>
-        ) : (
-          /* Incoming Radar List */
-          <div className="space-y-3">
-            <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider flex items-center gap-1.5 bg-[#0F1015]/80 backdrop-blur p-2 rounded-xl border border-[#2C303E]">
-              <BellRing className="text-[#FF5B4C] animate-bounce" size={16} />
-              Termiz bo'yicha kiruvchi buyurtmalar ({incomingOrders.length} ta)
-            </h3>
-
-            {incomingOrders.map((ord) => (
-              <div key={ord.id} className="bg-[#181A20] border border-[#2C303E] hover:border-[#16C2B2] rounded-3xl p-4 shadow-2xl space-y-3">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">{ord.type === 'taxi' ? '🚕' : '📦'}</span>
-                    <div>
-                      <div className="font-extrabold text-sm text-white">{ord.tariff || ord.store}</div>
-                      <div className="text-[10px] text-gray-400">Masofa: {ord.distance} • Mijoz: {ord.client}</div>
+              {incomingOrders.map((ord) => (
+                <div key={ord.id} className="bg-white border border-gray-200/80 hover:border-[#F59E0B] rounded-3xl p-4 shadow-[0_8px_25px_rgba(0,0,0,0.03)] space-y-3 apple-card-press">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">{ord.type === 'taxi' ? '🚕' : '📦'}</span>
+                      <div>
+                        <div className="font-black text-sm text-[#0F1015]">{ord.tariff || ord.store}</div>
+                        <div className="text-[10px] text-gray-400 font-semibold">Masofa: {ord.distance} • Mijoz: {ord.client}</div>
+                      </div>
                     </div>
+                    <div className="text-base font-black text-[#0F1015]">{ord.price.toLocaleString('ru-RU')} so'm</div>
                   </div>
-                  <div className="text-base font-black text-[#16C2B2]">{ord.price.toLocaleString('ru-RU')} so'm</div>
-                </div>
 
-                <div className="text-xs text-gray-400 space-y-1">
-                  <div>🟢 {ord.from}</div>
-                  <div>🔴 {ord.to}</div>
-                </div>
+                  <div className="text-xs text-gray-600 space-y-1 font-medium bg-gray-50 p-2.5 rounded-2xl border border-gray-100">
+                    <div className="truncate">🟢 <b>Dan:</b> {ord.from}</div>
+                    <div className="truncate">🔴 <b>Ga:</b> {ord.to}</div>
+                  </div>
 
-                <div className="flex gap-2 pt-1">
-                  <button 
-                    onClick={() => setIncomingOrders(prev => prev.filter(o => o.id !== ord.id))}
-                    className="flex-1 bg-[#0F1015] border border-[#2C303E] text-gray-400 font-bold py-2.5 rounded-xl text-xs"
-                  >
-                    Rad etish
-                  </button>
-                  <button 
-                    onClick={() => handleAcceptOrder(ord)}
-                    className="flex-1 bg-[#16C2B2] text-[#0F1015] font-black py-2.5 rounded-xl text-xs shadow-lg shadow-[#16C2B2]/20"
-                  >
-                    Qabul qilish ✓
-                  </button>
+                  <div className="flex gap-2 pt-1">
+                    <button 
+                      onClick={() => setIncomingOrders(prev => prev.filter(o => o.id !== ord.id))}
+                      className="flex-1 bg-gray-100 border border-gray-200 text-gray-600 font-bold py-2.5 rounded-2xl text-xs hover:bg-gray-200"
+                    >
+                      Rad etish
+                    </button>
+                    <button 
+                      onClick={() => handleAcceptOrder(ord)}
+                      className="flex-1 bg-[#0F1015] text-[#F59E0B] font-black py-2.5 rounded-2xl text-xs shadow-md hover:bg-[#1C1E26]"
+                    >
+                      Qabul qilish ✓
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Live Map Panel (7 cols on Desktop) */}
+        <div className="md:col-span-7 h-[420px] md:h-[600px] rounded-3xl overflow-hidden border border-gray-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] relative">
+          <YandexMap 
+            fromAddress={activeOrder ? activeOrder.from : 'Termiz Markaz'} 
+            toAddress={activeOrder ? activeOrder.to : 'TerDU Campus'} 
+          />
+        </div>
+
       </div>
     </div>
   );
 }
+
