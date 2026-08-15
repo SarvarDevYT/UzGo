@@ -15,12 +15,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="uz" className="bg-[#FAFAFC]">
+    <html lang="uz" className="bg-[#FAFAFC] dark:bg-[#0F1015] transition-colors">
       <head>
         <link rel="icon" href="/logo.jpg" type="image/jpeg" />
         <link rel="apple-touch-icon" href="/logo.jpg" />
       </head>
-      <body className="min-h-screen font-sans flex flex-col antialiased bg-[#FAFAFC] text-[#111827]">
+      <body className="min-h-screen font-sans flex flex-col antialiased bg-[#FAFAFC] dark:bg-[#0F1015] text-[#111827] dark:text-[#F5F5F7] transition-colors">
         <Providers>
           <Navbar />
           <main className="flex-1">
@@ -32,5 +32,6 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
 
 

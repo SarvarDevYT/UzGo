@@ -116,7 +116,7 @@ export default function TaxiPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-64px)] bg-[#FAFAFC] relative">
+    <div className="flex flex-col min-h-[calc(100vh-64px)] bg-[#FAFAFC] dark:bg-[#0F1015] text-[#111827] dark:text-[#F5F5F7] relative transition-colors">
       {/* Real Yandex Maps Integration (Termiz) */}
       <div className="absolute inset-0 z-0">
         <YandexMap 
@@ -133,12 +133,11 @@ export default function TaxiPage() {
       <div className="flex-1 overflow-y-auto p-4 pb-28 md:pb-6 z-10 flex flex-col justify-end max-w-lg mx-auto w-full">
         
         {status === 'idle' && (
-          <div className="bg-white rounded-3xl p-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] border border-gray-200/80 backdrop-blur-xl animate-slide-up space-y-3">
-
+          <div className="bg-white dark:bg-[#181A20] rounded-3xl p-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] border border-gray-200/80 dark:border-gray-800 backdrop-blur-xl animate-slide-up space-y-3">
             
             <div className="flex justify-between items-center mb-4">
               <div>
-                <h2 className="text-xl font-black text-[#0F1015] tracking-tight">UzGo Taksi Termiz</h2>
+                <h2 className="text-xl font-black text-[#0F1015] dark:text-white tracking-tight">UzGo Taksi Termiz</h2>
                 <span className="text-[10px] text-[#D97706] font-bold">📍 Surxondaryo viloyati</span>
               </div>
               
@@ -146,7 +145,7 @@ export default function TaxiPage() {
                 <button 
                   onClick={() => setShowScheduleModal(!showScheduleModal)} 
                   className={`p-2 rounded-xl border text-xs font-bold transition-all apple-card-press ${
-                    scheduledTime ? 'bg-[#0F1015] text-[#F59E0B] border-[#0F1015]' : 'bg-gray-100 text-gray-600 border-gray-200'
+                    scheduledTime ? 'bg-[#0F1015] dark:bg-white text-[#F59E0B] dark:text-[#0F1015] border-[#0F1015]' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700'
                   }`}
                   title="Oldindan rejalashtirish"
                 >
@@ -174,11 +173,11 @@ export default function TaxiPage() {
 
             {/* Rejalashtirish Modali */}
             {showScheduleModal && (
-              <div className="mb-4 bg-gray-50 border border-gray-200 p-3 rounded-2xl">
-                <label className="text-xs text-gray-500 font-bold block mb-2">Safar vaqtini tanlang:</label>
+              <div className="mb-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-3 rounded-2xl">
+                <label className="text-xs text-gray-500 dark:text-gray-400 font-bold block mb-2">Safar vaqtini tanlang:</label>
                 <input 
                   type="datetime-local" 
-                  className="w-full bg-white border border-gray-200 text-[#0F1015] p-2.5 rounded-xl text-xs outline-none focus:border-[#F59E0B] font-medium"
+                  className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-[#0F1015] dark:text-white p-2.5 rounded-xl text-xs outline-none focus:border-[#F59E0B] font-medium"
                   value={scheduledTime}
                   onChange={(e) => setScheduledTime(e.target.value)}
                 />
@@ -187,15 +186,15 @@ export default function TaxiPage() {
             
             {/* Address Inputs */}
             <div className="relative flex flex-col gap-2 mb-4">
-              <div className="absolute left-4 top-5 bottom-5 w-0.5 bg-gray-200 z-0"></div>
+              <div className="absolute left-4 top-5 bottom-5 w-0.5 bg-gray-200 dark:bg-gray-700 z-0"></div>
               
               <div className="relative z-10">
-                <div className="flex items-center bg-gray-50 rounded-2xl p-3.5 border border-gray-200 focus-within:border-emerald-500 transition-colors">
+                <div className="flex items-center bg-gray-50 dark:bg-gray-800 rounded-2xl p-3.5 border border-gray-200 dark:border-gray-700 focus-within:border-emerald-500 transition-colors">
                   <div className="w-3 h-3 rounded-full bg-emerald-500 mr-3 shrink-0"></div>
                   <input 
                     type="text" 
                     placeholder="Qayerdan (Termiz manzil)" 
-                    className="bg-transparent w-full outline-none text-[#0F1015] text-sm font-medium"
+                    className="bg-transparent w-full outline-none text-[#0F1015] dark:text-white text-sm font-medium"
                     value={from}
                     onChange={(e) => setFrom(e.target.value)}
                     onFocus={() => setShowFromDropdown(true)}
@@ -203,11 +202,11 @@ export default function TaxiPage() {
                   />
                 </div>
                 {showFromDropdown && (
-                  <div className="absolute top-full mt-1 w-full bg-white border border-gray-200 rounded-2xl shadow-2xl z-30 max-h-48 overflow-y-auto">
+                  <div className="absolute top-full mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl z-30 max-h-48 overflow-y-auto">
                     {TERMIZ_DISTRICTS.filter(d => d.toLowerCase().includes(from.toLowerCase())).map(district => (
                       <div 
                         key={`from-${district}`} 
-                        className="p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer text-[#0F1015] text-xs font-medium flex items-center gap-2"
+                        className="p-3 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-[#0F1015] dark:text-white text-xs font-medium flex items-center gap-2"
                         onClick={() => { setFrom(district); setShowFromDropdown(false); }}
                       >
                         <MapPin size={14} className="text-emerald-500" />
@@ -219,12 +218,12 @@ export default function TaxiPage() {
               </div>
 
               <div className="relative z-10">
-                <div className="flex items-center bg-gray-50 rounded-2xl p-3.5 border border-gray-200 focus-within:border-[#F59E0B] transition-colors">
+                <div className="flex items-center bg-gray-50 dark:bg-gray-800 rounded-2xl p-3.5 border border-gray-200 dark:border-gray-700 focus-within:border-[#F59E0B] transition-colors">
                   <div className="w-3 h-3 rounded-full bg-[#F59E0B] mr-3 shrink-0"></div>
                   <input 
                     type="text" 
                     placeholder="Qayerga boramiz?" 
-                    className="bg-transparent w-full outline-none text-[#0F1015] text-sm font-medium"
+                    className="bg-transparent w-full outline-none text-[#0F1015] dark:text-white text-sm font-medium"
                     value={to}
                     onChange={(e) => setTo(e.target.value)}
                     onFocus={() => setShowToDropdown(true)}
@@ -232,11 +231,11 @@ export default function TaxiPage() {
                   />
                 </div>
                 {showToDropdown && (
-                  <div className="absolute top-full mt-1 w-full bg-white border border-gray-200 rounded-2xl shadow-2xl z-30 max-h-48 overflow-y-auto">
+                  <div className="absolute top-full mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl z-30 max-h-48 overflow-y-auto">
                     {TERMIZ_DISTRICTS.filter(d => d.toLowerCase().includes(to.toLowerCase())).map(district => (
                       <div 
                         key={`to-${district}`} 
-                        className="p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer text-[#0F1015] text-xs font-medium flex items-center gap-2"
+                        className="p-3 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-[#0F1015] dark:text-white text-xs font-medium flex items-center gap-2"
                         onClick={() => { setTo(district); setShowToDropdown(false); }}
                       >
                         <Navigation size={14} className="text-[#F59E0B]" />
@@ -259,37 +258,37 @@ export default function TaxiPage() {
                     onClick={() => setSelectedTariff(t.id)}
                     className={`p-2 rounded-2xl border-2 cursor-pointer transition-all flex flex-col items-center justify-between text-center apple-card-press ${
                       isSelected
-                        ? 'border-[#0F1015] bg-[#0F1015] text-[#F59E0B] shadow-md'
-                        : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300'
+                        ? 'border-[#0F1015] dark:border-[#F59E0B] bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] shadow-md'
+                        : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-gray-300'
                     }`}
                   >
                     <span className="text-xl mb-0.5">{t.icon}</span>
-                    <span className={`font-extrabold text-[10px] leading-tight ${isSelected ? 'text-white' : 'text-[#0F1015]'}`}>{t.name}</span>
-                    <span className="text-[9px] font-black mt-1 text-[#F59E0B]">{t.price.toLocaleString('ru-RU')}</span>
+                    <span className={`font-extrabold text-[10px] leading-tight ${isSelected ? 'text-white dark:text-[#0F1015]' : 'text-[#0F1015] dark:text-white'}`}>{t.name}</span>
+                    <span className={`text-[9px] font-black mt-1 ${isSelected ? 'text-[#F59E0B] dark:text-[#0F1015]' : 'text-[#F59E0B]'}`}>{t.price.toLocaleString('ru-RU')}</span>
                   </div>
                 );
               })}
             </div>
 
             {/* Price & Booking Button */}
-            <div className="flex items-center justify-between bg-gray-50 p-3.5 rounded-2xl border border-gray-200 mb-4">
+            <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 p-3.5 rounded-2xl border border-gray-200 dark:border-gray-700 mb-4">
               <div className="flex items-center gap-2">
                 <Car className="text-[#F59E0B]" size={18} />
                 <div>
-                  <div className="text-xs font-bold text-[#0F1015]">{activeTariffObj.name} ({activeTariffObj.car})</div>
+                  <div className="text-xs font-bold text-[#0F1015] dark:text-white">{activeTariffObj.name} ({activeTariffObj.car})</div>
                   <div className="text-[10px] text-gray-400 font-medium">Naqd, Click yoki Payme</div>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-lg font-black text-[#0F1015]">{activeTariffObj.price.toLocaleString('ru-RU')} so'm</div>
+                <div className="text-lg font-black text-[#0F1015] dark:text-white">{activeTariffObj.price.toLocaleString('ru-RU')} so'm</div>
               </div>
             </div>
 
             <button 
               className={`w-full py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 transition-all shadow-md apple-card-press ${
                 from && to 
-                  ? 'bg-[#0F1015] text-[#F59E0B] hover:bg-[#1C1E26] active:scale-[0.98]' 
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  ? 'bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] hover:bg-[#1C1E26] active:scale-[0.98]' 
+                  : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
               }`}
               onClick={handleSearch}
               disabled={!from || !to}
@@ -299,6 +298,7 @@ export default function TaxiPage() {
             </button>
           </div>
         )}
+
 
         {status === 'searching' && (
           <div className="bg-white rounded-3xl p-8 shadow-2xl border border-gray-200 flex flex-col items-center justify-center h-72 animate-slide-up">

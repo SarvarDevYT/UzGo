@@ -160,35 +160,14 @@ export default function ProfilePage() {
           >
             <div className="flex items-center gap-3.5">
               <div className="w-10 h-10 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-[#F59E0B] flex items-center justify-center shrink-0">
-                {isDark ? <Sun className="w-5 h-5 text-[#F59E0B]" /> : <Moon className="w-5 h-5 text-gray-700" />}
+                {isDark ? <Sun className="w-5 h-5 text-[#F59E0B]" /> : <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />}
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-[#0F1015]">Yoritish Rejimi</h3>
-                <p className="text-[11px] text-gray-500 font-extrabold">{isDark ? 'Qorong\'u (Dark Mode) 🌙' : 'Yoritilgan (Light Mode) ☀️'}</p>
+                <h3 className="font-extrabold text-sm text-[#0F1015] dark:text-white">Yoritish Rejimi</h3>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400 font-extrabold">{isDark ? 'Qorong\'u (Dark Mode) 🌙' : 'Yoritilgan (Light Mode) ☀️'}</p>
               </div>
             </div>
-            <span className="text-xs font-black text-[#0F1015] bg-gray-100 border border-gray-200 px-3 py-1 rounded-xl">
-              Almashtirish ⇄
-            </span>
-          </div>
-        </div>
-
-        {/* Language Switcher */}
-        <div className="bg-white rounded-3xl border border-gray-200/80 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
-          <div 
-            onClick={toggleLanguage}
-            className="flex items-center justify-between p-3.5 hover:bg-gray-50 rounded-2xl transition-colors cursor-pointer group apple-card-press"
-          >
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 bg-purple-500/10 border border-purple-500/20 rounded-2xl text-purple-600 flex items-center justify-center shrink-0">
-                <Globe className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-extrabold text-sm text-[#0F1015]">Ilova Tili</h3>
-                <p className="text-[11px] text-[#D97706] font-extrabold">{lang === 'uz' ? 'O\'zbek tili 🇺🇿' : 'Русский язык 🇷🇺'}</p>
-              </div>
-            </div>
-            <span className="text-xs font-black text-[#0F1015] bg-gray-100 border border-gray-200 px-3 py-1 rounded-xl">
+            <span className="text-xs font-black text-[#0F1015] dark:text-white bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-1 rounded-xl">
               Almashtirish ⇄
             </span>
           </div>
@@ -196,18 +175,18 @@ export default function ProfilePage() {
 
         {/* Admin Panel Link (If admin) */}
         {user.role === 'admin' && (
-          <div className="bg-white rounded-3xl border border-gray-200/80 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
-            <Link href="/admin/dashboard" className="flex items-center justify-between p-3.5 hover:bg-gray-50 rounded-2xl transition-colors group apple-card-press">
+          <div className="bg-white dark:bg-[#181A20] rounded-3xl border border-gray-200/80 dark:border-gray-800 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
+            <Link href="/admin/dashboard" className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-2xl transition-colors group apple-card-press">
               <div className="flex items-center gap-3.5">
                 <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-600 flex items-center justify-center shrink-0">
                   <Shield className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-sm text-[#0F1015]">Super Admin Panel</h3>
+                  <h3 className="font-extrabold text-sm text-[#0F1015] dark:text-white">Super Admin Panel</h3>
                   <p className="text-[11px] text-emerald-600 font-bold">Termiz platforma boshqaruvi</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-black transition-all" />
+              <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600 group-hover:text-[#F59E0B] transition-all" />
             </Link>
           </div>
         )}
@@ -224,13 +203,13 @@ export default function ProfilePage() {
 
       {/* Edit Profile Modal */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white border border-gray-200 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
-            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
-              <h2 className="text-base font-black text-[#0F1015]">Profil Sozlamalarini Tahrirlash</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#181A20] border border-gray-200 dark:border-gray-800 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
+            <div className="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
+              <h2 className="text-base font-black text-[#0F1015] dark:text-white">Profil Sozlamalarini Tahrirlash</h2>
               <button 
                 onClick={() => setIsEditModalOpen(false)}
-                className="text-gray-400 hover:text-black"
+                className="text-gray-400 hover:text-black dark:hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -238,44 +217,39 @@ export default function ProfilePage() {
             
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-bold text-gray-500 mb-1 block">
-                  Ismingiz
-                </label>
+                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 block mb-1">F.I.O.</label>
                 <input 
                   type="text" 
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-[#0F1015] text-xs outline-none focus:border-[#F59E0B] font-medium"
+                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-3 text-xs font-bold text-[#0F1015] dark:text-white outline-none focus:border-[#F59E0B]"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-bold text-gray-500 mb-1 block">
-                  Telefon Raqami
-                </label>
+                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 block mb-1">Telefon Raqami</label>
                 <input 
                   type="text" 
                   value={editPhone}
                   onChange={(e) => setEditPhone(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-[#0F1015] text-xs outline-none focus:border-[#F59E0B] font-medium"
+                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-3 text-xs font-bold text-[#0F1015] dark:text-white outline-none focus:border-[#F59E0B]"
                 />
               </div>
-              
-              <div className="flex gap-2 pt-2">
-                <button 
-                  type="button" 
-                  onClick={() => setIsEditModalOpen(false)}
-                  className="flex-1 bg-gray-100 border border-gray-200 text-gray-600 font-bold py-3 rounded-xl text-xs"
-                >
-                  Bekor qilish
-                </button>
-                <button 
-                  onClick={handleSaveProfile}
-                  className="flex-1 bg-[#0F1015] text-[#F59E0B] font-black rounded-xl py-3 text-xs shadow-md"
-                >
-                  Saqlash
-                </button>
-              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button 
+                onClick={() => setIsEditModalOpen(false)}
+                className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold py-3 rounded-2xl text-xs"
+              >
+                Bekor qilish
+              </button>
+              <button 
+                onClick={handleSaveProfile}
+                className="flex-1 bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] font-black py-3 rounded-2xl text-xs shadow-lg"
+              >
+                Saqlash ✓
+              </button>
             </div>
           </div>
         </div>
@@ -283,4 +257,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
