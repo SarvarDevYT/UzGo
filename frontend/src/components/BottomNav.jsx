@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Car, ShoppingBag, Package, User } from 'lucide-react';
+import { Car, Utensils, ShoppingBag, Wallet, User } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const BottomNav = () => {
@@ -15,40 +15,39 @@ const BottomNav = () => {
   }
 
   const navItems = [
-    { path: '/', label: t('home') || 'Bosh sahifa', icon: Home },
-    { path: '/taxi', label: t('taxi') || 'Taksi', icon: Car },
-    { path: '/market', label: 'Market', icon: ShoppingBag },
-    { path: '/delivery', label: 'Delivery', icon: Package },
-    { path: '/profile', label: t('profile') || 'Profil', icon: User },
+    { path: '/', label: 'Taksi', icon: Car },
+    { path: '/delivery', label: 'Taomlar', icon: Utensils },
+    { path: '/market', label: 'Lavka', icon: ShoppingBag },
+    { path: '/wallet', label: 'Hamyon', icon: Wallet },
+    { path: '/profile', label: 'Profil', icon: User },
   ];
 
-
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 max-w-md mx-auto">
-      <div className="bg-white/90 dark:bg-[#0F1015]/90 backdrop-blur-2xl border border-gray-200/80 dark:border-gray-800 rounded-full p-2 shadow-[0_12px_40px_rgba(0,0,0,0.12)] flex justify-around items-center h-16 transition-colors">
+    <div className="fixed bottom-3 left-3 right-3 z-50 max-w-md mx-auto md:hidden pointer-events-none">
+      <div className="pointer-events-auto bg-white/95 dark:bg-[#1C1C1E]/95 backdrop-blur-2xl border border-gray-200/90 dark:border-gray-800 rounded-3xl p-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.18)] flex justify-around items-center h-16 transition-all">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.path || 
-                          (item.path !== '/' && pathname?.startsWith(item.path));
+          const isActive = (item.path === '/' && (pathname === '/' || pathname === '/taxi')) || 
+                           (item.path !== '/' && pathname?.startsWith(item.path));
           
           return (
             <Link 
               key={item.path} 
               href={item.path}
               className={`relative flex flex-col items-center justify-center flex-1 h-full spring-transition ${
-                isActive ? 'text-[#0F1015] dark:text-white' : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                isActive ? 'text-[#121214] dark:text-white' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'
               }`}
             >
               {isActive && (
-                <span className="absolute -top-1 w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-md shadow-[#F59E0B] animate-pulse"></span>
+                <span className="absolute top-0 w-1.5 h-1.5 rounded-full bg-[#FCE000] shadow-[0_0_8px_#FCE000]"></span>
               )}
-              <div className={`p-1.5 rounded-full spring-transition ${
-                isActive ? 'bg-[#0F1015] dark:bg-white text-[#F59E0B] dark:text-[#0F1015] scale-110 shadow-md' : 'hover:scale-105'
+              <div className={`p-1 rounded-2xl spring-transition ${
+                isActive ? 'bg-[#FCE000] text-[#121214] scale-105 shadow-sm' : 'hover:scale-105'
               }`}>
-                <Icon size={19} strokeWidth={isActive ? 2.5 : 2} />
+                <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
               </div>
-              <span className={`text-[10px] font-extrabold mt-0.5 tracking-tight transition-colors ${
-                isActive ? 'text-[#0F1015] dark:text-white' : 'text-gray-400'
+              <span className={`text-[10px] font-black mt-0.5 tracking-tight transition-colors ${
+                isActive ? 'text-[#121214] dark:text-white font-extrabold' : 'text-gray-400'
               }`}>
                 {item.label}
               </span>
@@ -61,5 +60,3 @@ const BottomNav = () => {
 };
 
 export default BottomNav;
-
-

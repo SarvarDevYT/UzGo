@@ -1,135 +1,540 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Search, Star, Clock, Bike } from 'lucide-react';
-import api from '../../services/api';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { 
+  Utensils, Package, Search, Star, Clock, Plus, Minus, ShoppingBag, 
+  ArrowRight, X, CheckCircle2, ChevronRight, ShieldCheck, MapPin, 
+  Phone, User, Sparkles, Filter, Bike
+} from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
-const categories = [
-  { id: 'all', name: 'Barchasi', icon: '🍽️' },
-  { id: 'pizza', name: 'Pizza', icon: '🍕' },
-  { id: 'sushi', name: 'Sushi', icon: '🍣' },
-  { id: 'burger', name: 'Burger', icon: '🍔' },
-  { id: 'pharmacy', name: 'Dorixona', icon: '💊' },
+const RESTAURANTS = [
+  {
+    id: 'kfc',
+    name: 'KFC Toshkent',
+    category: 'Fast Food • Tovuq',
+    rating: 4.85,
+    deliveryTime: '20-30 daq',
+    deliveryFee: 'Bepul',
+    image: 'https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?w=500&auto=format&fit=crop&q=80',
+    logo: '🍗',
+    badge: 'Ommabop',
+    menu: [
+      { id: 'kfc1', name: 'Zinger Burger Kombo', price: 42000, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&auto=format&fit=crop&q=80', desc: 'Qarsildoq achchiq tovuq go\'shti, fri va 0.5L Pepsi' },
+      { id: 'kfc2', name: 'Box Master', price: 38000, image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=300&auto=format&fit=crop&q=80', desc: 'Tortilya noniga o\'ralgan tovuq filesi, pishloq va pomidor' },
+      { id: 'kfc3', name: 'Hot Wings (8 dona)', price: 39000, image: 'https://images.unsplash.com/photo-1527477378378-f463375b630e?w=300&auto=format&fit=crop&q=80', desc: 'Achchiq qarsildoq tovuq qanotchalari' },
+    ]
+  },
+  {
+    id: 'evos',
+    name: 'EVOS Lavash',
+    category: 'Lavash • Burger • Fast Food',
+    rating: 4.92,
+    deliveryTime: '15-25 daq',
+    deliveryFee: 'Bepul',
+    image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=500&auto=format&fit=crop&q=80',
+    logo: '🌯',
+    badge: 'Tezkor',
+    menu: [
+      { id: 'ev1', name: 'Mol go\'shtli Lavash (Standart)', price: 36000, image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=300&auto=format&fit=crop&q=80', desc: 'Shirali mol go\'shti, chipslar, pomidor va maxsus sous' },
+      { id: 'ev2', name: 'Pishloqli Tovuq Lavash', price: 38000, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&auto=format&fit=crop&q=80', desc: 'Eritilgan golland pishlog\'i va nozik tovuq filesi' },
+      { id: 'ev3', name: 'Shaurma Kombo', price: 44000, image: 'https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?w=300&auto=format&fit=crop&q=80', desc: 'Katta shaurma, fri kartoshkasi va muzdek ichimlik' },
+    ]
+  },
+  {
+    id: 'bellissimo',
+    name: 'Bellissimo Pizza',
+    category: 'Pizza • Italyancha',
+    rating: 4.88,
+    deliveryTime: '25-35 daq',
+    deliveryFee: 'Bepul',
+    image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&auto=format&fit=crop&q=80',
+    logo: '🍕',
+    badge: '30 daqiqada',
+    menu: [
+      { id: 'bp1', name: 'Pepperoni Pizza (30 cm)', price: 65000, image: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=300&auto=format&fit=crop&q=80', desc: 'Mazali pepperoni kolbasasi, motsarella pishlog\'i va tomat sousi' },
+      { id: 'bp2', name: 'Margarita Pizza', price: 54000, image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=300&auto=format&fit=crop&q=80', desc: 'Klassik italyancha motsarella va yangi rayhon barglari' },
+      { id: 'bp3', name: 'Kombo Bellissimo 4x1', price: 110000, image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300&auto=format&fit=crop&q=80', desc: '2 ta o\'rta pizza + 2 ta ichimlik + sous' },
+    ]
+  },
+  {
+    id: 'rayhon',
+    name: 'Rayhon Milliy Taomlar',
+    category: 'Osh • Shashlik • Somsa',
+    rating: 4.95,
+    deliveryTime: '20-30 daq',
+    deliveryFee: '5,000 so\'m',
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80',
+    logo: '🍲',
+    badge: 'Milliy',
+    menu: [
+      { id: 'r1', name: 'Toshkent To\'y Oshi (1 porsiya)', price: 38000, image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&auto=format&fit=crop&q=80', desc: 'Lazer guruchi, mayin qo\'y go\'shti, qazi va bedana tuxumi' },
+      { id: 'r2', name: 'Qiyma Shashlik (2 dona)', price: 34000, image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=300&auto=format&fit=crop&q=80', desc: 'Ko\'mirda pishirilgan shirali mol va dumba go\'shti' },
+      { id: 'r3', name: 'Tandir Somsa (Go\'shtli)', price: 12000, image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300&auto=format&fit=crop&q=80', desc: 'Qatlama xamirli, maydalangan go\'sht va piyozli issiq somsa' },
+    ]
+  },
 ];
 
 export default function DeliveryPage() {
-  const [stores, setStores] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState('all');
+  const router = useRouter();
+  const { t } = useLanguage();
 
-  useEffect(() => {
-    setLoading(true);
-    api.get('/delivery/stores/')
-      .then(data => {
-        const list = Array.isArray(data) ? data : data.results || [];
-        setStores(list);
-      })
-      .catch(() => {
-        setStores([
-          { id: 1, name: 'Toshkent Pizza', category: 'pizza', category_icon: '🍕', rating: 4.8, delivery_time: '25-40 daqiqa', delivery_fee: 5000, is_open: true, image_url: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400' },
-          { id: 2, name: 'Burger House', category: 'burger', category_icon: '🍔', rating: 4.7, delivery_time: '20-35 daqiqa', delivery_fee: 4000, is_open: true, image_url: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400' },
-        ]);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  // Mode: 'eats' | 'courier'
+  const [activeTab, setActiveTab] = useState('eats');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Barchasi');
 
-  const filteredStores = activeCategory === 'all' 
-    ? stores 
-    : stores.filter(store => store.category === activeCategory);
+  // Food Cart State
+  const [cart, setCart] = useState({});
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [showCartDrawer, setShowCartDrawer] = useState(false);
+  const [orderStatus, setOrderStatus] = useState(null); // null | 'placed' | 'delivering'
+
+  // Courier Form State
+  const [courierFrom, setCourierFrom] = useState('Toshkent, Amir Temur ko\'chasi 14');
+  const [courierTo, setCourierTo] = useState('');
+  const [receiverPhone, setReceiverPhone] = useState('');
+  const [packageSize, setPackageSize] = useState('small'); // small | medium | large
+
+  const categories = ['Barchasi', 'Fast Food', 'Lavash', 'Pizza', 'Milliy Taomlar', 'Shirinliklar'];
+
+  // Cart operations
+  const addToCart = (item, rest) => {
+    setCart((prev) => {
+      const currentCount = prev[item.id]?.count || 0;
+      return {
+        ...prev,
+        [item.id]: {
+          ...item,
+          restaurant: rest.name,
+          count: currentCount + 1,
+        }
+      };
+    });
+  };
+
+  const removeFromCart = (itemId) => {
+    setCart((prev) => {
+      const currentCount = prev[itemId]?.count || 0;
+      if (currentCount <= 1) {
+        const next = { ...prev };
+        delete next[itemId];
+        return next;
+      }
+      return {
+        ...prev,
+        [itemId]: {
+          ...prev[itemId],
+          count: currentCount - 1,
+        }
+      };
+    });
+  };
+
+  const totalCartItems = Object.values(cart).reduce((sum, item) => sum + item.count, 0);
+  const totalCartPrice = Object.values(cart).reduce((sum, item) => sum + (item.price * item.count), 0);
+
+  const handlePlaceFoodOrder = () => {
+    setOrderStatus('placed');
+    setShowCartDrawer(false);
+    setTimeout(() => {
+      setOrderStatus('delivering');
+    }, 2500);
+  };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] dark:bg-[#0F1015] text-[#111827] dark:text-[#F5F5F7] pb-28 font-sans transition-colors">
-      <main className="max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-4 pt-6 space-y-6">
-        
-        {/* Header & Search */}
-        <div className="bg-white dark:bg-[#181A20] rounded-3xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-200/80 dark:border-gray-800 space-y-4">
-          <div>
-            <h1 className="text-xl font-black text-[#0F1015] dark:text-white tracking-tight flex items-center gap-2">
-              <Bike className="w-6 h-6 text-[#F59E0B]" /> UzGo Delivery
-            </h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Termiz bo‘ylab issiq taomlar va tezkor kuryer</p>
+    <div className="min-h-screen bg-[#F6F7F9] dark:bg-[#121214] text-[#121214] dark:text-[#F5F5F7] pb-28 font-sans transition-colors">
+      
+      {/* Top Header & Mode Tabs */}
+      <div className="bg-white dark:bg-[#1C1C1E] border-b border-gray-200/80 dark:border-gray-800 sticky top-16 z-30 shadow-sm backdrop-blur-xl">
+        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+          
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setActiveTab('eats')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-black transition-all ${
+                activeTab === 'eats'
+                  ? 'bg-[#FCE000] text-[#121214] shadow-md scale-105'
+                  : 'bg-gray-100 dark:bg-[#26262A] text-gray-600 dark:text-gray-300'
+              }`}
+            >
+              <Utensils size={15} /> UzGo Taomlar (Eats)
+            </button>
+
+            <button
+              onClick={() => setActiveTab('courier')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-black transition-all ${
+                activeTab === 'courier'
+                  ? 'bg-[#FCE000] text-[#121214] shadow-md scale-105'
+                  : 'bg-gray-100 dark:bg-[#26262A] text-gray-600 dark:text-gray-300'
+              }`}
+            >
+              <Package size={15} /> Kuryer (Yetkazib berish)
+            </button>
           </div>
 
-          <div className="relative">
-            <Search className="absolute left-4 top-3.5 text-gray-400 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Restoran yoki taom qidirish..."
-              className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700 text-[#0F1015] dark:text-white pl-11 pr-4 py-3 rounded-2xl text-xs font-semibold focus:outline-none focus:border-[#F59E0B] transition-colors"
-            />
-          </div>
+          {/* Cart Trigger Badge */}
+          {activeTab === 'eats' && totalCartItems > 0 && (
+            <button
+              onClick={() => setShowCartDrawer(true)}
+              className="bg-[#121214] dark:bg-white text-[#FCE000] dark:text-[#121214] px-4 py-2 rounded-2xl text-xs font-black flex items-center gap-2 shadow-md apple-card-press"
+            >
+              <ShoppingBag size={15} />
+              <span>{totalCartItems} ta • {totalCartPrice.toLocaleString()} so'm</span>
+            </button>
+          )}
 
-          {/* Category Pills */}
-          <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                className={`px-4 py-2 rounded-2xl text-xs font-black shrink-0 transition-all flex items-center gap-1.5 apple-card-press ${
-                  activeCategory === cat.id
-                    ? 'bg-[#0F1015] dark:bg-white text-[#F59E0B] dark:text-[#0F1015] shadow-md'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200'
-                }`}
-              >
-                <span>{cat.icon}</span>
-                <span>{cat.name}</span>
-              </button>
-            ))}
-          </div>
         </div>
+      </div>
 
-        {/* Stores Grid */}
-        <div className="space-y-3">
-          <h2 className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider px-1">Restoranlar va Magazinlar</h2>
+      {/* Main Content Area */}
+      <div className="max-w-5xl mx-auto px-4 pt-5 space-y-6">
 
-          {loading ? (
-            <div className="text-center py-12 text-gray-400 text-xs font-bold animate-pulse">Yuklanmoqda...</div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredStores.map((store) => (
-                <Link
-                  key={store.id}
-                  href={`/delivery/${store.id}`}
-                  className="bg-white dark:bg-[#181A20] border border-gray-200/80 dark:border-gray-800 hover:border-[#F59E0B] rounded-3xl p-4 shadow-[0_8px_25px_rgba(0,0,0,0.03)] flex gap-4 transition-all duration-300 apple-card-press group"
+        {/* 1. YANDEX EATS MODE */}
+        {activeTab === 'eats' && (
+          <div className="space-y-6">
+            
+            {/* Search Bar & Location Banner */}
+            <div className="bg-white dark:bg-[#1C1C1E] border border-gray-200/80 dark:border-gray-800 rounded-3xl p-4 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
+              <div className="relative w-full md:w-96">
+                <Search size={18} className="absolute left-3.5 top-3.5 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Restoran yoki taom qidiring (Osh, Lavash, Pizza)..."
+                  className="w-full bg-gray-100 dark:bg-[#26262A] text-[#121214] dark:text-white pl-10 pr-4 py-2.5 rounded-2xl text-xs font-bold outline-none border border-transparent focus:border-[#FCE000]"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 text-xs font-black text-gray-500">
+                <MapPin size={15} className="text-[#FC3F1D]" />
+                <span>Yetkazish manzili: <strong>Toshkent, Amir Temur 14</strong></span>
+              </div>
+            </div>
+
+            {/* Category Chips */}
+            <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-4 py-2 rounded-2xl text-xs font-black whitespace-nowrap transition-all ${
+                    selectedCategory === cat
+                      ? 'bg-[#121214] text-[#FCE000] dark:bg-white dark:text-[#121214] shadow-sm'
+                      : 'bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300'
+                  }`}
                 >
-                  <img
-                    src={store.image_url || '/logo.jpg'}
-                    alt={store.name}
-                    className="w-24 h-24 rounded-2xl object-cover group-hover:scale-105 transition-transform"
-                    onError={(e) => { e.target.src = '/logo.jpg'; }}
-                  />
-
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-extrabold text-sm text-[#0F1015] dark:text-white group-hover:text-[#F59E0B] transition-colors">{store.name}</h3>
-                        <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                          {store.is_open ? 'Ochilgan' : 'Yopilgan'}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-gray-400 font-medium mt-0.5">{store.category_name || 'Taomlar'}</p>
-                    </div>
-
-                    <div className="flex items-center gap-3 text-xs font-bold text-gray-500 dark:text-gray-400 pt-2">
-                      <span className="flex items-center gap-1 text-[#F59E0B]">
-                        <Star size={13} className="fill-[#F59E0B]" /> {store.rating || '4.8'}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock size={13} /> {store.delivery_time || '25 min'}
-                      </span>
-                      <span className="text-[#0F1015] dark:text-white font-black">
-                        {store.delivery_fee ? `${store.delivery_fee.toLocaleString()} so'm` : 'Bepul'}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
+                  {cat}
+                </button>
               ))}
             </div>
-          )}
-        </div>
 
-      </main>
+            {/* Active Order Tracker if placed */}
+            {orderStatus && (
+              <div className="bg-[#121214] text-white p-4 rounded-3xl shadow-xl flex items-center justify-between border border-gray-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[#FCE000] text-[#121214] flex items-center justify-center text-xl font-black animate-pulse">
+                    🛵
+                  </div>
+                  <div>
+                    <h4 className="font-black text-sm">
+                      {orderStatus === 'placed' ? 'Oshpaz taomingizni tayyorlamoqda' : 'Kuryer yo\'lda! Yetib kelishiga ~15 daqiqa'}
+                    </h4>
+                    <span className="text-xs text-gray-400">
+                      Jami: {totalCartPrice.toLocaleString()} so'm • To'lov: UzGo Pay (+3% keshbek)
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setOrderStatus(null)}
+                  className="text-xs text-[#FCE000] font-black underline"
+                >
+                  Yopish
+                </button>
+              </div>
+            )}
+
+            {/* Restaurants Grid */}
+            <div className="space-y-6">
+              {RESTAURANTS.map((rest) => (
+                <div 
+                  key={rest.id}
+                  className="bg-white dark:bg-[#1C1C1E] border border-gray-200/80 dark:border-gray-800 rounded-3xl p-5 shadow-sm space-y-4"
+                >
+                  {/* Restaurant Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 dark:border-gray-800 pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="text-3xl">{rest.logo}</div>
+                      <div>
+                        <h3 className="font-black text-lg text-[#121214] dark:text-white flex items-center gap-2">
+                          {rest.name}
+                          <span className="bg-[#FCE000] text-[#121214] text-[10px] font-black px-2 py-0.5 rounded-md">
+                            {rest.badge}
+                          </span>
+                        </h3>
+                        <p className="text-xs text-gray-500 font-semibold">{rest.category}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 text-xs font-bold text-gray-600 dark:text-gray-300">
+                      <span className="flex items-center text-amber-500 font-black">
+                        <Star size={14} className="fill-amber-500 mr-1" /> {rest.rating}
+                      </span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <Clock size={14} /> {rest.deliveryTime}
+                      </span>
+                      <span>•</span>
+                      <span className="text-emerald-500 font-black">{rest.deliveryFee}</span>
+                    </div>
+                  </div>
+
+                  {/* Food Items List */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {rest.menu.map((dish) => {
+                      const countInCart = cart[dish.id]?.count || 0;
+                      return (
+                        <div
+                          key={dish.id}
+                          className="bg-gray-50 dark:bg-[#26262A] border border-gray-200/70 dark:border-gray-700/70 rounded-2xl p-3 flex flex-col justify-between transition-all"
+                        >
+                          <img
+                            src={dish.image}
+                            alt={dish.name}
+                            className="w-full h-32 object-cover rounded-xl mb-2.5"
+                          />
+                          <div>
+                            <h5 className="font-black text-xs text-[#121214] dark:text-white leading-tight">
+                              {dish.name}
+                            </h5>
+                            <p className="text-[11px] text-gray-500 line-clamp-2 mt-1">
+                              {dish.desc}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-200/60 dark:border-gray-700/60">
+                            <span className="font-black text-xs text-[#121214] dark:text-white">
+                              {dish.price.toLocaleString()} so'm
+                            </span>
+
+                            {countInCart > 0 ? (
+                              <div className="flex items-center gap-2 bg-[#FCE000] text-[#121214] rounded-xl px-2 py-1 shadow-sm">
+                                <button
+                                  onClick={() => removeFromCart(dish.id)}
+                                  className="font-black text-xs"
+                                >
+                                  <Minus size={13} />
+                                </button>
+                                <span className="text-xs font-black">{countInCart}</span>
+                                <button
+                                  onClick={() => addToCart(dish, rest)}
+                                  className="font-black text-xs"
+                                >
+                                  <Plus size={13} />
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => addToCart(dish, rest)}
+                                className="bg-[#121214] dark:bg-white text-[#FCE000] dark:text-[#121214] px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 shadow-sm apple-card-press"
+                              >
+                                <Plus size={13} /> Qo'shish
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                </div>
+              ))}
+            </div>
+
+          </div>
+        )}
+
+        {/* 2. YANDEX EXPRESS COURIER MODE */}
+        {activeTab === 'courier' && (
+          <div className="max-w-xl mx-auto bg-white dark:bg-[#1C1C1E] border border-gray-200/80 dark:border-gray-800 rounded-3xl p-6 shadow-sm space-y-5">
+            <div>
+              <h3 className="font-black text-xl text-[#121214] dark:text-white flex items-center gap-2">
+                <Package size={22} className="text-[#FCE000]" /> Eshikdan-eshikkacha Tezkor Kuryer
+              </h3>
+              <p className="text-xs text-gray-500 mt-1">
+                Hujjat, kalit, kiyim yoki posilkalarni 30 daqiqada yetkazib beramiz.
+              </p>
+            </div>
+
+            {/* Address Form */}
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-black text-gray-500 uppercase tracking-wider block mb-1">
+                  1. Jo'natuvchi manzili
+                </label>
+                <div className="flex items-center bg-gray-50 dark:bg-[#26262A] p-3 rounded-2xl border border-gray-200 dark:border-gray-700">
+                  <MapPin size={16} className="text-[#2563EB] mr-2" />
+                  <input
+                    type="text"
+                    value={courierFrom}
+                    onChange={(e) => setCourierFrom(e.target.value)}
+                    placeholder="Qayerdan olinadi..."
+                    className="w-full bg-transparent text-xs font-bold text-[#121214] dark:text-white outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-black text-gray-500 uppercase tracking-wider block mb-1">
+                  2. Qabul qiluvchi manzili
+                </label>
+                <div className="flex items-center bg-gray-50 dark:bg-[#26262A] p-3 rounded-2xl border border-gray-200 dark:border-gray-700">
+                  <MapPin size={16} className="text-[#FC3F1D] mr-2" />
+                  <input
+                    type="text"
+                    value={courierTo}
+                    onChange={(e) => setCourierTo(e.target.value)}
+                    placeholder="Qayerga yetkaziladi..."
+                    className="w-full bg-transparent text-xs font-bold text-[#121214] dark:text-white outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-black text-gray-500 uppercase tracking-wider block mb-1">
+                  3. Qabul qiluvchi telefon raqami
+                </label>
+                <div className="flex items-center bg-gray-50 dark:bg-[#26262A] p-3 rounded-2xl border border-gray-200 dark:border-gray-700">
+                  <Phone size={16} className="text-[#10B981] mr-2" />
+                  <input
+                    type="tel"
+                    value={receiverPhone}
+                    onChange={(e) => setReceiverPhone(e.target.value)}
+                    placeholder="+998 90 123 45 67"
+                    className="w-full bg-transparent text-xs font-bold text-[#121214] dark:text-white outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Package Size */}
+            <div>
+              <label className="text-xs font-black text-gray-500 uppercase tracking-wider block mb-2">
+                Posilka hajmi
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: 'small', label: 'Kichik (Konvert)', price: '11,000 so\'m', icon: '✉️' },
+                  { id: 'medium', label: 'O\'rta (Paket)', price: '16,000 so\'m', icon: '📦' },
+                  { id: 'large', label: 'Katta (Quti)', price: '25,000 so\'m', icon: '🧳' },
+                ].map((size) => (
+                  <div
+                    key={size.id}
+                    onClick={() => setPackageSize(size.id)}
+                    className={`p-3 rounded-2xl border cursor-pointer text-center apple-card-press transition-all ${
+                      packageSize === size.id
+                        ? 'bg-[#FCE000] border-black/20 text-[#121214] shadow-md font-black'
+                        : 'bg-gray-50 dark:bg-[#26262A] border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    <span className="text-xl">{size.icon}</span>
+                    <span className="text-xs block mt-1">{size.label}</span>
+                    <span className="text-[10px] font-black block mt-0.5 text-gray-500 dark:text-gray-400">
+                      {size.price}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => alert(`Kuryer chaqirildi! Qabul qiluvchi: ${receiverPhone}`)}
+              disabled={!courierTo}
+              className={`w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-md transition-all ${
+                courierTo
+                  ? 'bg-[#FCE000] text-[#121214] hover:bg-[#E5CB00] apple-card-press shadow-[0_10px_25px_rgba(252,224,0,0.3)]'
+                  : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
+              }`}
+            >
+              <Bike size={18} /> Kuryer chaqirish (30 min)
+            </button>
+
+          </div>
+        )}
+
+      </div>
+
+      {/* Food Cart Slide-Over Drawer */}
+      {showCartDrawer && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-end">
+          <div className="w-full sm:max-w-md h-[90vh] sm:h-full bg-white dark:bg-[#1C1C1E] rounded-t-3xl sm:rounded-l-3xl p-5 flex flex-col justify-between shadow-2xl space-y-4">
+            
+            <div>
+              <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
+                <h3 className="font-black text-base text-[#121214] dark:text-white flex items-center gap-2">
+                  <ShoppingBag size={18} className="text-[#FCE000]" /> Sizning savatchangiz
+                </h3>
+                <button
+                  onClick={() => setShowCartDrawer(false)}
+                  className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:text-black dark:hover:text-white"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Items in Cart */}
+              <div className="divide-y divide-gray-100 dark:divide-gray-800 max-h-[50vh] overflow-y-auto mt-2">
+                {Object.values(cart).map((item) => (
+                  <div key={item.id} className="py-3 flex items-center justify-between">
+                    <div>
+                      <h4 className="font-black text-xs text-[#121214] dark:text-white">
+                        {item.name}
+                      </h4>
+                      <span className="text-[10px] text-gray-500 font-bold">
+                        {item.price.toLocaleString()} so'm
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 bg-gray-100 dark:bg-[#26262A] rounded-xl px-2 py-1">
+                      <button onClick={() => removeFromCart(item.id)} className="font-black text-xs">
+                        <Minus size={13} />
+                      </button>
+                      <span className="text-xs font-black">{item.count}</span>
+                      <button onClick={() => addToCart(item, { name: item.restaurant })} className="font-black text-xs">
+                        <Plus size={13} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Cart Checkout Summary */}
+            <div className="border-t border-gray-100 dark:border-gray-800 pt-4 space-y-3">
+              <div className="flex justify-between text-xs font-bold text-gray-500">
+                <span>Yetkazib berish (25 daqiqa)</span>
+                <span className="text-emerald-500 font-black">Bepul</span>
+              </div>
+              <div className="flex justify-between text-base font-black text-[#121214] dark:text-white">
+                <span>Jami to'lov:</span>
+                <span>{totalCartPrice.toLocaleString()} so'm</span>
+              </div>
+
+              <button
+                onClick={handlePlaceFoodOrder}
+                className="w-full bg-[#FCE000] hover:bg-[#E5CB00] text-[#121214] py-4 rounded-2xl font-black text-sm shadow-lg apple-card-press flex items-center justify-center gap-2"
+              >
+                <span>Buyurtmani rasmiylashtirish</span>
+                <ArrowRight size={16} />
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

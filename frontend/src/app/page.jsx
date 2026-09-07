@@ -1,240 +1,748 @@
 'use client';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
+import dynamic from 'next/dynamic';
 import { 
-  Menu, Bell, Wallet, MapPin, Search, ChevronRight, 
-  Car, Utensils, Package, Smartphone, ShoppingBag, Grid, 
-  Zap, ShieldCheck, Headphones, Gift, ArrowUpRight, Sparkles, Navigation
+  Search, MapPin, Navigation, Car, Utensils, ShoppingBag, Package, 
+  Truck, ArrowRight, Clock, Star, Phone, MessageSquare, ShieldCheck, 
+  CheckCircle2, X, Wallet, CreditCard, Banknote, Sparkles, ChevronUp, 
+  ChevronDown, Flame, Award, HeartHandshake, AlertTriangle, RotateCcw
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
+// Dynamic Import for Leaflet Map Engine
+const YandexMap = dynamic(() => import('../components/YandexMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full min-h-[100dvh] bg-[#F6F7F9] dark:bg-[#121214] flex flex-col items-center justify-center text-[#121214] dark:text-white gap-3">
+      <div className="w-12 h-12 rounded-2xl bg-[#FCE000] text-[#121214] flex items-center justify-center font-black text-2xl shadow-lg animate-bounce">
+        Go
+      </div>
+      <span className="font-extrabold text-sm tracking-wide">Yandex Go Xaritasi yuklanmoqda...</span>
+    </div>
+  ),
+});
+
+// Popular Tashkent POIs
+const POPULAR_DESTINATIONS = [
+  { id: '1', name: 'Toshkent City Mall', address: 'Shayxontohur tumani, Botir Zokirov ko\'chasi', coords: { lat: 41.3145, lng: 69.2450 }, icon: '🏙️' },
+  { id: '2', name: 'Chorsu Bozori', address: 'Eski shahar, Beruniy ko\'chasi', coords: { lat: 41.3275, lng: 69.2355 }, icon: '🛍️' },
+  { id: '3', name: 'Islom Karimov Xalqaro Aeroporti', address: 'Yakkasaroy tumani, Qumariq ko\'chasi', coords: { lat: 41.2580, lng: 69.2810 }, icon: '✈️' },
+  { id: '4', name: 'Samarqand Darvoza Mall', address: 'Qoratosh ko\'chasi, 5A', coords: { lat: 41.3160, lng: 69.2280 }, icon: '🏢' },
+  { id: '5', name: 'Magic City Bog\'i', address: 'Bobur ko\'chasi, 174', coords: { lat: 41.3035, lng: 69.2510 }, icon: '🎡' },
+  { id: '6', name: 'Amir Temur Xiyoboni', address: 'Yunusobod tumani, Markaz', coords: { lat: 41.3115, lng: 69.2795 }, icon: '🏛️' },
+];
+
+// Yandex Go Tariffs
+const TARIFFS = [
+  {
+    id: 'start',
+    name: 'Start',
+    subtitle: 'Cobalt, Nexia 3',
+    price: 9000,
+    multiplier: 1.0,
+    eta: '2 daq',
+    icon: '🚕',
+    color: '#FCE000',
+    tag: 'Eng tejamkor',
+  },
+  {
+    id: 'comfort',
+    name: 'Comfort',
+    subtitle: 'Gentra, Lacetti',
+    price: 13500,
+    multiplier: 1.25,
+    eta: '3 daq',
+    icon: '🚖',
+    color: '#10B981',
+    tag: 'Mashhur',
+  },
+  {
+    id: 'comfort_plus',
+    name: 'Comfort+',
+    subtitle: 'Onix, Tracker 2',
+    price: 19500,
+    multiplier: 1.6,
+    eta: '4 daq',
+    icon: '⚡',
+    color: '#6366F1',
+    tag: 'Keng salon',
+  },
+  {
+    id: 'business',
+    name: 'Business',
+    subtitle: 'BYD Song Plus, Malibu 2',
+    price: 32000,
+    multiplier: 2.2,
+    eta: '5 daq',
+    icon: '👑',
+    color: '#181A20',
+    tag: 'Premium xizmat',
+  },
+  {
+    id: 'delivery',
+    name: 'Yetkazib berish',
+    subtitle: 'Kuryer eshikgacha',
+    price: 11000,
+    multiplier: 1.1,
+    eta: '4 daq',
+    icon: '📦',
+    color: '#F59E0B',
+    tag: 'Tezkor posilka',
+  },
+  {
+    id: 'cargo',
+    name: 'Yuk tashish',
+    subtitle: 'Labo, Damas, Porter',
+    price: 45000,
+    multiplier: 3.0,
+    eta: '8 daq',
+    icon: '🚛',
+    color: '#EC4899',
+    tag: 'Katta yuklar',
+  },
+];
+
 export default function HomePage() {
   const router = useRouter();
-  const { user } = useSelector((state) => state.auth || { user: null });
   const { t } = useLanguage();
-  const userName = user?.name || "Sarvarbek";
-  const [selectedLocation, setSelectedLocation] = useState("Termiz, Markaz");
 
-  const services = [
-    { 
-      id: 'taxi', 
-      title: 'Taksi', 
-      subtitle: 'Tez va qulay', 
-      badge: '3 min',
-      icon: <Car className="w-8 h-8 text-[#F59E0B]" />, 
-      bg: 'bg-amber-500/10 border-amber-500/20 hover:border-[#F59E0B]',
-      badgeBg: 'bg-[#F59E0B] text-black',
-      link: '/taxi' 
-    },
-    { 
-      id: 'food', 
-      title: 'Ovqat dastavka', 
-      subtitle: 'Issiq taomlar', 
-      badge: 'Top',
-      icon: <Utensils className="w-8 h-8 text-[#10B981]" />, 
-      bg: 'bg-emerald-500/10 border-emerald-500/20 hover:border-[#10B981]',
-      badgeBg: 'bg-[#10B981] text-white',
-      link: '/delivery' 
-    },
-    { 
-      id: 'courier', 
-      title: 'Kuryer', 
-      subtitle: 'Eshikgacha posilka', 
-      badge: 'Pochta',
-      icon: <Package className="w-8 h-8 text-[#06B6D4]" />, 
-      bg: 'bg-cyan-500/10 border-cyan-500/20 hover:border-[#06B6D4]',
-      badgeBg: 'bg-[#06B6D4] text-white',
-      link: '/delivery' 
-    },
-    { 
-      id: 'electronics', 
-      title: 'Elektronika', 
-      subtitle: 'Gadjet & Smartfon', 
-      badge: 'Chegirma',
-      icon: <Smartphone className="w-8 h-8 text-[#6366F1]" />, 
-      bg: 'bg-indigo-500/10 border-indigo-500/20 hover:border-[#6366F1]',
-      badgeBg: 'bg-[#6366F1] text-white',
-      link: '/market' 
-    },
-    { 
-      id: 'market', 
-      title: 'Market', 
-      subtitle: 'Kiyim & Xaridlar', 
-      badge: 'Brendlar',
-      icon: <ShoppingBag className="w-8 h-8 text-[#F43F5E]" />, 
-      bg: 'bg-rose-500/10 border-rose-500/20 hover:border-[#F43F5E]',
-      badgeBg: 'bg-[#F43F5E] text-white',
-      link: '/market' 
-    },
-    { 
-      id: 'all', 
-      title: 'Barchasi', 
-      subtitle: 'Barcha xizmatlar', 
-      badge: 'Xizmatlar',
-      icon: <Grid className="w-8 h-8 text-[#0F1015]" />, 
-      bg: 'bg-gray-500/10 border-gray-300 hover:border-[#0F1015]',
-      badgeBg: 'bg-[#0F1015] text-white',
-      link: '/market' 
-    },
-  ];
+  // Ride State Machine: 'idle' | 'choosing_tariff' | 'searching' | 'assigned' | 'in_trip' | 'completed'
+  const [rideState, setRideState] = useState('idle');
+  
+  // Location States
+  const [pickupLocation, setPickupLocation] = useState({
+    name: 'Mening joylashuvim (Toshkent markazi)',
+    coords: { lat: 41.2995, lng: 69.2401 },
+  });
+  const [destLocation, setDestLocation] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearchModal, setShowSearchModal] = useState(false);
+  const [showHeatmap, setShowHeatmap] = useState(false);
 
-  const quickBenefits = [
-    { title: 'Tez yetkazish', desc: '15-30 daqiqada', icon: <Zap className="w-5 h-5 text-[#F59E0B]" /> },
-    { title: 'Xavfsiz to‘lov', desc: 'Click, Payme, Naqd', icon: <ShieldCheck className="w-5 h-5 text-[#10B981]" /> },
-    { title: '24/7 yordam', desc: 'Doimiy qo‘llab-quvvatlash', icon: <Headphones className="w-5 h-5 text-[#06B6D4]" /> },
-    { title: 'Bonuslar', desc: 'Keshbek va sovg‘alar', icon: <Gift className="w-5 h-5 text-[#F43F5E]" /> },
-  ];
+  // Tariff & Options
+  const [selectedTariff, setSelectedTariff] = useState(TARIFFS[0]);
+  const [paymentMethod, setPaymentMethod] = useState('wallet'); // 'wallet' | 'cash' | 'card'
+  const [wishes, setWishes] = useState({
+    childSeat: false,
+    airConditioner: true,
+    quietDriver: false,
+  });
+
+  // Assigned Driver details
+  const [assignedDriver, setAssignedDriver] = useState(null);
+  const [tripProgress, setTripProgress] = useState(0);
+  const [userRating, setUserRating] = useState(5);
+  const [selectedTip, setSelectedTip] = useState(0);
+
+  // Active Service Tabs: 'taxi' | 'delivery' | 'eats' | 'market' | 'cargo' | 'intercity'
+  const [activeService, setActiveService] = useState('taxi');
+
+  // Handle Destination Select
+  const handleSelectDestination = (dest) => {
+    setDestLocation(dest);
+    setShowSearchModal(false);
+    setRideState('choosing_tariff');
+  };
+
+  // Start Order Flow
+  const handleStartOrder = () => {
+    setRideState('searching');
+
+    // Simulate finding a driver after 2.8 seconds
+    setTimeout(() => {
+      setAssignedDriver({
+        name: 'Jasur Aliyev',
+        rating: 4.96,
+        tripsCount: 1420,
+        photo: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+        carModel: 'Oq Chevrolet Cobalt',
+        licensePlate: '01 A 777 AA',
+        etaMinutes: 2,
+        phone: '+998 90 123 45 67',
+      });
+      setRideState('assigned');
+    }, 2800);
+  };
+
+  // Simulate Trip Start
+  const handleStartTripSimulation = () => {
+    setRideState('in_trip');
+    setTripProgress(0);
+  };
+
+  // Progress Tracker in Trip
+  useEffect(() => {
+    let interval;
+    if (rideState === 'in_trip') {
+      interval = setInterval(() => {
+        setTripProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setRideState('completed');
+            return 100;
+          }
+          return prev + 10;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [rideState]);
+
+  // Reset Order
+  const handleResetOrder = () => {
+    setRideState('idle');
+    setDestLocation(null);
+    setAssignedDriver(null);
+    setTripProgress(0);
+  };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] dark:bg-[#0F1015] text-[#111827] dark:text-[#F5F5F7] pb-28 font-sans overflow-x-hidden transition-colors">
-       {/* Main Container */}
-      <main className="max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-4 pt-6 space-y-6">
+    <div className="relative w-full h-[100dvh] overflow-hidden bg-[#F6F7F9] dark:bg-[#121214] font-sans">
+      
+      {/* 1. Full-Screen Interactive Map Engine */}
+      <div className="absolute inset-0 z-0">
+        <YandexMap
+          center={[pickupLocation.coords.lat, pickupLocation.coords.lng]}
+          pickupCoords={pickupLocation.coords}
+          destCoords={destLocation?.coords}
+          showHeatmap={showHeatmap}
+          assignedDriver={assignedDriver}
+          activeTariff={selectedTariff.id}
+          onSelectLocation={(loc) => {
+            if (!destLocation) {
+              setDestLocation(loc);
+              setRideState('choosing_tariff');
+            }
+          }}
+        />
+      </div>
 
-        {/* Location & Destination Search Field */}
-        <div className="bg-white dark:bg-[#181A20] rounded-3xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100/80 dark:border-gray-800 space-y-3">
-          
-          {/* Location Selector */}
-          <div className="flex items-center justify-between text-xs font-semibold text-gray-500 dark:text-gray-400 px-1">
-            <div className="flex items-center gap-1.5 text-[#0F1015] dark:text-white">
-              <Navigation size={14} className="text-[#F59E0B] fill-[#F59E0B]" />
-              <span className="font-extrabold text-sm">{selectedLocation}</span>
-            </div>
-            <span className="text-xs text-[#F59E0B] font-extrabold cursor-pointer hover:underline">O'zgartirish</span>
-          </div>
-
-          {/* Large Search Input */}
-          <div 
-            onClick={() => router.push('/taxi')}
-            className="bg-gray-50 dark:bg-gray-800/60 hover:bg-gray-100/80 dark:hover:bg-gray-800 border border-gray-200/70 dark:border-gray-700 hover:border-[#F59E0B] rounded-2xl p-4 flex items-center gap-3 cursor-pointer transition-all duration-200 apple-card-press group"
-          >
-            <Search size={22} className="text-gray-400 group-hover:text-[#F59E0B] transition-colors" />
-            <span className="text-gray-400 dark:text-gray-300 font-medium text-sm flex-1">Qayerga boramiz?</span>
-            <div className="bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1 shadow-md shadow-black/10">
-              Taksi <ChevronRight size={14} />
-            </div>
-          </div>
-
+      {/* 2. Top Floating Navigation & Capsules */}
+      <div className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between pointer-events-none">
+        
+        {/* Current Location Pill */}
+        <div className="pointer-events-auto bg-white/95 dark:bg-[#1C1C1E]/95 backdrop-blur-xl border border-gray-200/90 dark:border-gray-800 rounded-2xl px-3.5 py-2 shadow-[0_8px_24px_rgba(0,0,0,0.12)] flex items-center gap-2 max-w-[240px] sm:max-w-xs transition-all">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#2563EB] animate-pulse"></div>
+          <span className="text-xs font-black text-[#121214] dark:text-white truncate">
+            {pickupLocation.name}
+          </span>
         </div>
 
-        {/* 6 Main Service Bento Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
-          {services.map((srv) => (
-            <div 
-              key={srv.id}
-              onClick={() => router.push(srv.link)}
-              className={`bg-white dark:bg-[#181A20] rounded-3xl p-4 border border-gray-100 dark:border-gray-800 shadow-[0_8px_25px_rgba(0,0,0,0.03)] cursor-pointer transition-all duration-300 flex flex-col justify-between h-36 apple-card-press relative overflow-hidden group ${srv.bg}`}
-            >
-              <div className="flex justify-between items-start">
-                <div className="p-2.5 rounded-2xl bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 group-hover:scale-110 transition-transform">
-                  {srv.icon}
+        {/* Action Pills */}
+        <div className="pointer-events-auto flex items-center gap-2">
+          {/* Surge Heatmap Toggle */}
+          <button
+            onClick={() => setShowHeatmap(!showHeatmap)}
+            className={`px-3 py-2 rounded-2xl text-xs font-black flex items-center gap-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.12)] border transition-all ${
+              showHeatmap 
+                ? 'bg-[#FC3F1D] text-white border-[#FC3F1D]' 
+                : 'bg-white/95 dark:bg-[#1C1C1E]/95 text-[#121214] dark:text-white border-gray-200/90 dark:border-gray-800'
+            }`}
+            title="Yuqori talab zonalari (Surge Heatmap)"
+          >
+            <Flame size={15} className={showHeatmap ? 'text-white fill-white' : 'text-[#FC3F1D] fill-[#FC3F1D]'} />
+            <span className="hidden sm:inline">Talab zonalari</span>
+          </button>
+        </div>
+
+      </div>
+
+      {/* 3. Top Services Horizontal Bar (Taxi, Eats, Market, Courier, Cargo) */}
+      <div className="absolute top-16 left-3 right-3 z-20 overflow-x-auto hide-scrollbar pointer-events-none">
+        <div className="pointer-events-auto flex items-center gap-2 py-1">
+          
+          <button
+            onClick={() => { setActiveService('taxi'); }}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black shadow-[0_8px_20px_rgba(0,0,0,0.1)] border transition-all ${
+              activeService === 'taxi'
+                ? 'bg-[#FCE000] text-[#121214] border-black/10 scale-105'
+                : 'bg-white/95 dark:bg-[#1C1C1E]/95 text-gray-700 dark:text-gray-200 border-gray-200/80 dark:border-gray-800'
+            }`}
+          >
+            <Car size={16} /> Taksi
+          </button>
+
+          <button
+            onClick={() => router.push('/delivery')}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black bg-white/95 dark:bg-[#1C1C1E]/95 text-gray-700 dark:text-gray-200 border border-gray-200/80 dark:border-gray-800 shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:border-[#FCE000] transition-all"
+          >
+            <Utensils size={16} className="text-[#10B981]" /> Taomlar (Eats)
+          </button>
+
+          <button
+            onClick={() => router.push('/market')}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black bg-white/95 dark:bg-[#1C1C1E]/95 text-gray-700 dark:text-gray-200 border border-gray-200/80 dark:border-gray-800 shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:border-[#FCE000] transition-all"
+          >
+            <ShoppingBag size={16} className="text-[#6366F1]" /> Lavka (15 min)
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveService('delivery');
+              setSelectedTariff(TARIFFS[4]);
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black bg-white/95 dark:bg-[#1C1C1E]/95 text-gray-700 dark:text-gray-200 border border-gray-200/80 dark:border-gray-800 shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:border-[#FCE000] transition-all"
+          >
+            <Package size={16} className="text-[#F59E0B]" /> Kuryer
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveService('cargo');
+              setSelectedTariff(TARIFFS[5]);
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black bg-white/95 dark:bg-[#1C1C1E]/95 text-gray-700 dark:text-gray-200 border border-gray-200/80 dark:border-gray-800 shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:border-[#FCE000] transition-all"
+          >
+            <Truck size={16} className="text-[#EC4899]" /> Yuk (Cargo)
+          </button>
+
+        </div>
+      </div>
+
+      {/* 4. Sliding Interactive Yandex Bottom Sheet */}
+      <div className="absolute bottom-0 left-0 right-0 z-30 max-w-xl mx-auto px-3 pb-20 md:pb-6 pointer-events-none">
+        <div className="pointer-events-auto bg-white dark:bg-[#1C1C1E] border border-gray-200/90 dark:border-gray-800 rounded-3xl p-4 sm:p-5 shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all">
+
+          {/* Drag Handle Bar */}
+          <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3.5"></div>
+
+          {/* STATE 1: IDLE / Search Where to go */}
+          {rideState === 'idle' && (
+            <div className="space-y-4">
+              
+              {/* Big Search Input Trigger */}
+              <div 
+                onClick={() => setShowSearchModal(true)}
+                className="bg-gray-100 dark:bg-[#26262A] hover:bg-gray-200/70 dark:hover:bg-[#303036] border border-gray-200 dark:border-gray-700 rounded-2xl p-4 flex items-center gap-3.5 cursor-pointer transition-all apple-card-press group"
+              >
+                <div className="w-8 h-8 rounded-xl bg-[#FCE000] text-[#121214] flex items-center justify-center font-black">
+                  <Search size={18} />
                 </div>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm ${srv.badgeBg}`}>
-                  {srv.badge}
+                <div className="flex-1">
+                  <span className="text-gray-400 dark:text-gray-300 font-extrabold text-base block">
+                    Qayerga borasiz?
+                  </span>
+                  <span className="text-[11px] text-gray-500 font-medium">
+                    Toshkent City, Aeroport, Chorsu...
+                  </span>
+                </div>
+                <div className="bg-[#121214] dark:bg-white text-[#FCE000] dark:text-[#121214] px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 shadow-sm">
+                  Borish <ArrowRight size={13} />
+                </div>
+              </div>
+
+              {/* Popular Destinations Quick Chips */}
+              <div>
+                <span className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-2 px-1">
+                  Tezkor manzillar
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {POPULAR_DESTINATIONS.slice(0, 4).map((dest) => (
+                    <button
+                      key={dest.id}
+                      onClick={() => handleSelectDestination(dest)}
+                      className="bg-gray-50 dark:bg-[#26262A] hover:bg-gray-100 dark:hover:bg-[#303036] border border-gray-200/70 dark:border-gray-700/80 rounded-2xl p-2.5 text-left transition-all apple-card-press flex items-center gap-2"
+                    >
+                      <span className="text-lg">{dest.icon}</span>
+                      <div className="truncate">
+                        <span className="text-xs font-black text-[#121214] dark:text-white block truncate">
+                          {dest.name}
+                        </span>
+                        <span className="text-[10px] text-gray-500 truncate block">
+                          {dest.address}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* STATE 2: CHOOSING TARIFF & ROUTE OVERVIEW */}
+          {rideState === 'choosing_tariff' && destLocation && (
+            <div className="space-y-4">
+              
+              {/* Route Summary Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-[#FC3F1D] text-white flex items-center justify-center font-black text-xs shadow-sm">
+                    B
+                  </div>
+                  <div>
+                    <h4 className="font-black text-sm text-[#121214] dark:text-white">
+                      {destLocation.name}
+                    </h4>
+                    <span className="text-[11px] text-gray-500 font-semibold">
+                      Masofa: ~5.4 km • ~12 daqiqa
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={handleResetOrder}
+                  className="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:text-black dark:hover:text-white"
+                >
+                  <X size={15} />
+                </button>
+              </div>
+
+              {/* Horizontal Scrollable Tariffs */}
+              <div className="flex gap-2.5 overflow-x-auto pb-1 hide-scrollbar">
+                {TARIFFS.map((tariff) => {
+                  const isSelected = selectedTariff.id === tariff.id;
+                  return (
+                    <div
+                      key={tariff.id}
+                      onClick={() => setSelectedTariff(tariff)}
+                      className={`min-w-[130px] p-3 rounded-2xl border cursor-pointer transition-all apple-card-press flex flex-col justify-between ${
+                        isSelected
+                          ? 'bg-[#FCE000] border-black/20 text-[#121214] shadow-md scale-105'
+                          : 'bg-gray-50 dark:bg-[#26262A] border-gray-200/80 dark:border-gray-700/80 text-[#121214] dark:text-white'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <span className="text-2xl">{tariff.icon}</span>
+                        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md ${
+                          isSelected ? 'bg-black text-[#FCE000]' : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                        }`}>
+                          {tariff.eta}
+                        </span>
+                      </div>
+                      <div className="mt-3">
+                        <h5 className="font-black text-xs">{tariff.name}</h5>
+                        <span className="text-xs font-black block mt-0.5">
+                          {tariff.price.toLocaleString()} so'm
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Payment Method & Wishes Selector */}
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                
+                {/* Payment Selection */}
+                <div 
+                  onClick={() => {
+                    const methods = ['wallet', 'cash', 'card'];
+                    const nextIdx = (methods.indexOf(paymentMethod) + 1) % methods.length;
+                    setPaymentMethod(methods[nextIdx]);
+                  }}
+                  className="bg-gray-100 dark:bg-[#26262A] border border-gray-200 dark:border-gray-700 rounded-2xl p-2.5 flex items-center justify-between cursor-pointer apple-card-press"
+                >
+                  <div className="flex items-center gap-2">
+                    {paymentMethod === 'wallet' && <Wallet size={16} className="text-[#FCE000] fill-[#FCE000]" />}
+                    {paymentMethod === 'cash' && <Banknote size={16} className="text-[#10B981]" />}
+                    {paymentMethod === 'card' && <CreditCard size={16} className="text-[#6366F1]" />}
+                    <div>
+                      <span className="text-[10px] text-gray-500 font-bold block">To'lov turi</span>
+                      <span className="text-xs font-black text-[#121214] dark:text-white">
+                        {paymentMethod === 'wallet' ? 'UzGo Pay (+3% keshbek)' : paymentMethod === 'cash' ? 'Naqd pul' : 'Uzcard / Humo'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Wishes Pill */}
+                <div 
+                  onClick={() => setWishes({ ...wishes, quietDriver: !wishes.quietDriver })}
+                  className="bg-gray-100 dark:bg-[#26262A] border border-gray-200 dark:border-gray-700 rounded-2xl p-2.5 flex items-center justify-between cursor-pointer apple-card-press"
+                >
+                  <div className="flex items-center gap-2">
+                    <Sparkles size={16} className="text-[#F59E0B]" />
+                    <div>
+                      <span className="text-[10px] text-gray-500 font-bold block">Istaklar</span>
+                      <span className="text-xs font-black text-[#121214] dark:text-white">
+                        {wishes.quietDriver ? '🤫 Jimjit haydovchi' : '❄️ Konditsioner'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Big Yellow Order Button */}
+              <button
+                onClick={handleStartOrder}
+                className="w-full bg-[#FCE000] hover:bg-[#E5CB00] active:scale-[0.98] text-[#121214] py-4 rounded-2xl font-black text-base shadow-[0_10px_25px_rgba(252,224,0,0.35)] flex items-center justify-center gap-2 transition-all border border-black/10"
+              >
+                <span>{selectedTariff.name} buyurtma berish</span>
+                <span className="bg-[#121214] text-[#FCE000] px-2 py-0.5 rounded-lg text-xs font-black ml-1">
+                  {selectedTariff.price.toLocaleString()} so'm
+                </span>
+              </button>
+
+            </div>
+          )}
+
+          {/* STATE 3: SEARCHING FOR DRIVER (RADAR ANIMATION) */}
+          {rideState === 'searching' && (
+            <div className="text-center py-6 space-y-4">
+              <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full bg-[#FCE000]/30 animate-ping"></div>
+                <div className="w-16 h-16 rounded-full bg-[#FCE000] text-[#121214] flex items-center justify-center text-3xl shadow-lg font-black">
+                  🚕
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-[#121214] dark:text-white">
+                  Eng yaqin haydovchi qidirilmoqda...
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  {selectedTariff.name} tarifi bo'yicha eng yaqin avtomobil tanlanmoqda
+                </p>
+              </div>
+              <button
+                onClick={handleResetOrder}
+                className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-6 py-2.5 rounded-2xl text-xs font-extrabold hover:bg-red-50 hover:text-red-600 transition-colors"
+              >
+                Qidiruvni bekor qilish
+              </button>
+            </div>
+          )}
+
+          {/* STATE 4: DRIVER ASSIGNED & DRIVING TO USER */}
+          {rideState === 'assigned' && assignedDriver && (
+            <div className="space-y-4">
+              
+              {/* ETA & Status Banner */}
+              <div className="bg-[#FCE000] text-[#121214] p-3 rounded-2xl flex items-center justify-between shadow-sm">
+                <div className="flex items-center gap-2">
+                  <Clock size={18} />
+                  <span className="font-black text-sm">
+                    Haydovchi ~{assignedDriver.etaMinutes} daqiqada yetib keladi
+                  </span>
+                </div>
+                <span className="bg-black text-[#FCE000] text-[10px] font-black px-2 py-0.5 rounded-md">
+                  Yo'lda
                 </span>
               </div>
 
+              {/* Driver & Car Details */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={assignedDriver.photo}
+                    alt={assignedDriver.name}
+                    className="w-12 h-12 rounded-2xl object-cover border-2 border-[#FCE000] shadow-sm"
+                  />
+                  <div>
+                    <h4 className="font-black text-sm text-[#121214] dark:text-white flex items-center gap-1.5">
+                      {assignedDriver.name}
+                      <span className="text-[11px] font-bold text-amber-500 flex items-center">
+                        <Star size={12} className="fill-amber-500 mr-0.5" /> {assignedDriver.rating}
+                      </span>
+                    </h4>
+                    <span className="text-xs text-gray-500 font-medium block mt-0.5">
+                      {assignedDriver.carModel}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Car License Plate */}
+                <div className="bg-white dark:bg-[#26262A] border-2 border-[#121214] dark:border-white/80 rounded-xl px-2.5 py-1 text-center shadow-sm">
+                  <span className="font-black text-xs text-[#121214] dark:text-white tracking-wider">
+                    {assignedDriver.licensePlate}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons: Call, Chat & Start Trip */}
+              <div className="grid grid-cols-3 gap-2">
+                <a
+                  href={`tel:${assignedDriver.phone}`}
+                  className="bg-gray-100 dark:bg-[#26262A] hover:bg-gray-200 dark:hover:bg-[#303036] text-[#121214] dark:text-white p-3 rounded-2xl text-xs font-black flex items-center justify-center gap-1.5 apple-card-press"
+                >
+                  <Phone size={15} className="text-[#10B981]" /> Qo'ng'iroq
+                </a>
+                <button
+                  onClick={() => alert(`Haydovchi bilan xabar: ${assignedDriver.phone}`)}
+                  className="bg-gray-100 dark:bg-[#26262A] hover:bg-gray-200 dark:hover:bg-[#303036] text-[#121214] dark:text-white p-3 rounded-2xl text-xs font-black flex items-center justify-center gap-1.5 apple-card-press"
+                >
+                  <MessageSquare size={15} className="text-[#2563EB]" /> Xabar
+                </button>
+                <button
+                  onClick={handleStartTripSimulation}
+                  className="bg-[#121214] dark:bg-white text-[#FCE000] dark:text-[#121214] p-3 rounded-2xl text-xs font-black flex items-center justify-center gap-1 apple-card-press"
+                >
+                  Safar boshlash <ArrowRight size={13} />
+                </button>
+              </div>
+
+            </div>
+          )}
+
+          {/* STATE 5: IN TRIP SIMULATION */}
+          {rideState === 'in_trip' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-black text-emerald-500 uppercase tracking-wider block">
+                    Safardasiz • Tezlik 48 km/soat
+                  </span>
+                  <h4 className="font-black text-base text-[#121214] dark:text-white mt-0.5">
+                    {destLocation?.name} tomon ketilmoqda
+                  </h4>
+                </div>
+                <div className="bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 px-3 py-1 rounded-xl text-xs font-black">
+                  {tripProgress}%
+                </div>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="w-full h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-[#FCE000] transition-all duration-500 rounded-full"
+                  style={{ width: `${tripProgress}%` }}
+                ></div>
+              </div>
+
+              <div className="flex justify-between items-center text-xs font-bold text-gray-500">
+                <span>Qolgan vaqt: ~{Math.max(1, Math.round(12 * (1 - tripProgress / 100)))} daqiqa</span>
+                <button
+                  onClick={() => setRideState('completed')}
+                  className="text-xs text-[#FC3F1D] font-extrabold hover:underline"
+                >
+                  Safarni darhol yakunlash
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STATE 6: TRIP COMPLETED & RATING MODAL */}
+          {rideState === 'completed' && (
+            <div className="space-y-4 text-center py-2">
+              <div className="w-14 h-14 rounded-full bg-[#10B981]/20 text-[#10B981] flex items-center justify-center mx-auto">
+                <CheckCircle2 size={32} />
+              </div>
+
               <div>
-                <div className="flex items-center justify-between">
-                  <h3 className="font-extrabold text-sm md:text-base text-[#0F1015] dark:text-white group-hover:text-[#F59E0B] transition-colors">{srv.title}</h3>
-                  <ArrowUpRight size={16} className="text-gray-400 group-hover:text-[#F59E0B] transition-colors" />
-                </div>
-                <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-0.5 truncate">{srv.subtitle}</p>
+                <h3 className="text-lg font-black text-[#121214] dark:text-white">
+                  Safaringiz uchun rahmat!
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  Jami to'lov: <strong className="text-[#121214] dark:text-white font-black">{selectedTariff.price.toLocaleString()} so'm</strong> • 
+                  Keshbek: <strong className="text-[#10B981] font-black">+{Math.round(selectedTariff.price * 0.03)} so'm</strong>
+                </p>
               </div>
+
+              {/* 5-Star Rating */}
+              <div className="flex justify-center gap-2 py-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    onClick={() => setUserRating(star)}
+                    className="p-1 text-2xl transition-transform hover:scale-125"
+                  >
+                    <Star
+                      size={28}
+                      className={star <= userRating ? 'text-[#FCE000] fill-[#FCE000]' : 'text-gray-300 dark:text-gray-700'}
+                    />
+                  </button>
+                ))}
+              </div>
+
+              {/* Tips Selector */}
+              <div className="flex justify-center gap-2">
+                {[0, 2000, 5000, 10000].map((tip) => (
+                  <button
+                    key={tip}
+                    onClick={() => setSelectedTip(tip)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black border transition-all ${
+                      selectedTip === tip
+                        ? 'bg-[#FCE000] text-[#121214] border-black/10'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-transparent'
+                    }`}
+                  >
+                    {tip === 0 ? "Choychaqasiz" : `+${tip.toLocaleString()} so'm`}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={handleResetOrder}
+                className="w-full bg-[#121214] dark:bg-white text-[#FCE000] dark:text-[#121214] py-3.5 rounded-2xl font-black text-sm shadow-md flex items-center justify-center gap-2 apple-card-press"
+              >
+                <RotateCcw size={16} /> Yangi buyurtma
+              </button>
             </div>
-          ))}
+          )}
+
         </div>
+      </div>
 
-        {/* Promotional Cashback Banner */}
-        <div className="rounded-3xl p-5 bg-gradient-to-r from-[#0F1015] via-[#1C1E26] to-[#0F1015] text-white shadow-xl shadow-black/10 border border-gray-800 relative overflow-hidden group">
-          <div className="flex justify-between items-center relative z-10">
-            <div className="space-y-1 max-w-[70%]">
-              <div className="flex items-center gap-1.5 text-xs font-black text-[#F59E0B] uppercase tracking-wider">
-                <Sparkles size={14} className="animate-spin" />
-                <span>BUGUNGI KESHBЕK</span>
-              </div>
-              <h2 className="text-sm md:text-base font-extrabold text-white leading-tight">
-                Har bir buyurtmangizdan 10% keshbek oling!
-              </h2>
+      {/* 5. Destination Search Modal (Yandex Autocomplete Style) */}
+      {showSearchModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="w-full max-w-lg bg-white dark:bg-[#1C1C1E] rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
+            
+            <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
+              <h3 className="font-black text-base text-[#121214] dark:text-white flex items-center gap-2">
+                <Search size={18} className="text-[#FCE000]" /> Manzilni tanlang
+              </h3>
+              <button
+                onClick={() => setShowSearchModal(false)}
+                className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:text-black dark:hover:text-white"
+              >
+                <X size={18} />
+              </button>
             </div>
 
-            <div className="bg-[#F59E0B] text-[#0F1015] p-3 rounded-2xl flex flex-col items-center justify-center font-black text-center shadow-lg shadow-[#F59E0B]/20 group-hover:scale-105 transition-transform">
-              <span className="text-base font-black">+10%</span>
-              <span className="text-[9px] uppercase tracking-tighter">KESHBEK</span>
-            </div>
-          </div>
-
-          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#F59E0B]/10 rounded-full blur-2xl pointer-events-none" />
-        </div>
-
-        {/* Quick Benefits Section */}
-        <div className="space-y-3">
-          <h3 className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider px-1">Afzalliklarimiz</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {quickBenefits.map((item, idx) => (
-              <div key={idx} className="bg-white dark:bg-[#181A20] rounded-2xl p-3.5 border border-gray-100/80 dark:border-gray-800 shadow-sm flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
-                  {item.icon}
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-xs text-[#0F1015] dark:text-white">{item.title}</h4>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Quick Services List */}
-        <div className="space-y-3">
-          <div className="flex justify-between items-center px-1">
-            <h3 className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Tezkor xizmatlar</h3>
-            <span 
-              onClick={() => router.push('/market')}
-              className="text-xs font-extrabold text-[#F59E0B] cursor-pointer hover:underline"
-            >
-              Barchasi
-            </span>
-          </div>
-
-          <div className="bg-white dark:bg-[#181A20] rounded-3xl border border-gray-100/80 dark:border-gray-800 shadow-[0_8px_25px_rgba(0,0,0,0.03)] divide-y divide-gray-100 dark:divide-gray-800 overflow-hidden">
-            <div 
-              onClick={() => router.push('/taxi')}
-              className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 flex items-center justify-between cursor-pointer transition-colors group"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-xl">
-                  🚕
-                </div>
-                <div>
-                  <h4 className="font-black text-sm text-[#0F1015] dark:text-white group-hover:text-[#F59E0B] transition-colors">Termiz markaziga taksi</h4>
-                  <p className="text-xs text-gray-400 font-medium mt-0.5">Taxminan 12,000 so'm • 3 daqiqa</p>
-                </div>
-              </div>
-              <ChevronRight size={18} className="text-gray-300 dark:text-gray-600 group-hover:text-[#F59E0B] transition-colors" />
+            {/* Live Search Input */}
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Ko'cha, bino yoki joy nomi..."
+                autoFocus
+                className="w-full bg-gray-100 dark:bg-[#26262A] text-[#121214] dark:text-white px-4 py-3.5 rounded-2xl text-sm font-bold border border-transparent focus:border-[#FCE000] outline-none"
+              />
             </div>
 
-            <div 
-              onClick={() => router.push('/delivery')}
-              className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 flex items-center justify-between cursor-pointer transition-colors group"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xl">
-                  🥟
-                </div>
-                <div>
-                  <h4 className="font-black text-sm text-[#0F1015] dark:text-white group-hover:text-[#F59E0B] transition-colors">Surxon Somsa va Fast Food</h4>
-                  <p className="text-xs text-gray-400 font-medium mt-0.5">Yetkazish 15 daqiqada • 5,000 so'm</p>
-                </div>
-              </div>
-              <ChevronRight size={18} className="text-gray-300 dark:text-gray-600 group-hover:text-[#F59E0B] transition-colors" />
+            {/* List of Results / Popular Places */}
+            <div className="space-y-2">
+              <span className="text-[11px] font-black text-gray-400 uppercase tracking-wider block px-1">
+                Tavsiya etilgan joylar (Toshkent)
+              </span>
+
+              {POPULAR_DESTINATIONS
+                .filter(d => !searchQuery || d.name.toLowerCase().includes(searchQuery.toLowerCase()) || d.address.toLowerCase().includes(searchQuery.toLowerCase()))
+                .map((dest) => (
+                  <div
+                    key={dest.id}
+                    onClick={() => handleSelectDestination(dest)}
+                    className="flex items-center gap-3.5 p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-[#26262A] cursor-pointer transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+                  >
+                    <div className="w-10 h-10 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xl">
+                      {dest.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-black text-sm text-[#121214] dark:text-white truncate">
+                        {dest.name}
+                      </h4>
+                      <p className="text-xs text-gray-500 truncate">
+                        {dest.address}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs font-black text-emerald-500 block">
+                        9,000 so'mdan
+                      </span>
+                      <span className="text-[10px] text-gray-400">~12 daq</span>
+                    </div>
+                  </div>
+                ))}
             </div>
+
           </div>
         </div>
+      )}
 
-      </main>
     </div>
   );
 }

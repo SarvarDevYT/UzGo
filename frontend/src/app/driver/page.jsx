@@ -1,166 +1,353 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Car, Navigation, Phone, DollarSign, Check, X, Shield, MapPin, BellRing, Compass, Layers, User } from 'lucide-react';
-import YandexMap from '../../components/YandexMap';
+import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import { 
+  Car, Navigation, Phone, DollarSign, Check, X, Shield, MapPin, 
+  BellRing, Compass, Layers, User, Star, Zap, Flame, Award, 
+  ArrowRight, Clock, AlertTriangle, CheckCircle2
+} from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
+
+const YandexMap = dynamic(() => import('../../components/YandexMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full min-h-[400px] bg-[#121214] flex items-center justify-center text-white text-xs font-bold gap-2">
+      <div className="w-8 h-8 rounded-xl bg-[#FCE000] text-[#121214] flex items-center justify-center font-black animate-pulse">
+        Pro
+      </div>
+      <span>Yandex Pro Xaritasi yuklanmoqda...</span>
+    </div>
+  ),
+});
 
 const MOCK_INCOMING_ORDERS = [
-  { id: 'ORD-771', type: 'taxi', tariff: 'Ekonom', price: 12000, from: 'Termiz Markaz (Al-Hakim at-Tirmiziy)', to: 'TerDU Campus', distance: '3.2 km', client: 'Jamshidbek' },
-  { id: 'ORD-772', type: 'delivery', store: 'Termiz Fast Food', price: 18000, from: 'Navoiy ko\'chasi, 12', to: 'Indorama MFY', distance: '4.8 km', client: 'Dilnoza' },
+  {
+    id: 'ORD-901',
+    tariff: 'Comfort',
+    client: 'Alisher Qodirov',
+    clientRating: 4.92,
+    price: 28500,
+    surgeBonus: '+4,000 so\'m',
+    from: 'Toshkent City Mall (Asosiy kirish)',
+    to: 'Islom Karimov Xalqaro Aeroporti (Terminal 2)',
+    distanceToClient: '1.2 km (3 daqiqa)',
+    tripDistance: '8.4 km (18 daqiqa)',
+    fromCoords: { lat: 41.3145, lng: 69.2450 },
+    toCoords: { lat: 41.2580, lng: 69.2810 },
+  },
+  {
+    id: 'ORD-902',
+    tariff: 'Start',
+    client: 'Malika Karimova',
+    clientRating: 4.88,
+    price: 16000,
+    surgeBonus: '+2,000 so\'m',
+    from: 'Chorsu Bozori',
+    to: 'Samarqand Darvoza',
+    distanceToClient: '0.8 km (2 daqiqa)',
+    tripDistance: '3.6 km (8 daqiqa)',
+    fromCoords: { lat: 41.3275, lng: 69.2355 },
+    toCoords: { lat: 41.3160, lng: 69.2280 },
+  },
 ];
 
 export default function DriverModePage() {
-  const [isOnline, setIsOnline] = useState(true);
-  const [activeOrder, setActiveOrder] = useState(null);
-  const [incomingOrders, setIncomingOrders] = useState(MOCK_INCOMING_ORDERS);
-  const [todayEarnings, setTodayEarnings] = useState(145000);
-  const [completedRides, setCompletedRides] = useState(8);
+  const { t } = useLanguage();
 
-  const handleAcceptOrder = (order) => {
-    setActiveOrder({ ...order, status: 'accepted' });
-    setIncomingOrders(prev => prev.filter(o => o.id !== order.id));
+  const [isOnline, setIsOnline] = useState(true);
+  const [showHeatmap, setShowHeatmap] = useState(true);
+  const [todayEarnings, setTodayEarnings] = useState(385000);
+  const [completedRides, setCompletedRides] = useState(14);
+  const [driverActivity, setDriverActivity] = useState(99);
+
+  // Active Order State: null | { ...order, stage: 'to_client' | 'arrived' | 'in_trip' | 'completed' }
+  const [activeOrder, setActiveOrder] = useState(null);
+  const [incomingOrder, setIncomingOrder] = useState(MOCK_INCOMING_ORDERS[0]);
+  const [countdown, setCountdown] = useState(15);
+
+  // Incoming Order 15s Countdown Timer
+  useEffect(() => {
+    let timer;
+    if (isOnline && incomingOrder && !activeOrder) {
+      timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            setIncomingOrder(null);
+            return 15;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isOnline, incomingOrder, activeOrder]);
+
+  const handleAcceptOrder = () => {
+    setActiveOrder({ ...incomingOrder, stage: 'to_client' });
+    setIncomingOrder(null);
   };
 
-  const handleCompleteOrder = () => {
+  const handleDeclineOrder = () => {
+    setIncomingOrder(null);
+    setDriverActivity((prev) => Math.max(80, prev - 2));
+  };
+
+  const handleNextStage = () => {
     if (!activeOrder) return;
-    setTodayEarnings(prev => prev + activeOrder.price);
-    setCompletedRides(prev => prev + 1);
-    setActiveOrder(null);
-    alert("Safar muvaffaqiyatli yakunlandi! 💰 Balansingizga " + activeOrder.price.toLocaleString('ru-RU') + " so'm qo'shildi.");
+    if (activeOrder.stage === 'to_client') {
+      setActiveOrder({ ...activeOrder, stage: 'arrived' });
+    } else if (activeOrder.stage === 'arrived') {
+      setActiveOrder({ ...activeOrder, stage: 'in_trip' });
+    } else if (activeOrder.stage === 'in_trip') {
+      setTodayEarnings((prev) => prev + activeOrder.price);
+      setCompletedRides((prev) => prev + 1);
+      setActiveOrder({ ...activeOrder, stage: 'completed' });
+    } else if (activeOrder.stage === 'completed') {
+      setActiveOrder(null);
+      // Bring another order after 4 seconds
+      setTimeout(() => {
+        setIncomingOrder(MOCK_INCOMING_ORDERS[1]);
+        setCountdown(15);
+      }, 4000);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] dark:bg-[#0F1015] text-[#111827] dark:text-[#F5F5F7] pb-28 font-sans transition-colors">
+    <div className="min-h-screen bg-[#F6F7F9] dark:bg-[#121214] text-[#121214] dark:text-[#F5F5F7] pb-28 font-sans transition-colors">
       
-      {/* Page Header */}
-      <div className="bg-white dark:bg-[#181A20] border-b border-gray-100 dark:border-gray-800 p-4 shadow-sm">
-        <div className="max-w-md md:max-w-4xl lg:max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      {/* Top Pro Header Bar */}
+      <div className="bg-white dark:bg-[#1C1C1E] border-b border-gray-200/80 dark:border-gray-800 p-4 sticky top-16 z-30 shadow-sm backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          
+          {/* Driver Status Switch */}
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={() => setIsOnline(!isOnline)}
-              className={`w-12 h-6 rounded-full transition-colors relative flex items-center p-1 cursor-pointer apple-card-press ${
-                isOnline ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-700'
+              className={`w-14 h-8 rounded-full transition-all relative flex items-center p-1 cursor-pointer apple-card-press ${
+                isOnline ? 'bg-[#10B981]' : 'bg-gray-300 dark:bg-gray-700'
               }`}
             >
-              <div className={`w-4 h-4 rounded-full bg-white transition-transform ${
-                isOnline ? 'translate-x-6' : 'translate-x-0'
+              <div className={`w-6 h-6 rounded-full bg-white transition-transform ${
+                isOnline ? 'translate-x-6 shadow-md' : 'translate-x-0'
               }`} />
             </button>
             <div>
-              <div className="text-sm font-black text-[#0F1015] dark:text-white">{isOnline ? '● Navbatchilikda (Onlayn)' : '○ Dam olishda'}</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">Haydovchi: Otabek Tursunov (75 A 777 AA)</div>
+              <div className="text-sm font-black text-[#121214] dark:text-white flex items-center gap-2">
+                <span className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-[#10B981] animate-pulse' : 'bg-gray-400'}`}></span>
+                {isOnline ? 'Liniyada (Onlayn)' : 'Band (Oflayn)'}
+              </div>
+              <span className="text-xs text-gray-500 font-bold">
+                Haydovchi: Jasur Aliyev (01 A 777 AA)
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 bg-gray-50 dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700 px-4 py-2 rounded-2xl">
+          {/* Daily Performance Bar */}
+          <div className="flex items-center gap-3 bg-gray-100 dark:bg-[#26262A] border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-2xl">
             <div>
-              <div className="text-[10px] text-gray-400 font-bold uppercase">Bugungi Ish:</div>
-              <div className="text-sm font-black text-[#0F1015] dark:text-white">{todayEarnings.toLocaleString('ru-RU')} so'm <span className="text-xs text-emerald-600 font-extrabold">({completedRides} ta safar)</span></div>
+              <span className="text-[10px] text-gray-400 font-black uppercase block">Bugungi daromad</span>
+              <span className="text-sm font-black text-[#121214] dark:text-white">
+                {todayEarnings.toLocaleString()} so'm
+              </span>
+            </div>
+            <div className="h-6 w-[1px] bg-gray-300 dark:bg-gray-700"></div>
+            <div>
+              <span className="text-[10px] text-gray-400 font-black uppercase block">Safarlar</span>
+              <span className="text-sm font-black text-[#10B981]">
+                {completedRides} ta
+              </span>
+            </div>
+            <div className="h-6 w-[1px] bg-gray-300 dark:bg-gray-700"></div>
+            <div>
+              <span className="text-[10px] text-gray-400 font-black uppercase block">Faollik</span>
+              <span className="text-sm font-black text-[#FCE000]">
+                {driverActivity} ball
+              </span>
             </div>
           </div>
+
         </div>
       </div>
 
-      {/* Main Layout Container (Desktop 2-column / Mobile 1-column) */}
-      <div className="max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-4 pt-6 grid grid-cols-1 md:grid-cols-12 gap-6">
+      {/* Main Workspace (Grid on Desktop, Stack on Mobile) */}
+      <div className="max-w-6xl mx-auto px-4 pt-6 grid grid-cols-1 md:grid-cols-12 gap-6">
         
-        {/* Orders / Control Side Panel (5 cols on Desktop) */}
+        {/* Left Side: Orders & HUD Action Panel (5 cols) */}
         <div className="md:col-span-5 space-y-4">
-          {activeOrder ? (
-            /* Active Ride Panel */
-            <div className="bg-white dark:bg-[#181A20] border border-gray-200/80 dark:border-gray-800 rounded-3xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] space-y-4 animate-slide-up">
-              <div className="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
+          
+          {/* Heatmap Toggle Button */}
+          <button
+            onClick={() => setShowHeatmap(!showHeatmap)}
+            className={`w-full p-3 rounded-2xl border text-xs font-black flex items-center justify-between shadow-sm transition-all ${
+              showHeatmap 
+                ? 'bg-[#FC3F1D]/15 text-[#FC3F1D] border-[#FC3F1D]/40' 
+                : 'bg-white dark:bg-[#1C1C1E] text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Flame size={16} className="text-[#FC3F1D] fill-[#FC3F1D]" />
+              <span>Yuqori talab issiqlik xaritasi (Surge Heatmap)</span>
+            </div>
+            <span className="text-[10px] font-black">{showHeatmap ? 'Yoqilgan' : 'O\'chirilgan'}</span>
+          </button>
+
+          {/* ACTIVE RIDE HUD PANEL */}
+          {activeOrder && (
+            <div className="bg-white dark:bg-[#1C1C1E] border-2 border-[#FCE000] rounded-3xl p-5 shadow-xl space-y-4">
+              <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
                 <div>
-                  <span className="text-[10px] bg-amber-500/10 text-[#D97706] border border-amber-500/20 px-2.5 py-0.5 rounded-full font-black uppercase">
-                    {activeOrder.tariff || 'Taksi'} Safar jarayonda
+                  <span className="bg-[#FCE000] text-[#121214] text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">
+                    {activeOrder.tariff} • Faol Safar
                   </span>
-                  <h3 className="text-sm font-black text-[#0F1015] dark:text-white mt-1">Mijoz: {activeOrder.client}</h3>
+                  <h4 className="font-black text-sm text-[#121214] dark:text-white mt-1">
+                    Mijoz: {activeOrder.client} (⭐ {activeOrder.clientRating})
+                  </h4>
                 </div>
-                <a href="tel:+998912345678" className="bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] p-2.5 rounded-2xl font-black flex items-center gap-1 text-xs shadow-sm apple-card-press">
-                  <Phone size={15} /> Qo'ng'iroq
+                <a
+                  href="tel:+998901234567"
+                  className="w-10 h-10 rounded-2xl bg-[#10B981] text-white flex items-center justify-center shadow-md apple-card-press"
+                >
+                  <Phone size={18} />
                 </a>
               </div>
 
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-medium">
-                  <MapPin size={16} className="text-emerald-500 shrink-0" />
-                  <span className="truncate"><b>Qayerdan:</b> {activeOrder.from}</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-medium">
-                  <Navigation size={16} className="text-[#F59E0B] shrink-0" />
-                  <span className="truncate"><b>Qayerga:</b> {activeOrder.to}</span>
+              {/* Navigation HUD instruction */}
+              <div className="bg-[#121214] text-white p-3.5 rounded-2xl flex items-center gap-3">
+                <Navigation size={22} className="text-[#FCE000] shrink-0" />
+                <div className="text-xs">
+                  <span className="text-[#FCE000] font-black block">150 metrdan keyin o'ngga buriling</span>
+                  <span className="text-gray-400">
+                    {activeOrder.stage === 'to_client' ? activeOrder.from : activeOrder.to}
+                  </span>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-800 p-3.5 rounded-2xl border border-gray-200 dark:border-gray-700">
-                <span className="text-xs text-gray-500 dark:text-gray-400 font-semibold">Safardan narx:</span>
-                <span className="text-lg font-black text-[#0F1015] dark:text-white">{activeOrder.price.toLocaleString('ru-RU')} so'm</span>
+              {/* Route Summary */}
+              <div className="space-y-1.5 text-xs font-semibold">
+                <div className="text-gray-600 dark:text-gray-300 truncate">
+                  🟢 <b>Qayerdan:</b> {activeOrder.from}
+                </div>
+                <div className="text-gray-600 dark:text-gray-300 truncate">
+                  🔴 <b>Qayerga:</b> {activeOrder.to}
+                </div>
               </div>
 
-              <button 
-                onClick={handleCompleteOrder}
-                className="w-full py-4 rounded-3xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-sm shadow-md flex items-center justify-center gap-2 apple-card-press"
+              {/* Price */}
+              <div className="flex justify-between items-center bg-gray-100 dark:bg-[#26262A] p-3 rounded-2xl">
+                <span className="text-xs font-bold text-gray-500">Kafolatlangan daromad:</span>
+                <span className="text-base font-black text-[#121214] dark:text-white">
+                  {activeOrder.price.toLocaleString()} so'm
+                </span>
+              </div>
+
+              {/* Stage Action Button */}
+              <button
+                onClick={handleNextStage}
+                className="w-full bg-[#FCE000] hover:bg-[#E5CB00] text-[#121214] py-4 rounded-2xl font-black text-sm shadow-md apple-card-press flex items-center justify-center gap-2"
               >
-                <Check size={18} /> Safarni Muvaffaqiyatli Yakunlash
+                {activeOrder.stage === 'to_client' && 'Mijoz oldiga yetib keldim'}
+                {activeOrder.stage === 'arrived' && 'Safarni boshlash'}
+                {activeOrder.stage === 'in_trip' && 'Safarni yakunlash (Kassa)'}
+                {activeOrder.stage === 'completed' && 'Keyingi buyurtmaga o\'tish ✓'}
               </button>
             </div>
-          ) : (
-            /* Incoming Radar List */
-            <div className="space-y-3">
-              <h3 className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider flex items-center gap-1.5 bg-white dark:bg-[#181A20] p-3 rounded-2xl border border-gray-200/80 dark:border-gray-800 shadow-sm">
-                <BellRing className="text-[#F59E0B] animate-bounce" size={16} />
-                Termiz bo'yicha kiruvchi buyurtmalar ({incomingOrders.length} ta)
-              </h3>
+          )}
 
-              {incomingOrders.map((ord) => (
-                <div key={ord.id} className="bg-white dark:bg-[#181A20] border border-gray-200/80 dark:border-gray-800 hover:border-[#F59E0B] rounded-3xl p-4 shadow-[0_8px_25px_rgba(0,0,0,0.03)] space-y-3 apple-card-press">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl">{ord.type === 'taxi' ? '🚕' : '📦'}</span>
-                      <div>
-                        <div className="font-black text-sm text-[#0F1015] dark:text-white">{ord.tariff || ord.store}</div>
-                        <div className="text-[10px] text-gray-400 font-semibold">Masofa: {ord.distance} • Mijoz: {ord.client}</div>
-                      </div>
-                    </div>
-                    <div className="text-base font-black text-[#0F1015] dark:text-white">{ord.price.toLocaleString('ru-RU')} so'm</div>
+          {/* INCOMING ORDER MODAL (15s RADAR) */}
+          {!activeOrder && isOnline && incomingOrder && (
+            <div className="bg-white dark:bg-[#1C1C1E] border-2 border-[#FC3F1D] rounded-3xl p-5 shadow-2xl space-y-4 animate-bounce-short">
+              
+              {/* Header with Circular Countdown */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#FC3F1D] text-white flex items-center justify-center font-black animate-pulse">
+                    🔥
                   </div>
-
-                  <div className="text-xs text-gray-600 dark:text-gray-300 space-y-1 font-medium bg-gray-50 dark:bg-gray-800/80 p-2.5 rounded-2xl border border-gray-100 dark:border-gray-700">
-                    <div className="truncate">🟢 <b>Dan:</b> {ord.from}</div>
-                    <div className="truncate">🔴 <b>Ga:</b> {ord.to}</div>
-                  </div>
-
-                  <div className="flex gap-2 pt-1">
-                    <button 
-                      onClick={() => setIncomingOrders(prev => prev.filter(o => o.id !== ord.id))}
-                      className="flex-1 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 font-bold py-2.5 rounded-2xl text-xs hover:bg-gray-200 dark:hover:bg-gray-700"
-                    >
-                      Rad etish
-                    </button>
-                    <button 
-                      onClick={() => handleAcceptOrder(ord)}
-                      className="flex-1 bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] font-black py-2.5 rounded-2xl text-xs shadow-md hover:bg-[#1C1E26]"
-                    >
-                      Qabul qilish ✓
-                    </button>
+                  <div>
+                    <h4 className="font-black text-sm text-[#121214] dark:text-white">
+                      Yangi Buyurtma ({incomingOrder.tariff})
+                    </h4>
+                    <span className="text-[10px] text-[#FC3F1D] font-black">
+                      {incomingOrder.surgeBonus} talab bonusi
+                    </span>
                   </div>
                 </div>
-              ))}
+
+                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/40 text-[#FC3F1D] flex items-center justify-center font-black text-sm border-2 border-[#FC3F1D]">
+                  {countdown}s
+                </div>
+              </div>
+
+              {/* Payout & Distance */}
+              <div className="bg-gray-100 dark:bg-[#26262A] p-3.5 rounded-2xl flex justify-between items-center">
+                <div>
+                  <span className="text-[10px] text-gray-500 font-bold block">Sizgacha masofa</span>
+                  <span className="text-xs font-black text-[#121214] dark:text-white">
+                    {incomingOrder.distanceToClient}
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[10px] text-gray-500 font-bold block">Tushum</span>
+                  <span className="text-lg font-black text-[#10B981]">
+                    {incomingOrder.price.toLocaleString()} so'm
+                  </span>
+                </div>
+              </div>
+
+              {/* Route */}
+              <div className="text-xs space-y-1 bg-gray-50 dark:bg-[#26262A]/60 p-3 rounded-2xl border border-gray-200/80 dark:border-gray-700/80">
+                <div className="truncate">🟢 {incomingOrder.from}</div>
+                <div className="truncate">🔴 {incomingOrder.to}</div>
+              </div>
+
+              {/* Accept & Decline Buttons */}
+              <div className="flex gap-2 pt-1">
+                <button
+                  onClick={handleDeclineOrder}
+                  className="flex-1 bg-gray-100 dark:bg-[#26262A] text-gray-600 dark:text-gray-300 py-3 rounded-2xl text-xs font-black hover:bg-red-50 hover:text-red-600 transition-colors"
+                >
+                  O'tkazish
+                </button>
+                <button
+                  onClick={handleAcceptOrder}
+                  className="flex-1 bg-[#10B981] hover:bg-[#059669] text-white py-3 rounded-2xl text-xs font-black shadow-lg apple-card-press flex items-center justify-center gap-1"
+                >
+                  Qabul qilish ✓
+                </button>
+              </div>
+
             </div>
           )}
+
+          {/* Offline Notice */}
+          {!isOnline && (
+            <div className="bg-white dark:bg-[#1C1C1E] border border-gray-200/80 dark:border-gray-800 rounded-3xl p-6 text-center space-y-2">
+              <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-400 flex items-center justify-center mx-auto">
+                <Clock size={24} />
+              </div>
+              <h4 className="font-black text-sm text-[#121214] dark:text-white">
+                Siz hozir dam olishdasiz
+              </h4>
+              <p className="text-xs text-gray-500">
+                Buyurtmalarni qabul qilish uchun yuqoridagi tugmani "Onlayn" holatiga o'tkazing.
+              </p>
+            </div>
+          )}
+
         </div>
 
-        {/* Live Map Panel (7 cols on Desktop) */}
-        <div className="md:col-span-7 h-[420px] md:h-[600px] rounded-3xl overflow-hidden border border-gray-200/80 dark:border-gray-800 shadow-[0_8px_30px_rgba(0,0,0,0.04)] relative">
-          <YandexMap 
-            fromAddress={activeOrder ? activeOrder.from : 'Termiz Markaz'} 
-            toAddress={activeOrder ? activeOrder.to : 'TerDU Campus'} 
+        {/* Right Side: Interactive Leaflet Map for Drivers (7 cols) */}
+        <div className="md:col-span-7 h-[460px] md:h-[620px] rounded-3xl overflow-hidden border border-gray-200/80 dark:border-gray-800 shadow-sm relative">
+          <YandexMap
+            pickupCoords={activeOrder ? activeOrder.fromCoords : incomingOrder?.fromCoords}
+            destCoords={activeOrder ? activeOrder.toCoords : incomingOrder?.toCoords}
+            showHeatmap={showHeatmap}
           />
         </div>
 
       </div>
+
     </div>
   );
-
 }
-

@@ -5,23 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
-  Settings, 
-  CreditCard, 
-  Package, 
-  LogOut, 
-  ChevronRight, 
-  Camera, 
-  X,
-  Edit2,
-  Wallet,
-  Globe,
-  Shield,
-  Car,
-  Check,
-  Sparkles,
-  Phone,
-  Sun,
-  Moon
+  Settings, CreditCard, Package, LogOut, ChevronRight, Camera, 
+  X, Edit2, Wallet, Globe, Shield, Car, Check, Sparkles, Phone, 
+  Sun, Moon, Headphones, ArrowLeft, HeartHandshake, ShieldAlert, Award
 } from 'lucide-react';
 import { logout } from '../../store/authSlice';
 import { useLanguage } from '../../context/LanguageContext';
@@ -34,21 +20,19 @@ export default function ProfilePage() {
   const { lang, toggleLanguage, t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
   const reduxUser = useSelector((state) => state.auth?.user);
-  const { walletBalance, cashbackBalance } = useWallet() || { walletBalance: 150000, cashbackBalance: 25000 };
+  const { walletBalance = 85000, cashbackBalance = 14500 } = useWallet() || {};
 
   const [user, setUser] = useState({
-    name: reduxUser?.name || 'Sarvarbek (Termiz)',
+    name: reduxUser?.name || 'Sarvarbek',
     phone: reduxUser?.phone || '+998 90 123 45 67',
+    rating: 4.98,
+    tripsCount: 42,
     role: reduxUser?.role || 'user'
   });
   
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editName, setEditName] = useState(user.name);
   const [editPhone, setEditPhone] = useState(user.phone);
-
-  const getInitial = (name) => {
-    return name ? name.charAt(0).toUpperCase() : 'U';
-  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -60,193 +44,214 @@ export default function ProfilePage() {
   const handleSaveProfile = () => {
     setUser({ ...user, name: editName, phone: editPhone });
     setIsEditModalOpen(false);
-    alert("Profil sozlamalari saqlandi! ✨");
+    alert("Profil sozlamalari muvaffaqiyatli saqlandi! ✨");
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] dark:bg-[#0F1015] text-[#111827] dark:text-[#F5F5F7] pb-28 font-sans transition-colors">
-      {/* Header Profile Section */}
-      <div className="bg-white dark:bg-[#181A20] border-b border-gray-100 dark:border-gray-800 pt-10 pb-8 px-4 relative overflow-hidden shadow-sm">
-        <div className="max-w-md mx-auto relative z-10 flex flex-col items-center">
-          <div className="relative group">
-            <div className="w-24 h-24 rounded-3xl bg-[#0F1015] dark:bg-white text-[#F59E0B] dark:text-[#0F1015] flex items-center justify-center shadow-xl border-4 border-white dark:border-gray-800">
-              <span className="text-4xl font-black">
-                {getInitial(user.name)}
-              </span>
-            </div>
-            <button className="absolute -bottom-1 -right-1 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-700 dark:text-gray-200 hover:text-[#F59E0B] transition-colors shadow-sm apple-card-press">
-              <Camera className="w-4 h-4" />
-            </button>
-          </div>
-          
-          <div className="mt-4 text-center flex items-center gap-2">
-            <h1 className="text-2xl font-black text-[#0F1015] dark:text-white">{user.name}</h1>
-            <button 
-              onClick={() => setIsEditModalOpen(true)}
-              className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-[#F59E0B] rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-colors apple-card-press"
-            >
-              <Edit2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
-          
-          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1 mt-1">
-            <Phone className="w-3 h-3 text-[#F59E0B]" /> {user.phone}
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#F6F7F9] dark:bg-[#121214] text-[#121214] dark:text-[#F5F5F7] pb-32 font-sans transition-colors">
+      
+      {/* Top Header */}
+      <div className="max-w-md mx-auto px-4 pt-6 flex justify-between items-center">
+        <button
+          onClick={() => router.push('/')}
+          className="bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-gray-800 p-2.5 rounded-2xl text-xs font-black flex items-center gap-1.5 shadow-sm apple-card-press"
+        >
+          <ArrowLeft size={16} /> Bosh sahifa
+        </button>
+
+        <h1 className="text-base font-black text-[#121214] dark:text-white">
+          Foydalanuvchi Profili
+        </h1>
+
+        <button
+          onClick={() => setIsEditModalOpen(true)}
+          className="p-2.5 text-gray-500 dark:text-gray-400 hover:text-[#121214] dark:hover:text-white rounded-2xl bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-gray-800 shadow-sm apple-card-press"
+        >
+          <Edit2 size={16} />
+        </button>
       </div>
 
-      <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
-        {/* Wallet & Balance Overview Card */}
-        <div className="bg-gradient-to-br from-[#0F1015] via-[#1C1E26] to-[#0F1015] text-white rounded-3xl p-5 shadow-xl border border-gray-800 relative overflow-hidden space-y-4">
-          <div className="flex justify-between items-center relative z-10">
-            <div className="flex items-center gap-2 text-xs font-black text-[#F59E0B]">
-              <Wallet className="w-4 h-4" />
-              <span>UzGo Hamyon</span>
+      <main className="max-w-md mx-auto px-4 pt-5 space-y-4">
+        
+        {/* User Card */}
+        <div className="bg-white dark:bg-[#1C1C1E] border border-gray-200/80 dark:border-gray-800 rounded-3xl p-6 shadow-sm flex items-center gap-4">
+          <div className="relative">
+            <div className="w-16 h-16 rounded-3xl bg-[#FCE000] text-[#121214] flex items-center justify-center font-black text-2xl shadow-md border-2 border-black/10">
+              {user.name.charAt(0).toUpperCase()}
             </div>
-            <button 
-              onClick={() => router.push('/wallet')}
-              className="text-[10px] bg-[#F59E0B] text-[#0F1015] font-black px-3 py-1 rounded-xl shadow-sm hover:scale-105 transition-transform"
-            >
-              To'ldirish +
-            </button>
+            <span className="absolute -bottom-1 -right-1 bg-black text-[#FCE000] text-[10px] font-black px-1.5 py-0.5 rounded-md">
+              ★ {user.rating}
+            </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 relative z-10 pt-1">
-            <div>
-              <p className="text-[10px] text-gray-400 font-bold uppercase">Asosiy Balans</p>
-              <h2 className="text-xl font-black text-white">{walletBalance.toLocaleString('ru-RU')} so'm</h2>
-            </div>
-            <div>
-              <p className="text-[10px] text-amber-400 font-bold uppercase">Keshbek Balans</p>
-              <h2 className="text-xl font-black text-[#F59E0B]">{cashbackBalance.toLocaleString('ru-RU')} so'm</h2>
+          <div>
+            <h2 className="text-lg font-black text-[#121214] dark:text-white">{user.name}</h2>
+            <p className="text-xs text-gray-500 font-medium">{user.phone}</p>
+            <div className="flex items-center gap-2 mt-1.5">
+              <span className="text-[10px] bg-emerald-500/10 text-emerald-500 font-black px-2 py-0.5 rounded-md">
+                {user.tripsCount} ta muvaffaqiyatli safar
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Quick Services Menu */}
-        <div className="bg-white dark:bg-[#181A20] rounded-3xl border border-gray-200/80 dark:border-gray-800 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)] divide-y divide-gray-100 dark:divide-gray-800">
-          <Link href="/taxi" className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-2xl transition-colors group apple-card-press">
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-[#F59E0B] flex items-center justify-center shrink-0">
-                <Car className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-extrabold text-sm text-[#0F1015] dark:text-white group-hover:text-[#F59E0B] transition-colors">Taksi Safarlari</h3>
-                <p className="text-[11px] text-gray-500 dark:text-gray-400">Safarlar tarixi va faol buyurtmalar</p>
-              </div>
+        {/* UzGo Pay Balance Banner */}
+        <div 
+          onClick={() => router.push('/wallet')}
+          className="bg-gradient-to-br from-[#1E1E22] to-[#121214] text-white rounded-3xl p-5 shadow-lg border border-gray-800 cursor-pointer apple-card-press flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-[#FCE000] text-[#121214] flex items-center justify-center font-black text-lg">
+              <Wallet size={20} />
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600 group-hover:text-[#F59E0B] transition-all" />
-          </Link>
+            <div>
+              <span className="text-[10px] text-gray-400 font-bold uppercase block">UzGo Hamyon & Keshbek</span>
+              <h3 className="text-lg font-black text-white">{walletBalance.toLocaleString()} so'm</h3>
+            </div>
+          </div>
 
-          <Link href="/market/cart" className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-2xl transition-colors group apple-card-press">
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-2xl text-blue-500 flex items-center justify-center shrink-0">
-                <Package className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-extrabold text-sm text-[#0F1015] dark:text-white group-hover:text-[#F59E0B] transition-colors">UzGo Market Savati</h3>
-                <p className="text-[11px] text-gray-500 dark:text-gray-400">Savat va buyurtmalar tarixi</p>
-              </div>
-            </div>
-            <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600 group-hover:text-[#F59E0B] transition-all" />
-          </Link>
+          <div className="text-right flex items-center gap-1 text-xs font-black text-[#FCE000]">
+            <span>To'ldirish</span>
+            <ChevronRight size={16} />
+          </div>
         </div>
 
-        {/* Theme Switcher */}
-        <div className="bg-white dark:bg-[#181A20] rounded-3xl border border-gray-200/80 dark:border-gray-800 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
+        {/* Quick Menu List */}
+        <div className="bg-white dark:bg-[#1C1C1E] rounded-3xl border border-gray-200/80 dark:border-gray-800 p-2 shadow-sm divide-y divide-gray-100 dark:divide-gray-800">
+          
+          <Link href="/taxi" className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-[#26262A] rounded-2xl transition-colors apple-card-press">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 bg-[#FCE000]/15 rounded-2xl text-[#121214] dark:text-[#FCE000] flex items-center justify-center">
+                <Car size={18} />
+              </div>
+              <div>
+                <h4 className="font-black text-xs text-[#121214] dark:text-white">Taksi Safarlari</h4>
+                <p className="text-[10px] text-gray-500">Safarlar tarixi va cheklar</p>
+              </div>
+            </div>
+            <ChevronRight size={16} className="text-gray-400" />
+          </Link>
+
+          <Link href="/delivery" className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-[#26262A] rounded-2xl transition-colors apple-card-press">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 bg-[#10B981]/15 rounded-2xl text-[#10B981] flex items-center justify-center">
+                <Package size={18} />
+              </div>
+              <div>
+                <h4 className="font-black text-xs text-[#121214] dark:text-white">Taomlar & Kuryer</h4>
+                <p className="text-[10px] text-gray-500">Buyurtmalar va yetkazmalar</p>
+              </div>
+            </div>
+            <ChevronRight size={16} className="text-gray-400" />
+          </Link>
+
+          <Link href="/driver" className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-[#26262A] rounded-2xl transition-colors apple-card-press">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 bg-[#121214] dark:bg-white text-[#FCE000] dark:text-[#121214] rounded-2xl flex items-center justify-center font-black text-xs">
+                PRO
+              </div>
+              <div>
+                <h4 className="font-black text-xs text-[#121214] dark:text-white">Yandex Pro Haydovchi Rejimi</h4>
+                <p className="text-[10px] text-gray-500">Kassali taxometr va daromadlar</p>
+              </div>
+            </div>
+            <ChevronRight size={16} className="text-gray-400" />
+          </Link>
+
+        </div>
+
+        {/* Theme & Preferences */}
+        <div className="bg-white dark:bg-[#1C1C1E] rounded-3xl border border-gray-200/80 dark:border-gray-800 p-2 shadow-sm divide-y divide-gray-100 dark:divide-gray-800">
+          
           <div 
             onClick={() => toggleTheme()}
-            className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-2xl transition-colors cursor-pointer group apple-card-press"
+            className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-[#26262A] rounded-2xl cursor-pointer apple-card-press"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-[#F59E0B] flex items-center justify-center shrink-0">
-                {isDark ? <Sun className="w-5 h-5 text-[#F59E0B]" /> : <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />}
+              <div className="w-10 h-10 bg-gray-100 dark:bg-[#26262A] rounded-2xl text-[#FCE000] flex items-center justify-center">
+                {isDark ? <Sun size={18} /> : <Moon size={18} className="text-[#121214]" />}
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-[#0F1015] dark:text-white">Yoritish Rejimi</h3>
-                <p className="text-[11px] text-gray-500 dark:text-gray-400 font-extrabold">{isDark ? 'Qorong\'u (Dark Mode) 🌙' : 'Yoritilgan (Light Mode) ☀️'}</p>
+                <h4 className="font-black text-xs text-[#121214] dark:text-white">Yoritish Rejimi</h4>
+                <p className="text-[10px] text-gray-500">{isDark ? 'Qorong\'u (Dark Mode) 🌙' : 'Yoritilgan (Light Mode) ☀️'}</p>
               </div>
             </div>
-            <span className="text-xs font-black text-[#0F1015] dark:text-white bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-1 rounded-xl">
+            <span className="text-[10px] font-black bg-gray-100 dark:bg-[#26262A] px-2.5 py-1 rounded-xl">
               Almashtirish ⇄
             </span>
           </div>
+
+          <div 
+            onClick={() => alert("24/7 UzGo qo'llab-quvvatlash xizmati bilan bog'lanish: +998 71 200 00 00")}
+            className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-[#26262A] rounded-2xl cursor-pointer apple-card-press"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 bg-sky-500/15 rounded-2xl text-sky-500 flex items-center justify-center">
+                <Headphones size={18} />
+              </div>
+              <div>
+                <h4 className="font-black text-xs text-[#121214] dark:text-white">24/7 Qo'llab-quvvatlash</h4>
+                <p className="text-[10px] text-gray-500">Savollar va yordam markazi</p>
+              </div>
+            </div>
+            <ChevronRight size={16} className="text-gray-400" />
+          </div>
+
         </div>
 
-        {/* Admin Panel Link (If admin) */}
-        {user.role === 'admin' && (
-          <div className="bg-white dark:bg-[#181A20] rounded-3xl border border-gray-200/80 dark:border-gray-800 p-2 shadow-[0_8px_25px_rgba(0,0,0,0.03)]">
-            <Link href="/admin/dashboard" className="flex items-center justify-between p-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-2xl transition-colors group apple-card-press">
-              <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-600 flex items-center justify-center shrink-0">
-                  <Shield className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-sm text-[#0F1015] dark:text-white">Super Admin Panel</h3>
-                  <p className="text-[11px] text-emerald-600 font-bold">Termiz platforma boshqaruvi</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600 group-hover:text-[#F59E0B] transition-all" />
-            </Link>
-          </div>
-        )}
-
-        {/* Logout Button */}
-        <button 
+        {/* Logout */}
+        <button
           onClick={handleLogout}
-          className="w-full mt-6 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 rounded-3xl p-4 font-black text-sm transition-all flex items-center justify-center gap-2 shadow-sm apple-card-press"
+          className="w-full bg-red-500/10 hover:bg-red-500/20 text-[#FC3F1D] py-4 rounded-3xl font-black text-xs transition-colors flex items-center justify-center gap-2 apple-card-press"
         >
-          <LogOut className="w-4 h-4" />
-          Tizimdan Chiqish
+          <LogOut size={16} /> Tizimdan chiqish
         </button>
+
       </main>
 
       {/* Edit Profile Modal */}
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[#181A20] border border-gray-200 dark:border-gray-800 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
+          <div className="bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-gray-800 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
-              <h2 className="text-base font-black text-[#0F1015] dark:text-white">Profil Sozlamalarini Tahrirlash</h2>
-              <button 
-                onClick={() => setIsEditModalOpen(false)}
-                className="text-gray-400 hover:text-black dark:hover:text-white"
-              >
-                <X className="w-5 h-5" />
+              <h3 className="font-black text-base text-[#121214] dark:text-white">Profilni tahrirlash</h3>
+              <button onClick={() => setIsEditModalOpen(false)} className="text-gray-400 hover:text-black dark:hover:text-white">
+                <X size={18} />
               </button>
             </div>
-            
+
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 block mb-1">F.I.O.</label>
-                <input 
-                  type="text" 
+                <label className="text-xs font-bold text-gray-500 block mb-1">Ism Familiya</label>
+                <input
+                  type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-3 text-xs font-bold text-[#0F1015] dark:text-white outline-none focus:border-[#F59E0B]"
+                  className="w-full bg-gray-100 dark:bg-[#26262A] text-[#121214] dark:text-white p-3 rounded-2xl text-xs font-bold outline-none border border-transparent focus:border-[#FCE000]"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 block mb-1">Telefon Raqami</label>
-                <input 
-                  type="text" 
+                <label className="text-xs font-bold text-gray-500 block mb-1">Telefon raqam</label>
+                <input
+                  type="tel"
                   value={editPhone}
                   onChange={(e) => setEditPhone(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-3 text-xs font-bold text-[#0F1015] dark:text-white outline-none focus:border-[#F59E0B]"
+                  className="w-full bg-gray-100 dark:bg-[#26262A] text-[#121214] dark:text-white p-3 rounded-2xl text-xs font-bold outline-none border border-transparent focus:border-[#FCE000]"
                 />
               </div>
             </div>
 
             <div className="flex gap-2 pt-2">
-              <button 
+              <button
                 onClick={() => setIsEditModalOpen(false)}
-                className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold py-3 rounded-2xl text-xs"
+                className="flex-1 bg-gray-100 dark:bg-[#26262A] text-gray-600 dark:text-gray-300 py-3 rounded-2xl text-xs font-bold"
               >
                 Bekor qilish
               </button>
-              <button 
+              <button
                 onClick={handleSaveProfile}
-                className="flex-1 bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] font-black py-3 rounded-2xl text-xs shadow-lg"
+                className="flex-1 bg-[#FCE000] text-[#121214] py-3 rounded-2xl text-xs font-black shadow-md apple-card-press"
               >
                 Saqlash ✓
               </button>
@@ -254,6 +259,7 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
+
     </div>
   );
 }

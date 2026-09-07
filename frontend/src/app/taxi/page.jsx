@@ -1,102 +1,72 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MapPin, Navigation, Search, Loader2, Phone, Star, X, Check, Car, Compass, Calendar, Share2, MessageSquare, Send, ShieldCheck } from 'lucide-react';
-import { getCurrentAddress } from '../../utils/geolocation';
-import { supabase } from '../../services/supabaseClient';
+import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import { 
+  MapPin, Navigation, Search, Loader2, Phone, Star, X, Check, Car, 
+  Compass, Calendar, Share2, MessageSquare, Send, ShieldCheck, Wallet, 
+  CreditCard, Banknote, Sparkles, ChevronRight, ArrowLeft, Clock, Info
+} from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
-import YandexMap from '../../components/YandexMap';
 
-const TERMIZ_DISTRICTS = [
-  'Termiz Markaz (Al-Hakim at-Tirmiziy)', 
-  'Indorama MFY (Sanoat zonasi)', 
-  'Surxon Sohil MFY (Amudaryo bo\'yi)', 
-  'San\'at Saroyi va Teatr tumani', 
-  'Do\'stlik MFY (Navoi ko\'chasi)', 
-  'Chegara MFY (Manguzar Post Tomonda)', 
-  'Termiz Avtovokzal (Shimoliy kapasi)', 
-  'Termiz Xalqaro Aeroporti', 
-  'TerDU Campus (Termiz Davlat Univ)'
-];
+const YandexMap = dynamic(() => import('../../components/YandexMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full min-h-[100dvh] bg-[#F6F7F9] dark:bg-[#121214] flex flex-col items-center justify-center text-[#121214] dark:text-white gap-3">
+      <div className="w-12 h-12 rounded-2xl bg-[#FCE000] text-[#121214] flex items-center justify-center font-black text-2xl animate-bounce">
+        Go
+      </div>
+      <span className="font-extrabold text-sm tracking-wide">Yandex Go Taksi yuklanmoqda...</span>
+    </div>
+  ),
+});
+
+const CITIES = ['Toshkent', 'Samarqand', 'Termiz', 'Buxoro', 'Farg\'ona', 'Andijon', 'Namangan'];
 
 const TARIFFS = [
-  { id: 'economy', name: 'Ekonom', price: 12000, duration: '~3 min', car: 'Chevrolet Cobalt', icon: '🚗' },
-  { id: 'comfort', name: 'Komfort', price: 18000, duration: '~4 min', car: 'Chevrolet Monza', icon: '🚙' },
-  { id: 'comfort_plus', name: 'Komfort+', price: 25000, duration: '~5 min', car: 'BYD Song Plus', icon: '🏎️' },
-  { id: 'business', name: 'Business', price: 40000, duration: '~7 min', car: 'Kia K5 / Malibu', icon: '👑' },
+  { id: 'start', name: 'Start', price: 9000, duration: '~2 min', car: 'Chevrolet Cobalt, Nexia 3', icon: '🚕', desc: 'Arzon va qulay har kungi safarlar' },
+  { id: 'comfort', name: 'Comfort', price: 13500, duration: '~3 min', car: 'Chevrolet Gentra, Lacetti', icon: '🚖', desc: 'Konditsionerli va yumshoq yurish' },
+  { id: 'comfort_plus', name: 'Comfort+', price: 19500, duration: '~4 min', car: 'Chevrolet Onix, Tracker 2', icon: '⚡', desc: 'Keng salon va zamonaviy xorijiy avtomobillar' },
+  { id: 'business', name: 'Business', price: 32000, duration: '~5 min', car: 'BYD Song Plus, Malibu 2, K5', icon: '👑', desc: 'Klassik premium safar va yuqori darajadagi servis' },
+  { id: 'delivery', name: 'Yetkazib berish', price: 11000, duration: '~4 min', car: 'Kuryer (Piyoda/Avto)', icon: '📦', desc: 'Hujjatlar va posilkalarni eshikdan eshikkacha yetkazish' },
+  { id: 'cargo', name: 'Yuk tashish', price: 45000, duration: '~8 min', car: 'Labo / Damas / Porter', icon: '🚛', desc: 'Mebel, texnika va katta yuklarni tashish' },
 ];
 
 const MOCK_DRIVER = {
-  name: 'Otabek Tursunov (Termiz)',
-  carModel: 'Chevrolet Cobalt (Oq metallik)',
-  plateNumber: '75 A 777 AA', // Termiz region code 75
-  rating: 4.9,
-  phone: '+998912345678',
-  photo: 'O'
+  name: 'Jasur Aliyev',
+  carModel: 'Oq Chevrolet Cobalt',
+  plateNumber: '01 A 777 AA',
+  rating: 4.96,
+  phone: '+998 90 123 45 67',
+  photo: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
 };
 
 export default function TaxiPage() {
+  const router = useRouter();
   const { t } = useLanguage();
-  const [from, setFrom] = useState('Termiz Markaz (Al-Hakim at-Tirmiziy)');
+  
+  const [selectedCity, setSelectedCity] = useState('Toshkent');
+  const [from, setFrom] = useState('Toshkent Markazi (Amir Temur)');
   const [to, setTo] = useState('');
-  const [loadingGps, setLoadingGps] = useState(false);
-  const [showFromDropdown, setShowFromDropdown] = useState(false);
-  const [showToDropdown, setShowToDropdown] = useState(false);
-  const [selectedTariff, setSelectedTariff] = useState('economy');
-  const [status, setStatus] = useState('idle'); // idle | searching | found
+  const [selectedTariff, setSelectedTariff] = useState('start');
+  const [status, setStatus] = useState('idle'); // idle | searching | found | in_trip
   const [scheduledTime, setScheduledTime] = useState('');
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showChatModal, setShowChatModal] = useState(false);
   const [messages, setMessages] = useState([
-    { sender: 'driver', text: 'Assalomu alaykum! Men Termiz markazidan siz tomonga yo\'l oldim.' }
+    { sender: 'driver', text: 'Assalomu alaykum! Men siz tomonga yo\'l oldim, 2 daqiqada yetib boraman.' }
   ]);
   const [chatInput, setChatInput] = useState('');
 
   const activeTariffObj = TARIFFS.find(t => t.id === selectedTariff) || TARIFFS[0];
 
-  const handleGetGps = async () => {
-    setLoadingGps(true);
-    try {
-      const res = await getCurrentAddress();
-      if (res && res.address) {
-        setFrom(res.address + ' (Termiz)');
-      }
-    } catch (err) {
-      alert(err.message || 'GPS aniqlab bo\'lmadi');
-    } finally {
-      setLoadingGps(false);
-    }
-  };
-
-  const handleSearch = async () => {
-    if (!from || !to) return;
+  const handleSearch = () => {
+    if (!to) return;
     setStatus('searching');
-
-    try {
-      await supabase.from('taxi_rides').insert([
-        {
-          from_address: from,
-          to_address: to,
-          tariff: selectedTariff,
-          price: activeTariffObj.price,
-          driver_name: MOCK_DRIVER.name,
-          car_model: MOCK_DRIVER.carModel,
-          plate_number: MOCK_DRIVER.plateNumber,
-          status: 'searching',
-          scheduled_time: scheduledTime || null
-        }
-      ]);
-    } catch (err) {
-      console.error('Supabase write error:', err);
-    }
-    
     setTimeout(() => {
       setStatus('found');
-    }, 2800);
-  };
-
-  const handleCancel = () => {
-    setStatus('idle');
+    }, 2500);
   };
 
   const handleSendMessage = (e) => {
@@ -105,314 +75,222 @@ export default function TaxiPage() {
     setMessages(prev => [...prev, { sender: 'user', text: chatInput }]);
     setChatInput('');
     setTimeout(() => {
-      setMessages(prev => [...prev, { sender: 'driver', text: 'Tushundim, hozir yetib boraman!' }]);
-    }, 1200);
-  };
-
-  const handleShareRide = () => {
-    const shareUrl = `${window.location.origin}/taxi?shareToken=UZGO-TERMIZ-9981`;
-    navigator.clipboard?.writeText(shareUrl);
-    alert(`Safaringizni kuzatish havolasi nusxalandi:\n${shareUrl}\nOila a'zolaringiz va do'stlaringizga yuborishingiz mumkin! 🛡️`);
+      setMessages(prev => [...prev, { sender: 'driver', text: 'Tushundim, manzilga yetib keldim, kutib turibman!' }]);
+    }, 1500);
   };
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-64px)] bg-[#FAFAFC] dark:bg-[#0F1015] text-[#111827] dark:text-[#F5F5F7] relative transition-colors">
-      {/* Real Yandex Maps Integration (Termiz) */}
+    <div className="relative w-full h-[100dvh] overflow-hidden bg-[#F6F7F9] dark:bg-[#121214] font-sans">
+      
+      {/* 1. Leaflet Interactive Map */}
       <div className="absolute inset-0 z-0">
-        <YandexMap 
-          fromAddress={from} 
-          toAddress={to} 
-          onSelectLocation={(addr) => {
-            if (!to) setTo(addr);
-            else setFrom(addr);
-          }} 
+        <YandexMap
+          pickupCoords={{ lat: 41.2995, lng: 69.2401 }}
+          destCoords={to ? { lat: 41.3145, lng: 69.2450 } : null}
+          assignedDriver={status === 'found' ? MOCK_DRIVER : null}
+          activeTariff={selectedTariff}
         />
       </div>
 
-      {/* Taxi Bottom Sheet Container */}
-      <div className="flex-1 overflow-y-auto p-4 pb-28 md:pb-6 z-10 flex flex-col justify-end max-w-lg mx-auto w-full">
-        
-        {status === 'idle' && (
-          <div className="bg-white dark:bg-[#181A20] rounded-3xl p-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] border border-gray-200/80 dark:border-gray-800 backdrop-blur-xl animate-slide-up space-y-3">
-            
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <h2 className="text-xl font-black text-[#0F1015] dark:text-white tracking-tight">UzGo Taksi Termiz</h2>
-                <span className="text-[10px] text-[#D97706] font-bold">📍 Surxondaryo viloyati</span>
-              </div>
+      {/* 2. Top Bar (City Switcher & Back) */}
+      <div className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between pointer-events-none">
+        <button
+          onClick={() => router.push('/')}
+          className="pointer-events-auto bg-white/95 dark:bg-[#1C1C1E]/95 backdrop-blur-xl border border-gray-200/90 dark:border-gray-800 rounded-2xl p-2.5 text-[#121214] dark:text-white shadow-md apple-card-press flex items-center gap-1 text-xs font-black"
+        >
+          <ArrowLeft size={16} /> Bosh sahifa
+        </button>
+
+        {/* City Switcher Pill */}
+        <div className="pointer-events-auto bg-white/95 dark:bg-[#1C1C1E]/95 backdrop-blur-xl border border-gray-200/90 dark:border-gray-800 rounded-2xl px-3 py-1.5 shadow-md flex items-center gap-1.5">
+          <MapPin size={14} className="text-[#FC3F1D]" />
+          <select
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+            className="bg-transparent text-xs font-black text-[#121214] dark:text-white outline-none cursor-pointer"
+          >
+            {CITIES.map(c => <option key={c} value={c} className="dark:bg-[#1C1C1E]">{c}</option>)}
+          </select>
+        </div>
+      </div>
+
+      {/* 3. Bottom Sheet Booking */}
+      <div className="absolute bottom-0 left-0 right-0 z-30 max-w-xl mx-auto px-3 pb-20 md:pb-6 pointer-events-none">
+        <div className="pointer-events-auto bg-white dark:bg-[#1C1C1E] border border-gray-200/90 dark:border-gray-800 rounded-3xl p-4 sm:p-5 shadow-[0_20px_50px_rgba(0,0,0,0.25)] space-y-4">
+          
+          <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto"></div>
+
+          {status === 'idle' && (
+            <div className="space-y-3.5">
               
-              <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => setShowScheduleModal(!showScheduleModal)} 
-                  className={`p-2 rounded-xl border text-xs font-bold transition-all apple-card-press ${
-                    scheduledTime ? 'bg-[#0F1015] dark:bg-white text-[#F59E0B] dark:text-[#0F1015] border-[#0F1015]' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700'
-                  }`}
-                  title="Oldindan rejalashtirish"
-                >
-                  <Calendar size={16} />
-                </button>
-
-                <button 
-                  onClick={handleGetGps} 
-                  disabled={loadingGps}
-                  className="flex items-center gap-1 bg-amber-500/10 text-[#D97706] hover:bg-amber-500/20 font-extrabold text-xs px-3 py-1.5 rounded-full border border-amber-500/30 transition-all apple-card-press"
-                >
-                  {loadingGps ? <Loader2 size={14} className="animate-spin" /> : <Compass size={14} />}
-                  <span>{loadingGps ? 'GPS...' : 'Mening joyim'}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Scheduled time info if set */}
-            {scheduledTime && (
-              <div className="mb-3 bg-amber-500/10 border border-amber-500/30 rounded-xl p-2.5 flex items-center justify-between text-xs text-[#D97706] font-bold">
-                <span>📅 Rejalashtirilgan vaqt: {new Date(scheduledTime).toLocaleString('uz-UZ')}</span>
-                <button onClick={() => setScheduledTime('')} className="text-red-500 font-black"><X size={14} /></button>
-              </div>
-            )}
-
-            {/* Rejalashtirish Modali */}
-            {showScheduleModal && (
-              <div className="mb-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-3 rounded-2xl">
-                <label className="text-xs text-gray-500 dark:text-gray-400 font-bold block mb-2">Safar vaqtini tanlang:</label>
-                <input 
-                  type="datetime-local" 
-                  className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-[#0F1015] dark:text-white p-2.5 rounded-xl text-xs outline-none focus:border-[#F59E0B] font-medium"
-                  value={scheduledTime}
-                  onChange={(e) => setScheduledTime(e.target.value)}
-                />
-              </div>
-            )}
-            
-            {/* Address Inputs */}
-            <div className="relative flex flex-col gap-2 mb-4">
-              <div className="absolute left-4 top-5 bottom-5 w-0.5 bg-gray-200 dark:bg-gray-700 z-0"></div>
-              
-              <div className="relative z-10">
-                <div className="flex items-center bg-gray-50 dark:bg-gray-800 rounded-2xl p-3.5 border border-gray-200 dark:border-gray-700 focus-within:border-emerald-500 transition-colors">
-                  <div className="w-3 h-3 rounded-full bg-emerald-500 mr-3 shrink-0"></div>
-                  <input 
-                    type="text" 
-                    placeholder="Qayerdan (Termiz manzil)" 
-                    className="bg-transparent w-full outline-none text-[#0F1015] dark:text-white text-sm font-medium"
+              {/* Address inputs */}
+              <div className="space-y-2 bg-gray-50 dark:bg-[#26262A] p-3 rounded-2xl border border-gray-200/80 dark:border-gray-700/80">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-3 h-3 rounded-full bg-[#2563EB]"></div>
+                  <input
+                    type="text"
                     value={from}
                     onChange={(e) => setFrom(e.target.value)}
-                    onFocus={() => setShowFromDropdown(true)}
-                    onBlur={() => setTimeout(() => setShowFromDropdown(false), 200)}
+                    placeholder="Qayerdan..."
+                    className="w-full bg-transparent text-xs font-bold text-[#121214] dark:text-white outline-none"
                   />
                 </div>
-                {showFromDropdown && (
-                  <div className="absolute top-full mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl z-30 max-h-48 overflow-y-auto">
-                    {TERMIZ_DISTRICTS.filter(d => d.toLowerCase().includes(from.toLowerCase())).map(district => (
-                      <div 
-                        key={`from-${district}`} 
-                        className="p-3 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-[#0F1015] dark:text-white text-xs font-medium flex items-center gap-2"
-                        onClick={() => { setFrom(district); setShowFromDropdown(false); }}
-                      >
-                        <MapPin size={14} className="text-emerald-500" />
-                        {district}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="relative z-10">
-                <div className="flex items-center bg-gray-50 dark:bg-gray-800 rounded-2xl p-3.5 border border-gray-200 dark:border-gray-700 focus-within:border-[#F59E0B] transition-colors">
-                  <div className="w-3 h-3 rounded-full bg-[#F59E0B] mr-3 shrink-0"></div>
-                  <input 
-                    type="text" 
-                    placeholder="Qayerga boramiz?" 
-                    className="bg-transparent w-full outline-none text-[#0F1015] dark:text-white text-sm font-medium"
+                <div className="h-[1px] bg-gray-200 dark:bg-gray-700 ml-5"></div>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-3 h-3 rounded-full bg-[#FC3F1D]"></div>
+                  <input
+                    type="text"
                     value={to}
                     onChange={(e) => setTo(e.target.value)}
-                    onFocus={() => setShowToDropdown(true)}
-                    onBlur={() => setTimeout(() => setShowToDropdown(false), 200)}
+                    placeholder="Qayerga boramiz? (Masalan: Toshkent City Mall)"
+                    className="w-full bg-transparent text-xs font-bold text-[#121214] dark:text-white outline-none placeholder:text-gray-400"
                   />
                 </div>
-                {showToDropdown && (
-                  <div className="absolute top-full mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl z-30 max-h-48 overflow-y-auto">
-                    {TERMIZ_DISTRICTS.filter(d => d.toLowerCase().includes(to.toLowerCase())).map(district => (
-                      <div 
-                        key={`to-${district}`} 
-                        className="p-3 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-[#0F1015] dark:text-white text-xs font-medium flex items-center gap-2"
-                        onClick={() => { setTo(district); setShowToDropdown(false); }}
+              </div>
+
+              {/* Tariffs List */}
+              <div>
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block mb-2 px-1">
+                  Mavjud tariflar
+                </span>
+                <div className="grid grid-cols-3 gap-2">
+                  {TARIFFS.slice(0, 6).map((tariff) => {
+                    const isSelected = selectedTariff === tariff.id;
+                    return (
+                      <div
+                        key={tariff.id}
+                        onClick={() => setSelectedTariff(tariff.id)}
+                        className={`p-2.5 rounded-2xl border cursor-pointer transition-all apple-card-press text-center flex flex-col justify-between ${
+                          isSelected
+                            ? 'bg-[#FCE000] border-black/20 text-[#121214] shadow-md scale-[1.03]'
+                            : 'bg-gray-50 dark:bg-[#26262A] border-gray-200/70 dark:border-gray-700/70 text-[#121214] dark:text-white'
+                        }`}
                       >
-                        <Navigation size={14} className="text-[#F59E0B]" />
-                        {district}
+                        <span className="text-xl">{tariff.icon}</span>
+                        <div className="mt-1">
+                          <span className="font-black text-xs block leading-tight">{tariff.name}</span>
+                          <span className="text-[10px] font-black block mt-0.5">{tariff.price.toLocaleString()} so'm</span>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Horizontal Tariff Selector Slider */}
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tarifni tanlang</h3>
-            <div className="grid grid-cols-4 gap-2 mb-4">
-              {TARIFFS.map((t) => {
-                const isSelected = selectedTariff === t.id;
-                return (
-                  <div
-                    key={t.id}
-                    onClick={() => setSelectedTariff(t.id)}
-                    className={`p-2 rounded-2xl border-2 cursor-pointer transition-all flex flex-col items-center justify-between text-center apple-card-press ${
-                      isSelected
-                        ? 'border-[#0F1015] dark:border-[#F59E0B] bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] shadow-md'
-                        : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-gray-300'
-                    }`}
-                  >
-                    <span className="text-xl mb-0.5">{t.icon}</span>
-                    <span className={`font-extrabold text-[10px] leading-tight ${isSelected ? 'text-white dark:text-[#0F1015]' : 'text-[#0F1015] dark:text-white'}`}>{t.name}</span>
-                    <span className={`text-[9px] font-black mt-1 ${isSelected ? 'text-[#F59E0B] dark:text-[#0F1015]' : 'text-[#F59E0B]'}`}>{t.price.toLocaleString('ru-RU')}</span>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Price & Booking Button */}
-            <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 p-3.5 rounded-2xl border border-gray-200 dark:border-gray-700 mb-4">
-              <div className="flex items-center gap-2">
-                <Car className="text-[#F59E0B]" size={18} />
-                <div>
-                  <div className="text-xs font-bold text-[#0F1015] dark:text-white">{activeTariffObj.name} ({activeTariffObj.car})</div>
-                  <div className="text-[10px] text-gray-400 font-medium">Naqd, Click yoki Payme</div>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-lg font-black text-[#0F1015] dark:text-white">{activeTariffObj.price.toLocaleString('ru-RU')} so'm</div>
-              </div>
-            </div>
-
-            <button 
-              className={`w-full py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 transition-all shadow-md apple-card-press ${
-                from && to 
-                  ? 'bg-[#0F1015] dark:bg-[#F59E0B] text-[#F59E0B] dark:text-[#0F1015] hover:bg-[#1C1E26] active:scale-[0.98]' 
-                  : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
-              }`}
-              onClick={handleSearch}
-              disabled={!from || !to}
-            >
-              <Search size={18} />
-              {activeTariffObj.name}'ni chaqirish
-            </button>
-          </div>
-        )}
-
-
-        {status === 'searching' && (
-          <div className="bg-white rounded-3xl p-8 shadow-2xl border border-gray-200 flex flex-col items-center justify-center h-72 animate-slide-up">
-            <div className="relative mb-6">
-              <div className="w-24 h-24 bg-amber-500/10 rounded-full animate-ping absolute inset-0"></div>
-              <div className="w-24 h-24 bg-amber-500/20 rounded-full flex items-center justify-center relative z-10 border border-amber-500/40">
-                <Loader2 size={48} className="text-[#F59E0B] animate-spin" />
-              </div>
-            </div>
-            <h2 className="text-xl font-black text-[#0F1015] mb-1">Termizda haydovchi izlanmoqda...</h2>
-            <p className="text-gray-500 text-xs text-center max-w-xs mb-4 font-medium">
-              Yaqin atrofdagi {activeTariffObj.name} haydovchilariga yuborildi
-            </p>
-            <button 
-              className="text-red-500 font-extrabold text-sm hover:underline"
-              onClick={handleCancel}
-            >
-              Qidiruvni bekor qilish
-            </button>
-          </div>
-        )}
-
-
-        {status === 'found' && (
-          <div className="flex flex-col gap-3 animate-slide-up">
-            <div className="bg-[#22C55E]/20 text-[#22C55E] p-3.5 rounded-2xl border border-[#22C55E]/30 text-center font-bold text-xs animate-pulse flex items-center justify-center gap-2">
-              <Check size={16} /> Haydovchi topildi! U siz tomonga yo'l oldi.
-            </div>
-            
-            {/* Driver Card */}
-            <div className="bg-[#181A20] border border-[#2C303E] rounded-3xl p-5 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-[#2C303E] pb-4 mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#16C2B2] to-[#FFE066] flex items-center justify-center text-[#0F1015] font-black text-lg shadow-lg">
-                    {MOCK_DRIVER.photo}
-                  </div>
-                  <div>
-                    <h3 className="text-white font-extrabold text-sm">{MOCK_DRIVER.name}</h3>
-                    <div className="flex items-center gap-1 text-xs text-[#F2A93B] font-bold">
-                      <Star size={12} fill="currentColor" />
-                      <span>{MOCK_DRIVER.rating} (Surxondaryo)</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="font-black text-[#0F1015] bg-[#F2A93B] px-2 py-0.5 rounded-xl text-xs shadow-md">
-                    {MOCK_DRIVER.plateNumber}
-                  </div>
-                  <div className="text-[10px] text-gray-400 font-semibold mt-1">{MOCK_DRIVER.carModel}</div>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Action Buttons: Share Ride & In-App Chat */}
-              <div className="grid grid-cols-2 gap-2 mb-4">
-                <button 
-                  onClick={handleShareRide}
-                  className="bg-[#16C2B2]/10 text-[#16C2B2] border border-[#16C2B2]/30 hover:bg-[#16C2B2]/20 font-bold text-xs py-2 rounded-xl flex items-center justify-center gap-1.5 transition-all"
-                >
-                  <Share2 size={14} /> Safarni ulashish
-                </button>
-                <button 
-                  onClick={() => setShowChatModal(true)}
-                  className="bg-[#F2A93B]/10 text-[#F2A93B] border border-[#F2A93B]/30 hover:bg-[#F2A93B]/20 font-bold text-xs py-2 rounded-xl flex items-center justify-center gap-1.5 transition-all"
-                >
-                  <MessageSquare size={14} /> Ichki Chat
-                </button>
+              {/* Order Button */}
+              <button
+                onClick={handleSearch}
+                disabled={!to}
+                className={`w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-md ${
+                  to 
+                    ? 'bg-[#FCE000] hover:bg-[#E5CB00] text-[#121214] apple-card-press shadow-[0_10px_25px_rgba(252,224,0,0.3)]' 
+                    : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                <span>{activeTariffObj.name} buyurtma berish</span>
+                <span className="bg-[#121214] text-[#FCE000] px-2 py-0.5 rounded-lg text-xs font-black">
+                  {activeTariffObj.price.toLocaleString()} so'm
+                </span>
+              </button>
+
+            </div>
+          )}
+
+          {status === 'searching' && (
+            <div className="text-center py-6 space-y-3">
+              <div className="w-16 h-16 rounded-full bg-[#FCE000] text-[#121214] flex items-center justify-center text-3xl mx-auto shadow-lg animate-pulse">
+                🚕
+              </div>
+              <h3 className="font-black text-base text-[#121214] dark:text-white">
+                Haydovchi izlanmoqda...
+              </h3>
+              <button
+                onClick={() => setStatus('idle')}
+                className="text-xs font-bold text-[#FC3F1D] hover:underline"
+              >
+                Qidiruvni bekor qilish
+              </button>
+            </div>
+          )}
+
+          {status === 'found' && (
+            <div className="space-y-4">
+              <div className="bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 p-2.5 rounded-2xl text-center text-xs font-black flex items-center justify-center gap-2">
+                <Check size={16} /> Haydovchi topildi! 2 daqiqada yetib keladi.
               </div>
 
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] text-gray-400">Yetib keladi:</p>
-                  <p className="text-white font-black text-lg text-[#FF5B4C]">~2 daqiqada</p>
+                <div className="flex items-center gap-3">
+                  <img
+                    src={MOCK_DRIVER.photo}
+                    alt={MOCK_DRIVER.name}
+                    className="w-12 h-12 rounded-2xl object-cover border-2 border-[#FCE000]"
+                  />
+                  <div>
+                    <h4 className="font-black text-sm text-[#121214] dark:text-white flex items-center gap-1">
+                      {MOCK_DRIVER.name}
+                      <span className="text-xs text-amber-500 font-black flex items-center">
+                        <Star size={12} className="fill-amber-500 ml-0.5" /> {MOCK_DRIVER.rating}
+                      </span>
+                    </h4>
+                    <span className="text-xs text-gray-500 font-medium block">
+                      {MOCK_DRIVER.carModel}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <button 
-                    className="bg-[#0F1015] border border-[#2C303E] text-white p-3 rounded-2xl hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50 transition-all" 
-                    onClick={handleCancel}
-                  >
-                    <X size={18} />
-                  </button>
-                  <a 
-                    href={`tel:${MOCK_DRIVER.phone}`} 
-                    className="bg-[#FF5B4C] text-white px-4 py-3 rounded-2xl hover:bg-[#E5493A] transition-all font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-[#FF5B4C]/25"
-                  >
-                    <Phone size={16} /> Qo'ng'iroq
-                  </a>
+
+                <div className="bg-white dark:bg-[#26262A] border-2 border-[#121214] dark:border-white rounded-xl px-2.5 py-1 text-center">
+                  <span className="font-black text-xs text-[#121214] dark:text-white">
+                    {MOCK_DRIVER.plateNumber}
+                  </span>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
 
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => setShowChatModal(true)}
+                  className="bg-gray-100 dark:bg-[#26262A] text-[#121214] dark:text-white p-3 rounded-2xl text-xs font-black flex items-center justify-center gap-2 apple-card-press"
+                >
+                  <MessageSquare size={16} className="text-[#2563EB]" /> Haydovchiga xabar
+                </button>
+                <button
+                  onClick={() => setStatus('idle')}
+                  className="bg-red-500/10 text-[#FC3F1D] p-3 rounded-2xl text-xs font-black flex items-center justify-center gap-1 apple-card-press"
+                >
+                  <X size={16} /> Bekor qilish
+                </button>
+              </div>
+
+            </div>
+          )}
+
+        </div>
       </div>
 
-      {/* Driver-Rider Chat Modal */}
+      {/* In-App Chat Modal */}
       {showChatModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
-          <div className="bg-[#181A20] border border-[#2C303E] w-full max-w-md rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[420px]">
-            <div className="p-4 bg-[#0F1015] border-b border-[#2C303E] flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#16C2B2] text-[#0F1015] font-black flex items-center justify-center text-xs">O</div>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 sm:p-4">
+          <div className="bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-gray-800 w-full max-w-md rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[420px]">
+            <div className="p-4 bg-gray-50 dark:bg-[#121214] border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
+              <div className="flex items-center gap-2.5">
+                <img src={MOCK_DRIVER.photo} className="w-8 h-8 rounded-full object-cover" />
                 <div>
-                  <div className="font-bold text-white text-xs">Otabek Tursunov (Haydovchi)</div>
-                  <div className="text-[10px] text-[#22C55E] font-medium">● Onlayn</div>
+                  <h4 className="font-black text-xs text-[#121214] dark:text-white">{MOCK_DRIVER.name}</h4>
+                  <span className="text-[10px] text-emerald-500 font-bold">● Liniyada</span>
                 </div>
               </div>
-              <button onClick={() => setShowChatModal(false)} className="text-gray-400 hover:text-white"><X size={18} /></button>
+              <button onClick={() => setShowChatModal(false)} className="text-gray-400 hover:text-black dark:hover:text-white">
+                <X size={18} />
+              </button>
             </div>
 
-            <div className="flex-1 p-4 overflow-y-auto space-y-3">
+            <div className="flex-1 p-4 overflow-y-auto space-y-2.5">
               {messages.map((m, i) => (
                 <div key={i} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[75%] p-3 rounded-2xl text-xs font-medium ${
-                    m.sender === 'user' ? 'bg-[#FF5B4C] text-white rounded-br-none' : 'bg-[#22252E] text-white rounded-bl-none'
+                  <div className={`max-w-[78%] p-3 rounded-2xl text-xs font-semibold ${
+                    m.sender === 'user' 
+                      ? 'bg-[#FCE000] text-[#121214] rounded-br-none' 
+                      : 'bg-gray-100 dark:bg-[#26262A] text-[#121214] dark:text-white rounded-bl-none'
                   }`}>
                     {m.text}
                   </div>
@@ -420,19 +298,22 @@ export default function TaxiPage() {
               ))}
             </div>
 
-            <form onSubmit={handleSendMessage} className="p-3 bg-[#0F1015] border-t border-[#2C303E] flex gap-2">
-              <input 
-                type="text" 
-                placeholder="Xabar yozing..." 
-                className="flex-1 bg-[#181A20] border border-[#2C303E] text-white text-xs p-2.5 rounded-xl outline-none focus:border-[#16C2B2]"
+            <form onSubmit={handleSendMessage} className="p-3 bg-gray-50 dark:bg-[#121214] border-t border-gray-100 dark:border-gray-800 flex gap-2">
+              <input
+                type="text"
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
+                placeholder="Xabar yozing..."
+                className="flex-1 bg-white dark:bg-[#26262A] text-[#121214] dark:text-white text-xs px-3.5 py-2.5 rounded-xl outline-none border border-gray-200 dark:border-gray-700 focus:border-[#FCE000]"
               />
-              <button type="submit" className="bg-[#16C2B2] text-[#0F1015] p-2.5 rounded-xl font-bold"><Send size={16} /></button>
+              <button type="submit" className="bg-[#FCE000] text-[#121214] p-2.5 rounded-xl font-bold">
+                <Send size={16} />
+              </button>
             </form>
           </div>
         </div>
       )}
+
     </div>
   );
 }

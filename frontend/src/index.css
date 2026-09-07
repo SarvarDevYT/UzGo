@@ -1,27 +1,59 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+@import 'leaflet/dist/leaflet.css';
+
+:root {
+  --yandex-yellow: #FCE000;
+  --yandex-yellow-hover: #E5CB00;
+  --yandex-red: #FC3F1D;
+  --yandex-black: #121214;
+  --yandex-dark-card: #1C1C1E;
+  --yandex-dark-border: #2C2C2E;
+  --yandex-light-bg: #F6F7F9;
+  --yandex-light-card: #FFFFFF;
+}
 
 * { 
   box-sizing: border-box; 
+  -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
   overflow-x: hidden !important;
   max-width: 100vw;
   scroll-behavior: smooth;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #FAFAFC;
-  color: #111827;
+  background-color: #F6F7F9;
+  color: #121214;
   min-height: 100vh;
   min-height: 100dvh;
 }
 
-/* Apple Smooth Spring Physics Utilities */
+.dark html, .dark body, html.dark, body.dark {
+  background-color: #121214;
+  color: #F5F5F7;
+}
+
+/* Yandex Map Tile Dark Mode Filter */
+.dark .leaflet-tile-pane {
+  filter: brightness(0.7) invert(1) contrast(3) hue-rotate(200deg) saturate(0.35);
+}
+
+.dark .leaflet-container {
+  background: #121214 !important;
+}
+
+.leaflet-container {
+  font-family: inherit !important;
+  z-index: 1;
+}
+
+/* Yandex Spring Physics */
 .spring-transition {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .apple-card-press {
@@ -29,33 +61,60 @@ html, body {
 }
 
 .apple-card-press:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
-/* Mobile Soft Keyboard scroll adjustments */
-input, textarea, select {
-  scroll-margin-top: 100px;
-  scroll-margin-bottom: 100px;
+/* Radar Pulse for Finding Driver */
+@keyframes radar-pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
 }
 
-/* Hide scrollbars for clean mobile app feel */
+.animate-radar {
+  animation: radar-pulse 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+
+@keyframes pulse-car {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.animate-pulse-car {
+  animation: pulse-car 2s ease-in-out infinite;
+}
+
+/* Hide scrollbars */
 ::-webkit-scrollbar {
   display: none;
   width: 0;
   height: 0;
 }
 
-.safe-bottom { 
-  padding-bottom: max(1rem, env(safe-area-inset-bottom)); 
-}
-
 .hide-scrollbar { 
   -ms-overflow-style: none; 
+  scrollbar-width: none;
 }
 
 .hide-scrollbar::-webkit-scrollbar { 
   display: none; 
-  width: 0;
+  width: 0; 
   height: 0;
 }
 
+.safe-bottom { 
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); 
+}
