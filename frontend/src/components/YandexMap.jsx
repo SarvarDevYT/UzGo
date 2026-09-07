@@ -3,8 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Locate, Navigation, Layers, Shield, Sparkles } from 'lucide-react';
 
-// Default Center: Tashkent, Uzbekistan
-const DEFAULT_CENTER = [41.2995, 69.2401];
+// Default Center: Termiz, Surxondaryo
+const TERMIZ_CENTER = [37.2242, 67.2783];
 
 // SVG Top-Down Yandex Taxi Icon
 const createTaxiSvg = (color = '#FCE000', rotation = 0) => `
@@ -27,7 +27,7 @@ const createTaxiSvg = (color = '#FCE000', rotation = 0) => `
 // SVG User Pin with Pulse
 const createUserPinSvg = () => `
   <div style="position: relative; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">
-    <div style="position: absolute; width: 36px; height: 36px; border-radius: 50%; background: rgba(59, 130, 246, 0.35); animation: radar-pulse 2s infinite;"></div>
+    <div style="position: absolute; width: 36px; height: 36px; border-radius: 50%; background: rgba(37, 99, 235, 0.35); animation: radar-pulse 2s infinite;"></div>
     <div style="width: 18px; height: 18px; border-radius: 50%; background: #2563EB; border: 3px solid #FFFFFF; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"></div>
   </div>
 `;
@@ -44,7 +44,7 @@ const createDestPinSvg = () => `
 `;
 
 export default function YandexMap({
-  center = DEFAULT_CENTER,
+  center = TERMIZ_CENTER,
   zoom = 14,
   pickupCoords = null,
   destCoords = null,
@@ -59,25 +59,26 @@ export default function YandexMap({
   const markersGroupRef = useRef(null);
   const routeLayerRef = useRef(null);
   const heatmapLayerRef = useRef(null);
-  const activeCarMarkerRef = useRef(null);
 
   const [mapReady, setMapReady] = useState(false);
+  
+  // Real Termiz live fleet cars
   const [liveCars, setLiveCars] = useState([
-    { id: 1, lat: 41.3020, lng: 69.2430, angle: 45, color: '#FCE000', name: 'Cobalt (01 A 777 AA)' },
-    { id: 2, lat: 41.2960, lng: 69.2350, angle: 120, color: '#FCE000', name: 'Gentra (01 B 888 BB)' },
-    { id: 3, lat: 41.3050, lng: 69.2380, angle: 220, color: '#FCE000', name: 'Onix (01 C 999 CC)' },
-    { id: 4, lat: 41.2940, lng: 69.2460, angle: 310, color: '#FCE000', name: 'BYD (01 D 001 DD)' },
-    { id: 5, lat: 41.3080, lng: 69.2480, angle: 90, color: '#FCE000', name: 'Tracker (01 E 123 EE)' },
+    { id: 1, lat: 37.2255, lng: 67.2795, angle: 45, color: '#FCE000', name: 'Cobalt (75 A 777 AA)' },
+    { id: 2, lat: 37.2210, lng: 67.2710, angle: 120, color: '#FCE000', name: 'Gentra (75 B 888 BB)' },
+    { id: 3, lat: 37.2300, lng: 67.2850, angle: 220, color: '#FCE000', name: 'Onix (75 C 999 CC)' },
+    { id: 4, lat: 37.2180, lng: 67.2820, angle: 310, color: '#FCE000', name: 'BYD (75 D 001 DD)' },
+    { id: 5, lat: 37.2270, lng: 67.2730, angle: 90, color: '#FCE000', name: 'Monza (75 E 123 EE)' },
   ]);
 
-  // Dynamic simulation: Live cars move slightly on the map to feel alive
+  // Live cars move slightly on Termiz streets
   useEffect(() => {
     const interval = setInterval(() => {
       setLiveCars((prevCars) =>
         prevCars.map((car) => {
-          const deltaLat = (Math.random() - 0.5) * 0.0006;
-          const deltaLng = (Math.random() - 0.5) * 0.0006;
-          const newAngle = (car.angle + (Math.random() - 0.5) * 40) % 360;
+          const deltaLat = (Math.random() - 0.5) * 0.0004;
+          const deltaLng = (Math.random() - 0.5) * 0.0004;
+          const newAngle = (car.angle + (Math.random() - 0.5) * 30) % 360;
           return {
             ...car,
             lat: car.lat + deltaLat,
@@ -101,7 +102,7 @@ export default function YandexMap({
       if (!isMounted || !mapContainerRef.current) return;
       LRef.current = L;
 
-      // Fix default icons
+      // Fix default marker icon paths
       delete L.Icon.Default.prototype._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -111,13 +112,13 @@ export default function YandexMap({
 
       if (!mapInstanceRef.current) {
         const map = L.map(mapContainerRef.current, {
-          center: center || DEFAULT_CENTER,
+          center: center || TERMIZ_CENTER,
           zoom: zoom,
           zoomControl: false,
           attributionControl: false,
         });
 
-        // High quality CartoDB Positron Vector tiles (Crisp, clean, Yandex style)
+        // Clean, ultra-sharp vector map tiles (No dark invert filters!)
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
           maxZoom: 19,
           subdomains: 'abcd',
@@ -132,7 +133,7 @@ export default function YandexMap({
             onSelectLocation({
               lat: e.latlng.lat,
               lng: e.latlng.lng,
-              name: `Tanlangan nuqta (${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)})`
+              name: `Termiz (${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)})`
             });
           }
         });
@@ -151,7 +152,7 @@ export default function YandexMap({
     };
   }, []);
 
-  // Render Surge Heatmap
+  // Render Surge Heatmap for Termiz
   useEffect(() => {
     if (!mapReady || !LRef.current || !heatmapLayerRef.current || !mapInstanceRef.current) return;
     const L = LRef.current;
@@ -159,16 +160,16 @@ export default function YandexMap({
 
     if (showHeatmap) {
       const surgeZones = [
-        { center: [41.3050, 69.2450], radius: 600, rate: '1.8x', color: '#FC3F1D' },
-        { center: [41.2950, 69.2320], radius: 800, rate: '1.5x', color: '#F59E0B' },
-        { center: [41.3120, 69.2550], radius: 700, rate: '1.3x', color: '#10B981' },
+        { center: [37.2242, 67.2783], radius: 600, rate: '1.8x', color: '#FC3F1D' },
+        { center: [37.2210, 67.2710], radius: 500, rate: '1.5x', color: '#F59E0B' },
+        { center: [37.2300, 67.2850], radius: 700, rate: '1.3x', color: '#10B981' },
       ];
 
       surgeZones.forEach((zone) => {
         const circle = L.circle(zone.center, {
           radius: zone.radius,
           fillColor: zone.color,
-          fillOpacity: 0.22,
+          fillOpacity: 0.2,
           color: zone.color,
           weight: 1.5,
           dashArray: '4, 4',
@@ -245,12 +246,10 @@ export default function YandexMap({
     if (pickupCoords && destCoords) {
       const latlngs = [
         [pickupCoords.lat, pickupCoords.lng],
-        // Smooth curved interpolation point
-        [(pickupCoords.lat + destCoords.lat) / 2 + 0.003, (pickupCoords.lng + destCoords.lng) / 2 - 0.002],
+        [(pickupCoords.lat + destCoords.lat) / 2 + 0.002, (pickupCoords.lng + destCoords.lng) / 2 - 0.001],
         [destCoords.lat, destCoords.lng],
       ];
 
-      // Route Outer Glow Line
       const routeBorder = L.polyline(latlngs, {
         color: '#000000',
         weight: 7,
@@ -259,7 +258,6 @@ export default function YandexMap({
         lineJoin: 'round',
       });
 
-      // Route Core Line (Yandex Yellow or Red Accent)
       const routeLine = L.polyline(latlngs, {
         color: '#FCE000',
         weight: 5,
@@ -271,39 +269,26 @@ export default function YandexMap({
       routeLayerRef.current.addLayer(routeBorder);
       routeLayerRef.current.addLayer(routeLine);
 
-      // Fit map bounds to show full route
       const bounds = L.latLngBounds(latlngs);
-      mapInstanceRef.current.fitBounds(bounds, { padding: [60, 60], maxZoom: 15 });
+      mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
     }
   }, [pickupCoords, destCoords, mapReady]);
 
-  // Center on current location
+  // Center on Termiz
   const handleLocateMe = () => {
     if (!mapInstanceRef.current) return;
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const newCenter = [pos.coords.latitude, pos.coords.longitude];
-          mapInstanceRef.current.flyTo(newCenter, 15, { duration: 1.2 });
-          if (onSelectLocation) {
-            onSelectLocation({
-              lat: pos.coords.latitude,
-              lng: pos.coords.longitude,
-              name: 'Joriy joylashuvingiz',
-            });
-          }
-        },
-        () => {
-          mapInstanceRef.current.flyTo(DEFAULT_CENTER, 15, { duration: 1 });
-        }
-      );
-    } else {
-      mapInstanceRef.current.flyTo(DEFAULT_CENTER, 15, { duration: 1 });
+    mapInstanceRef.current.flyTo(TERMIZ_CENTER, 15, { duration: 1 });
+    if (onSelectLocation) {
+      onSelectLocation({
+        lat: TERMIZ_CENTER[0],
+        lng: TERMIZ_CENTER[1],
+        name: 'Termiz Markaz (Al-Hakim at-Termiziy)',
+      });
     }
   };
 
   return (
-    <div className="relative w-full h-full min-h-[100dvh] bg-[#F6F7F9] dark:bg-[#121214] overflow-hidden">
+    <div className="relative w-full h-full min-h-[100dvh] bg-[#E8ECEF] overflow-hidden">
       {/* Map Container */}
       <div ref={mapContainerRef} className="w-full h-full min-h-[100dvh] z-0" />
 
@@ -311,7 +296,7 @@ export default function YandexMap({
       <div className="absolute right-4 top-24 z-20 flex flex-col gap-2.5">
         <button
           onClick={handleLocateMe}
-          title="Mening joylashuvim"
+          title="Termiz Markaziga qaytish"
           className="w-11 h-11 bg-white dark:bg-[#1C1C1E] text-[#121214] dark:text-white rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.15)] border border-gray-200/80 dark:border-gray-800 flex items-center justify-center hover:scale-105 active:scale-95 transition-all"
         >
           <Locate size={20} className="text-[#2563EB]" />

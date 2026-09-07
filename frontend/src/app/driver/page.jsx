@@ -16,39 +16,39 @@ const YandexMap = dynamic(() => import('../../components/YandexMap'), {
       <div className="w-8 h-8 rounded-xl bg-[#FCE000] text-[#121214] flex items-center justify-center font-black animate-pulse">
         Pro
       </div>
-      <span>Yandex Pro Xaritasi yuklanmoqda...</span>
+      <span>Yandex Pro Termiz yuklanmoqda...</span>
     </div>
   ),
 });
 
 const MOCK_INCOMING_ORDERS = [
   {
-    id: 'ORD-901',
+    id: 'ORD-701',
     tariff: 'Comfort',
-    client: 'Alisher Qodirov',
-    clientRating: 4.92,
-    price: 28500,
-    surgeBonus: '+4,000 so\'m',
-    from: 'Toshkent City Mall (Asosiy kirish)',
-    to: 'Islom Karimov Xalqaro Aeroporti (Terminal 2)',
-    distanceToClient: '1.2 km (3 daqiqa)',
-    tripDistance: '8.4 km (18 daqiqa)',
-    fromCoords: { lat: 41.3145, lng: 69.2450 },
-    toCoords: { lat: 41.2580, lng: 69.2810 },
+    client: 'Jamshidbek (Termiz)',
+    clientRating: 4.95,
+    price: 18000,
+    surgeBonus: '+3,000 so\'m',
+    from: 'Termiz Markaz (Al-Hakim at-Termiziy xiyoboni)',
+    to: 'TerDU Campus (Barkamol avlod ko\'chasi)',
+    distanceToClient: '0.9 km (2 daqiqa)',
+    tripDistance: '3.4 km (7 daqiqa)',
+    fromCoords: { lat: 37.2242, lng: 67.2783 },
+    toCoords: { lat: 37.2210, lng: 67.2710 },
   },
   {
-    id: 'ORD-902',
+    id: 'ORD-702',
     tariff: 'Start',
-    client: 'Malika Karimova',
-    clientRating: 4.88,
-    price: 16000,
+    client: 'Dilnoza Karimova',
+    clientRating: 4.90,
+    price: 14000,
     surgeBonus: '+2,000 so\'m',
-    from: 'Chorsu Bozori',
-    to: 'Samarqand Darvoza',
-    distanceToClient: '0.8 km (2 daqiqa)',
-    tripDistance: '3.6 km (8 daqiqa)',
-    fromCoords: { lat: 41.3275, lng: 69.2355 },
-    toCoords: { lat: 41.3160, lng: 69.2280 },
+    from: 'San\'at Saroyi',
+    to: 'Surxon Sohil (Amudaryo bo\'yi)',
+    distanceToClient: '0.6 km (1 daqiqa)',
+    tripDistance: '2.8 km (5 daqiqa)',
+    fromCoords: { lat: 37.2300, lng: 67.2850 },
+    toCoords: { lat: 37.2180, lng: 67.2820 },
   },
 ];
 
@@ -57,16 +57,14 @@ export default function DriverModePage() {
 
   const [isOnline, setIsOnline] = useState(true);
   const [showHeatmap, setShowHeatmap] = useState(true);
-  const [todayEarnings, setTodayEarnings] = useState(385000);
-  const [completedRides, setCompletedRides] = useState(14);
+  const [todayEarnings, setTodayEarnings] = useState(245000);
+  const [completedRides, setCompletedRides] = useState(11);
   const [driverActivity, setDriverActivity] = useState(99);
 
-  // Active Order State: null | { ...order, stage: 'to_client' | 'arrived' | 'in_trip' | 'completed' }
   const [activeOrder, setActiveOrder] = useState(null);
   const [incomingOrder, setIncomingOrder] = useState(MOCK_INCOMING_ORDERS[0]);
   const [countdown, setCountdown] = useState(15);
 
-  // Incoming Order 15s Countdown Timer
   useEffect(() => {
     let timer;
     if (isOnline && incomingOrder && !activeOrder) {
@@ -105,7 +103,6 @@ export default function DriverModePage() {
       setActiveOrder({ ...activeOrder, stage: 'completed' });
     } else if (activeOrder.stage === 'completed') {
       setActiveOrder(null);
-      // Bring another order after 4 seconds
       setTimeout(() => {
         setIncomingOrder(MOCK_INCOMING_ORDERS[1]);
         setCountdown(15);
@@ -120,7 +117,6 @@ export default function DriverModePage() {
       <div className="bg-white dark:bg-[#1C1C1E] border-b border-gray-200/80 dark:border-gray-800 p-4 sticky top-16 z-30 shadow-sm backdrop-blur-xl">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           
-          {/* Driver Status Switch */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsOnline(!isOnline)}
@@ -135,15 +131,14 @@ export default function DriverModePage() {
             <div>
               <div className="text-sm font-black text-[#121214] dark:text-white flex items-center gap-2">
                 <span className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-[#10B981] animate-pulse' : 'bg-gray-400'}`}></span>
-                {isOnline ? 'Liniyada (Onlayn)' : 'Band (Oflayn)'}
+                {isOnline ? 'Liniyada (Termiz Onlayn)' : 'Band (Oflayn)'}
               </div>
               <span className="text-xs text-gray-500 font-bold">
-                Haydovchi: Jasur Aliyev (01 A 777 AA)
+                Haydovchi: Otabek Tursunov (75 A 777 AA)
               </span>
             </div>
           </div>
 
-          {/* Daily Performance Bar */}
           <div className="flex items-center gap-3 bg-gray-100 dark:bg-[#26262A] border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-2xl">
             <div>
               <span className="text-[10px] text-gray-400 font-black uppercase block">Bugungi daromad</span>
@@ -170,13 +165,12 @@ export default function DriverModePage() {
         </div>
       </div>
 
-      {/* Main Workspace (Grid on Desktop, Stack on Mobile) */}
+      {/* Main Workspace */}
       <div className="max-w-6xl mx-auto px-4 pt-6 grid grid-cols-1 md:grid-cols-12 gap-6">
         
-        {/* Left Side: Orders & HUD Action Panel (5 cols) */}
+        {/* Left Side (5 cols) */}
         <div className="md:col-span-5 space-y-4">
           
-          {/* Heatmap Toggle Button */}
           <button
             onClick={() => setShowHeatmap(!showHeatmap)}
             className={`w-full p-3 rounded-2xl border text-xs font-black flex items-center justify-between shadow-sm transition-all ${
@@ -187,7 +181,7 @@ export default function DriverModePage() {
           >
             <div className="flex items-center gap-2">
               <Flame size={16} className="text-[#FC3F1D] fill-[#FC3F1D]" />
-              <span>Yuqori talab issiqlik xaritasi (Surge Heatmap)</span>
+              <span>Termiz talab zonalari (Surge Heatmap)</span>
             </div>
             <span className="text-[10px] font-black">{showHeatmap ? 'Yoqilgan' : 'O\'chirilgan'}</span>
           </button>
@@ -205,25 +199,23 @@ export default function DriverModePage() {
                   </h4>
                 </div>
                 <a
-                  href="tel:+998901234567"
+                  href="tel:+998911234567"
                   className="w-10 h-10 rounded-2xl bg-[#10B981] text-white flex items-center justify-center shadow-md apple-card-press"
                 >
                   <Phone size={18} />
                 </a>
               </div>
 
-              {/* Navigation HUD instruction */}
               <div className="bg-[#121214] text-white p-3.5 rounded-2xl flex items-center gap-3">
                 <Navigation size={22} className="text-[#FCE000] shrink-0" />
                 <div className="text-xs">
-                  <span className="text-[#FCE000] font-black block">150 metrdan keyin o'ngga buriling</span>
+                  <span className="text-[#FCE000] font-black block">100 metrdan keyin o'ngga buriling</span>
                   <span className="text-gray-400">
                     {activeOrder.stage === 'to_client' ? activeOrder.from : activeOrder.to}
                   </span>
                 </div>
               </div>
 
-              {/* Route Summary */}
               <div className="space-y-1.5 text-xs font-semibold">
                 <div className="text-gray-600 dark:text-gray-300 truncate">
                   🟢 <b>Qayerdan:</b> {activeOrder.from}
@@ -233,7 +225,6 @@ export default function DriverModePage() {
                 </div>
               </div>
 
-              {/* Price */}
               <div className="flex justify-between items-center bg-gray-100 dark:bg-[#26262A] p-3 rounded-2xl">
                 <span className="text-xs font-bold text-gray-500">Kafolatlangan daromad:</span>
                 <span className="text-base font-black text-[#121214] dark:text-white">
@@ -241,7 +232,6 @@ export default function DriverModePage() {
                 </span>
               </div>
 
-              {/* Stage Action Button */}
               <button
                 onClick={handleNextStage}
                 className="w-full bg-[#FCE000] hover:bg-[#E5CB00] text-[#121214] py-4 rounded-2xl font-black text-sm shadow-md apple-card-press flex items-center justify-center gap-2"
@@ -256,9 +246,8 @@ export default function DriverModePage() {
 
           {/* INCOMING ORDER MODAL (15s RADAR) */}
           {!activeOrder && isOnline && incomingOrder && (
-            <div className="bg-white dark:bg-[#1C1C1E] border-2 border-[#FC3F1D] rounded-3xl p-5 shadow-2xl space-y-4 animate-bounce-short">
+            <div className="bg-white dark:bg-[#1C1C1E] border-2 border-[#FC3F1D] rounded-3xl p-5 shadow-2xl space-y-4">
               
-              {/* Header with Circular Countdown */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-xl bg-[#FC3F1D] text-white flex items-center justify-center font-black animate-pulse">
@@ -266,7 +255,7 @@ export default function DriverModePage() {
                   </div>
                   <div>
                     <h4 className="font-black text-sm text-[#121214] dark:text-white">
-                      Yangi Buyurtma ({incomingOrder.tariff})
+                      Termiz: Yangi Buyurtma ({incomingOrder.tariff})
                     </h4>
                     <span className="text-[10px] text-[#FC3F1D] font-black">
                       {incomingOrder.surgeBonus} talab bonusi
@@ -279,7 +268,6 @@ export default function DriverModePage() {
                 </div>
               </div>
 
-              {/* Payout & Distance */}
               <div className="bg-gray-100 dark:bg-[#26262A] p-3.5 rounded-2xl flex justify-between items-center">
                 <div>
                   <span className="text-[10px] text-gray-500 font-bold block">Sizgacha masofa</span>
@@ -295,13 +283,11 @@ export default function DriverModePage() {
                 </div>
               </div>
 
-              {/* Route */}
               <div className="text-xs space-y-1 bg-gray-50 dark:bg-[#26262A]/60 p-3 rounded-2xl border border-gray-200/80 dark:border-gray-700/80">
                 <div className="truncate">🟢 {incomingOrder.from}</div>
                 <div className="truncate">🔴 {incomingOrder.to}</div>
               </div>
 
-              {/* Accept & Decline Buttons */}
               <div className="flex gap-2 pt-1">
                 <button
                   onClick={handleDeclineOrder}
@@ -320,7 +306,6 @@ export default function DriverModePage() {
             </div>
           )}
 
-          {/* Offline Notice */}
           {!isOnline && (
             <div className="bg-white dark:bg-[#1C1C1E] border border-gray-200/80 dark:border-gray-800 rounded-3xl p-6 text-center space-y-2">
               <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-400 flex items-center justify-center mx-auto">
@@ -330,16 +315,17 @@ export default function DriverModePage() {
                 Siz hozir dam olishdasiz
               </h4>
               <p className="text-xs text-gray-500">
-                Buyurtmalarni qabul qilish uchun yuqoridagi tugmani "Onlayn" holatiga o'tkazing.
+                Termiz buyurtmalarini qabul qilish uchun yuqoridagi tugmani "Onlayn" holatiga o'tkazing.
               </p>
             </div>
           )}
 
         </div>
 
-        {/* Right Side: Interactive Leaflet Map for Drivers (7 cols) */}
+        {/* Right Side: Termiz Map (7 cols) */}
         <div className="md:col-span-7 h-[460px] md:h-[620px] rounded-3xl overflow-hidden border border-gray-200/80 dark:border-gray-800 shadow-sm relative">
           <YandexMap
+            center={[37.2242, 67.2783]}
             pickupCoords={activeOrder ? activeOrder.fromCoords : incomingOrder?.fromCoords}
             destCoords={activeOrder ? activeOrder.toCoords : incomingOrder?.toCoords}
             showHeatmap={showHeatmap}

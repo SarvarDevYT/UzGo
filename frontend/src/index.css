@@ -37,13 +37,9 @@ html, body {
   color: #F5F5F7;
 }
 
-/* Yandex Map Tile Dark Mode Filter */
-.dark .leaflet-tile-pane {
-  filter: brightness(0.7) invert(1) contrast(3) hue-rotate(200deg) saturate(0.35);
-}
-
-.dark .leaflet-container {
-  background: #121214 !important;
+.leaflet-container {
+  font-family: inherit !important;
+  z-index: 1;
 }
 
 .leaflet-container {

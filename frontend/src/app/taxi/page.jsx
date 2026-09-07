@@ -17,28 +17,38 @@ const YandexMap = dynamic(() => import('../../components/YandexMap'), {
       <div className="w-12 h-12 rounded-2xl bg-[#FCE000] text-[#121214] flex items-center justify-center font-black text-2xl animate-bounce">
         Go
       </div>
-      <span className="font-extrabold text-sm tracking-wide">Yandex Go Taksi yuklanmoqda...</span>
+      <span className="font-extrabold text-sm tracking-wide">UzGo Taksi Termiz yuklanmoqda...</span>
     </div>
   ),
 });
 
-const CITIES = ['Toshkent', 'Samarqand', 'Termiz', 'Buxoro', 'Farg\'ona', 'Andijon', 'Namangan'];
+const TERMIZ_DISTRICTS = [
+  'Termiz Markaz (Al-Hakim at-Termiziy)', 
+  'Indorama MFY (Sanoat zonasi)', 
+  'Surxon Sohil MFY (Amudaryo bo\'yi)', 
+  'San\'at Saroyi va Teatr tumani', 
+  'Do\'stlik MFY (Navoiy ko\'chasi)', 
+  'Chegara MFY (Manguzar Post Tomonda)', 
+  'Termiz Avtovokzal (Shimoliy darvoza)', 
+  'Termiz Xalqaro Aeroporti (TMJ)', 
+  'TerDU Campus (Termiz Davlat Univ)'
+];
 
 const TARIFFS = [
-  { id: 'start', name: 'Start', price: 9000, duration: '~2 min', car: 'Chevrolet Cobalt, Nexia 3', icon: '🚕', desc: 'Arzon va qulay har kungi safarlar' },
-  { id: 'comfort', name: 'Comfort', price: 13500, duration: '~3 min', car: 'Chevrolet Gentra, Lacetti', icon: '🚖', desc: 'Konditsionerli va yumshoq yurish' },
-  { id: 'comfort_plus', name: 'Comfort+', price: 19500, duration: '~4 min', car: 'Chevrolet Onix, Tracker 2', icon: '⚡', desc: 'Keng salon va zamonaviy xorijiy avtomobillar' },
-  { id: 'business', name: 'Business', price: 32000, duration: '~5 min', car: 'BYD Song Plus, Malibu 2, K5', icon: '👑', desc: 'Klassik premium safar va yuqori darajadagi servis' },
-  { id: 'delivery', name: 'Yetkazib berish', price: 11000, duration: '~4 min', car: 'Kuryer (Piyoda/Avto)', icon: '📦', desc: 'Hujjatlar va posilkalarni eshikdan eshikkacha yetkazish' },
-  { id: 'cargo', name: 'Yuk tashish', price: 45000, duration: '~8 min', car: 'Labo / Damas / Porter', icon: '🚛', desc: 'Mebel, texnika va katta yuklarni tashish' },
+  { id: 'start', name: 'Start', price: 8000, duration: '~2 min', car: 'Chevrolet Cobalt, Nexia 3', icon: '🚕', desc: 'Termiz bo\'ylab har kungi qulay safarlar' },
+  { id: 'comfort', name: 'Comfort', price: 12000, duration: '~3 min', car: 'Chevrolet Gentra, Cobalt New', icon: '🚖', desc: 'Konditsionerli va yumshoq yurish' },
+  { id: 'comfort_plus', name: 'Comfort+', price: 18000, duration: '~4 min', car: 'Chevrolet Onix, Tracker 2', icon: '⚡', desc: 'Keng salon va yangi xorijiy avtomobillar' },
+  { id: 'business', name: 'Business', price: 28000, duration: '~5 min', car: 'BYD Song Plus, Monza', icon: '👑', desc: 'Yuqori darajadagi servis' },
+  { id: 'delivery', name: 'Yetkazib berish', price: 9000, duration: '~4 min', car: 'Kuryer (Piyoda/Avto)', icon: '📦', desc: 'Posilka va hujjatlarni eshikkacha yetkazish' },
+  { id: 'cargo', name: 'Yuk tashish', price: 40000, duration: '~8 min', car: 'Labo / Damas / Porter', icon: '🚛', desc: 'Mebel va katta yuklarni tashish' },
 ];
 
 const MOCK_DRIVER = {
-  name: 'Jasur Aliyev',
+  name: 'Otabek Tursunov (Termiz)',
   carModel: 'Oq Chevrolet Cobalt',
-  plateNumber: '01 A 777 AA',
-  rating: 4.96,
-  phone: '+998 90 123 45 67',
+  plateNumber: '75 A 777 AA',
+  rating: 4.97,
+  phone: '+998 91 123 45 67',
   photo: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
 };
 
@@ -46,16 +56,13 @@ export default function TaxiPage() {
   const router = useRouter();
   const { t } = useLanguage();
   
-  const [selectedCity, setSelectedCity] = useState('Toshkent');
-  const [from, setFrom] = useState('Toshkent Markazi (Amir Temur)');
+  const [from, setFrom] = useState('Termiz Markaz (Al-Hakim at-Termiziy)');
   const [to, setTo] = useState('');
   const [selectedTariff, setSelectedTariff] = useState('start');
-  const [status, setStatus] = useState('idle'); // idle | searching | found | in_trip
-  const [scheduledTime, setScheduledTime] = useState('');
-  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [status, setStatus] = useState('idle'); // idle | searching | found
   const [showChatModal, setShowChatModal] = useState(false);
   const [messages, setMessages] = useState([
-    { sender: 'driver', text: 'Assalomu alaykum! Men siz tomonga yo\'l oldim, 2 daqiqada yetib boraman.' }
+    { sender: 'driver', text: 'Assalomu alaykum! Men Termiz markazidan siz tomonga yo\'l oldim, 2 daqiqada yetib boraman.' }
   ]);
   const [chatInput, setChatInput] = useState('');
 
@@ -75,24 +82,25 @@ export default function TaxiPage() {
     setMessages(prev => [...prev, { sender: 'user', text: chatInput }]);
     setChatInput('');
     setTimeout(() => {
-      setMessages(prev => [...prev, { sender: 'driver', text: 'Tushundim, manzilga yetib keldim, kutib turibman!' }]);
+      setMessages(prev => [...prev, { sender: 'driver', text: 'Tushundim, manzilga yetib keldim!' }]);
     }, 1500);
   };
 
   return (
     <div className="relative w-full h-[100dvh] overflow-hidden bg-[#F6F7F9] dark:bg-[#121214] font-sans">
       
-      {/* 1. Leaflet Interactive Map */}
+      {/* 1. Leaflet Interactive Map for Termiz */}
       <div className="absolute inset-0 z-0">
         <YandexMap
-          pickupCoords={{ lat: 41.2995, lng: 69.2401 }}
-          destCoords={to ? { lat: 41.3145, lng: 69.2450 } : null}
+          center={[37.2242, 67.2783]}
+          pickupCoords={{ lat: 37.2242, lng: 67.2783 }}
+          destCoords={to ? { lat: 37.2210, lng: 67.2710 } : null}
           assignedDriver={status === 'found' ? MOCK_DRIVER : null}
           activeTariff={selectedTariff}
         />
       </div>
 
-      {/* 2. Top Bar (City Switcher & Back) */}
+      {/* 2. Top Bar */}
       <div className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between pointer-events-none">
         <button
           onClick={() => router.push('/')}
@@ -101,16 +109,9 @@ export default function TaxiPage() {
           <ArrowLeft size={16} /> Bosh sahifa
         </button>
 
-        {/* City Switcher Pill */}
         <div className="pointer-events-auto bg-white/95 dark:bg-[#1C1C1E]/95 backdrop-blur-xl border border-gray-200/90 dark:border-gray-800 rounded-2xl px-3 py-1.5 shadow-md flex items-center gap-1.5">
           <MapPin size={14} className="text-[#FC3F1D]" />
-          <select
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-            className="bg-transparent text-xs font-black text-[#121214] dark:text-white outline-none cursor-pointer"
-          >
-            {CITIES.map(c => <option key={c} value={c} className="dark:bg-[#1C1C1E]">{c}</option>)}
-          </select>
+          <span className="text-xs font-black text-[#121214] dark:text-white">Surxondaryo, Termiz</span>
         </div>
       </div>
 
@@ -131,7 +132,7 @@ export default function TaxiPage() {
                     type="text"
                     value={from}
                     onChange={(e) => setFrom(e.target.value)}
-                    placeholder="Qayerdan..."
+                    placeholder="Qayerdan (Termiz)..."
                     className="w-full bg-transparent text-xs font-bold text-[#121214] dark:text-white outline-none"
                   />
                 </div>
@@ -142,7 +143,7 @@ export default function TaxiPage() {
                     type="text"
                     value={to}
                     onChange={(e) => setTo(e.target.value)}
-                    placeholder="Qayerga boramiz? (Masalan: Toshkent City Mall)"
+                    placeholder="Qayerga boramiz? (Masalan: TerDU Campus)"
                     className="w-full bg-transparent text-xs font-bold text-[#121214] dark:text-white outline-none placeholder:text-gray-400"
                   />
                 </div>
@@ -151,7 +152,7 @@ export default function TaxiPage() {
               {/* Tariffs List */}
               <div>
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block mb-2 px-1">
-                  Mavjud tariflar
+                  Mavjud tariflar (Termiz)
                 </span>
                 <div className="grid grid-cols-3 gap-2">
                   {TARIFFS.slice(0, 6).map((tariff) => {
@@ -187,7 +188,7 @@ export default function TaxiPage() {
                     : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
                 }`}
               >
-                <span>{activeTariffObj.name} buyurtma berish</span>
+                <span>{activeTariffObj.name} chaqirish (Termiz)</span>
                 <span className="bg-[#121214] text-[#FCE000] px-2 py-0.5 rounded-lg text-xs font-black">
                   {activeTariffObj.price.toLocaleString()} so'm
                 </span>
@@ -202,7 +203,7 @@ export default function TaxiPage() {
                 🚕
               </div>
               <h3 className="font-black text-base text-[#121214] dark:text-white">
-                Haydovchi izlanmoqda...
+                Termizda haydovchi izlanmoqda...
               </h3>
               <button
                 onClick={() => setStatus('idle')}
@@ -276,7 +277,7 @@ export default function TaxiPage() {
                 <img src={MOCK_DRIVER.photo} className="w-8 h-8 rounded-full object-cover" />
                 <div>
                   <h4 className="font-black text-xs text-[#121214] dark:text-white">{MOCK_DRIVER.name}</h4>
-                  <span className="text-[10px] text-emerald-500 font-bold">● Liniyada</span>
+                  <span className="text-[10px] text-emerald-500 font-bold">● Liniyada (Termiz)</span>
                 </div>
               </div>
               <button onClick={() => setShowChatModal(false)} className="text-gray-400 hover:text-black dark:hover:text-white">

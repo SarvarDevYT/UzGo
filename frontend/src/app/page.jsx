@@ -19,39 +19,39 @@ const YandexMap = dynamic(() => import('../components/YandexMap'), {
       <div className="w-12 h-12 rounded-2xl bg-[#FCE000] text-[#121214] flex items-center justify-center font-black text-2xl shadow-lg animate-bounce">
         Go
       </div>
-      <span className="font-extrabold text-sm tracking-wide">Yandex Go Xaritasi yuklanmoqda...</span>
+      <span className="font-extrabold text-sm tracking-wide">UzGo Termiz xaritasi yuklanmoqda...</span>
     </div>
   ),
 });
 
-// Popular Tashkent POIs
+// Popular Termiz, Surxondaryo POIs
 const POPULAR_DESTINATIONS = [
-  { id: '1', name: 'Toshkent City Mall', address: 'Shayxontohur tumani, Botir Zokirov ko\'chasi', coords: { lat: 41.3145, lng: 69.2450 }, icon: '🏙️' },
-  { id: '2', name: 'Chorsu Bozori', address: 'Eski shahar, Beruniy ko\'chasi', coords: { lat: 41.3275, lng: 69.2355 }, icon: '🛍️' },
-  { id: '3', name: 'Islom Karimov Xalqaro Aeroporti', address: 'Yakkasaroy tumani, Qumariq ko\'chasi', coords: { lat: 41.2580, lng: 69.2810 }, icon: '✈️' },
-  { id: '4', name: 'Samarqand Darvoza Mall', address: 'Qoratosh ko\'chasi, 5A', coords: { lat: 41.3160, lng: 69.2280 }, icon: '🏢' },
-  { id: '5', name: 'Magic City Bog\'i', address: 'Bobur ko\'chasi, 174', coords: { lat: 41.3035, lng: 69.2510 }, icon: '🎡' },
-  { id: '6', name: 'Amir Temur Xiyoboni', address: 'Yunusobod tumani, Markaz', coords: { lat: 41.3115, lng: 69.2795 }, icon: '🏛️' },
+  { id: '1', name: 'Al-Hakim at-Termiziy majmuasi', address: 'Termiz tumani, Amudaryo yoqasi', coords: { lat: 37.2850, lng: 67.2400 }, icon: '🏛️' },
+  { id: '2', name: 'TerDU Campus (Termiz Davlat Univ)', address: 'Barkamol avlod ko\'chasi, 43', coords: { lat: 37.2210, lng: 67.2710 }, icon: '🎓' },
+  { id: '3', name: 'Termiz Xalqaro Aeroporti (TMJ)', address: 'Shimoliy zona, Aeroport yo\'li', coords: { lat: 37.2800, lng: 67.3100 }, icon: '✈️' },
+  { id: '4', name: 'San\'at Saroyi va Teatr tumani', address: 'At-Termiziy shoh ko\'chasi', coords: { lat: 37.2300, lng: 67.2850 }, icon: '🎭' },
+  { id: '5', name: 'Surxon Sohil (Amudaryo bo\'yi)', address: 'Chegara MFY, Janubiy sohil', coords: { lat: 37.2180, lng: 67.2820 }, icon: '🌊' },
+  { id: '6', name: 'Termiz Avtovokzal (Shimoliy)', address: 'Manguzar posti tomon', coords: { lat: 37.2450, lng: 67.2650 }, icon: '🚌' },
 ];
 
-// Yandex Go Tariffs
+// Yandex Go Termiz Tariffs
 const TARIFFS = [
   {
     id: 'start',
     name: 'Start',
     subtitle: 'Cobalt, Nexia 3',
-    price: 9000,
+    price: 8000,
     multiplier: 1.0,
     eta: '2 daq',
     icon: '🚕',
     color: '#FCE000',
-    tag: 'Eng tejamkor',
+    tag: 'Eng arzon',
   },
   {
     id: 'comfort',
     name: 'Comfort',
-    subtitle: 'Gentra, Lacetti',
-    price: 13500,
+    subtitle: 'Gentra, Cobalt New',
+    price: 12000,
     multiplier: 1.25,
     eta: '3 daq',
     icon: '🚖',
@@ -61,8 +61,8 @@ const TARIFFS = [
   {
     id: 'comfort_plus',
     name: 'Comfort+',
-    subtitle: 'Onix, Tracker 2',
-    price: 19500,
+    subtitle: 'Chevrolet Onix, Tracker 2',
+    price: 18000,
     multiplier: 1.6,
     eta: '4 daq',
     icon: '⚡',
@@ -72,35 +72,35 @@ const TARIFFS = [
   {
     id: 'business',
     name: 'Business',
-    subtitle: 'BYD Song Plus, Malibu 2',
-    price: 32000,
+    subtitle: 'BYD Song Plus, Monza',
+    price: 28000,
     multiplier: 2.2,
     eta: '5 daq',
     icon: '👑',
     color: '#181A20',
-    tag: 'Premium xizmat',
+    tag: 'Premium',
   },
   {
     id: 'delivery',
     name: 'Yetkazib berish',
-    subtitle: 'Kuryer eshikgacha',
-    price: 11000,
+    subtitle: 'Termiz bo\'ylab posilka',
+    price: 9000,
     multiplier: 1.1,
     eta: '4 daq',
     icon: '📦',
     color: '#F59E0B',
-    tag: 'Tezkor posilka',
+    tag: 'Tezkor',
   },
   {
     id: 'cargo',
     name: 'Yuk tashish',
     subtitle: 'Labo, Damas, Porter',
-    price: 45000,
+    price: 40000,
     multiplier: 3.0,
     eta: '8 daq',
     icon: '🚛',
     color: '#EC4899',
-    tag: 'Katta yuklar',
+    tag: 'Yuklar',
   },
 ];
 
@@ -111,10 +111,10 @@ export default function HomePage() {
   // Ride State Machine: 'idle' | 'choosing_tariff' | 'searching' | 'assigned' | 'in_trip' | 'completed'
   const [rideState, setRideState] = useState('idle');
   
-  // Location States
+  // Location States for Termiz
   const [pickupLocation, setPickupLocation] = useState({
-    name: 'Mening joylashuvim (Toshkent markazi)',
-    coords: { lat: 41.2995, lng: 69.2401 },
+    name: 'Termiz Markaz (Al-Hakim at-Termiziy)',
+    coords: { lat: 37.2242, lng: 67.2783 },
   });
   const [destLocation, setDestLocation] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -123,20 +123,20 @@ export default function HomePage() {
 
   // Tariff & Options
   const [selectedTariff, setSelectedTariff] = useState(TARIFFS[0]);
-  const [paymentMethod, setPaymentMethod] = useState('wallet'); // 'wallet' | 'cash' | 'card'
+  const [paymentMethod, setPaymentMethod] = useState('wallet');
   const [wishes, setWishes] = useState({
     childSeat: false,
     airConditioner: true,
     quietDriver: false,
   });
 
-  // Assigned Driver details
+  // Assigned Driver details (Termiz 75 plate)
   const [assignedDriver, setAssignedDriver] = useState(null);
   const [tripProgress, setTripProgress] = useState(0);
   const [userRating, setUserRating] = useState(5);
   const [selectedTip, setSelectedTip] = useState(0);
 
-  // Active Service Tabs: 'taxi' | 'delivery' | 'eats' | 'market' | 'cargo' | 'intercity'
+  // Active Service Tabs
   const [activeService, setActiveService] = useState('taxi');
 
   // Handle Destination Select
@@ -150,17 +150,16 @@ export default function HomePage() {
   const handleStartOrder = () => {
     setRideState('searching');
 
-    // Simulate finding a driver after 2.8 seconds
     setTimeout(() => {
       setAssignedDriver({
-        name: 'Jasur Aliyev',
-        rating: 4.96,
-        tripsCount: 1420,
+        name: 'Otabek Tursunov',
+        rating: 4.97,
+        tripsCount: 1840,
         photo: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
         carModel: 'Oq Chevrolet Cobalt',
-        licensePlate: '01 A 777 AA',
+        licensePlate: '75 A 777 AA',
         etaMinutes: 2,
-        phone: '+998 90 123 45 67',
+        phone: '+998 91 123 45 67',
       });
       setRideState('assigned');
     }, 2800);
@@ -183,7 +182,7 @@ export default function HomePage() {
             setRideState('completed');
             return 100;
           }
-          return prev + 10;
+          return prev + 12;
         });
       }, 1000);
     }
@@ -201,7 +200,7 @@ export default function HomePage() {
   return (
     <div className="relative w-full h-[100dvh] overflow-hidden bg-[#F6F7F9] dark:bg-[#121214] font-sans">
       
-      {/* 1. Full-Screen Interactive Map Engine */}
+      {/* 1. Full-Screen Interactive Map Engine for Termiz */}
       <div className="absolute inset-0 z-0">
         <YandexMap
           center={[pickupLocation.coords.lat, pickupLocation.coords.lng]}
@@ -222,7 +221,7 @@ export default function HomePage() {
       {/* 2. Top Floating Navigation & Capsules */}
       <div className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between pointer-events-none">
         
-        {/* Current Location Pill */}
+        {/* Current Location Pill (Termiz) */}
         <div className="pointer-events-auto bg-white/95 dark:bg-[#1C1C1E]/95 backdrop-blur-xl border border-gray-200/90 dark:border-gray-800 rounded-2xl px-3.5 py-2 shadow-[0_8px_24px_rgba(0,0,0,0.12)] flex items-center gap-2 max-w-[240px] sm:max-w-xs transition-all">
           <div className="w-2.5 h-2.5 rounded-full bg-[#2563EB] animate-pulse"></div>
           <span className="text-xs font-black text-[#121214] dark:text-white truncate">
@@ -240,7 +239,7 @@ export default function HomePage() {
                 ? 'bg-[#FC3F1D] text-white border-[#FC3F1D]' 
                 : 'bg-white/95 dark:bg-[#1C1C1E]/95 text-[#121214] dark:text-white border-gray-200/90 dark:border-gray-800'
             }`}
-            title="Yuqori talab zonalari (Surge Heatmap)"
+            title="Termiz talab zonalari"
           >
             <Flame size={15} className={showHeatmap ? 'text-white fill-white' : 'text-[#FC3F1D] fill-[#FC3F1D]'} />
             <span className="hidden sm:inline">Talab zonalari</span>
@@ -249,7 +248,7 @@ export default function HomePage() {
 
       </div>
 
-      {/* 3. Top Services Horizontal Bar (Taxi, Eats, Market, Courier, Cargo) */}
+      {/* 3. Top Services Horizontal Bar */}
       <div className="absolute top-16 left-3 right-3 z-20 overflow-x-auto hide-scrollbar pointer-events-none">
         <div className="pointer-events-auto flex items-center gap-2 py-1">
           
@@ -325,7 +324,7 @@ export default function HomePage() {
                     Qayerga borasiz?
                   </span>
                   <span className="text-[11px] text-gray-500 font-medium">
-                    Toshkent City, Aeroport, Chorsu...
+                    At-Termiziy, TerDU, Aeroport, San'at saroyi...
                   </span>
                 </div>
                 <div className="bg-[#121214] dark:bg-white text-[#FCE000] dark:text-[#121214] px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 shadow-sm">
@@ -336,7 +335,7 @@ export default function HomePage() {
               {/* Popular Destinations Quick Chips */}
               <div>
                 <span className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-2 px-1">
-                  Tezkor manzillar
+                  Termiz bo'ylab tezkor manzillar
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {POPULAR_DESTINATIONS.slice(0, 4).map((dest) => (
@@ -377,7 +376,7 @@ export default function HomePage() {
                       {destLocation.name}
                     </h4>
                     <span className="text-[11px] text-gray-500 font-semibold">
-                      Masofa: ~5.4 km • ~12 daqiqa
+                      Termiz bo'ylab: ~3.8 km • ~8 daqiqa
                     </span>
                   </div>
                 </div>
@@ -425,7 +424,6 @@ export default function HomePage() {
               {/* Payment Method & Wishes Selector */}
               <div className="grid grid-cols-2 gap-2 pt-1">
                 
-                {/* Payment Selection */}
                 <div 
                   onClick={() => {
                     const methods = ['wallet', 'cash', 'card'];
@@ -447,7 +445,6 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Wishes Pill */}
                 <div 
                   onClick={() => setWishes({ ...wishes, quietDriver: !wishes.quietDriver })}
                   className="bg-gray-100 dark:bg-[#26262A] border border-gray-200 dark:border-gray-700 rounded-2xl p-2.5 flex items-center justify-between cursor-pointer apple-card-press"
@@ -470,7 +467,7 @@ export default function HomePage() {
                 onClick={handleStartOrder}
                 className="w-full bg-[#FCE000] hover:bg-[#E5CB00] active:scale-[0.98] text-[#121214] py-4 rounded-2xl font-black text-base shadow-[0_10px_25px_rgba(252,224,0,0.35)] flex items-center justify-center gap-2 transition-all border border-black/10"
               >
-                <span>{selectedTariff.name} buyurtma berish</span>
+                <span>{selectedTariff.name} chaqirish (Termiz)</span>
                 <span className="bg-[#121214] text-[#FCE000] px-2 py-0.5 rounded-lg text-xs font-black ml-1">
                   {selectedTariff.price.toLocaleString()} so'm
                 </span>
@@ -490,10 +487,10 @@ export default function HomePage() {
               </div>
               <div>
                 <h3 className="text-lg font-black text-[#121214] dark:text-white">
-                  Eng yaqin haydovchi qidirilmoqda...
+                  Termizda haydovchi izlanmoqda...
                 </h3>
                 <p className="text-xs text-gray-500 mt-1">
-                  {selectedTariff.name} tarifi bo'yicha eng yaqin avtomobil tanlanmoqda
+                  Yaqin atrofdagi {selectedTariff.name} haydovchilariga buyurtma yuborildi
                 </p>
               </div>
               <button
@@ -509,7 +506,6 @@ export default function HomePage() {
           {rideState === 'assigned' && assignedDriver && (
             <div className="space-y-4">
               
-              {/* ETA & Status Banner */}
               <div className="bg-[#FCE000] text-[#121214] p-3 rounded-2xl flex items-center justify-between shadow-sm">
                 <div className="flex items-center gap-2">
                   <Clock size={18} />
@@ -518,11 +514,11 @@ export default function HomePage() {
                   </span>
                 </div>
                 <span className="bg-black text-[#FCE000] text-[10px] font-black px-2 py-0.5 rounded-md">
-                  Yo'lda
+                  Surxondaryo
                 </span>
               </div>
 
-              {/* Driver & Car Details */}
+              {/* Driver & Car Details (75 plate) */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <img
@@ -543,7 +539,6 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Car License Plate */}
                 <div className="bg-white dark:bg-[#26262A] border-2 border-[#121214] dark:border-white/80 rounded-xl px-2.5 py-1 text-center shadow-sm">
                   <span className="font-black text-xs text-[#121214] dark:text-white tracking-wider">
                     {assignedDriver.licensePlate}
@@ -551,7 +546,6 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Action Buttons: Call, Chat & Start Trip */}
               <div className="grid grid-cols-3 gap-2">
                 <a
                   href={`tel:${assignedDriver.phone}`}
@@ -582,7 +576,7 @@ export default function HomePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-black text-emerald-500 uppercase tracking-wider block">
-                    Safardasiz • Tezlik 48 km/soat
+                    Safardasiz • Tezlik 45 km/soat
                   </span>
                   <h4 className="font-black text-base text-[#121214] dark:text-white mt-0.5">
                     {destLocation?.name} tomon ketilmoqda
@@ -593,7 +587,6 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Progress Bar */}
               <div className="w-full h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-[#FCE000] transition-all duration-500 rounded-full"
@@ -602,7 +595,7 @@ export default function HomePage() {
               </div>
 
               <div className="flex justify-between items-center text-xs font-bold text-gray-500">
-                <span>Qolgan vaqt: ~{Math.max(1, Math.round(12 * (1 - tripProgress / 100)))} daqiqa</span>
+                <span>Qolgan vaqt: ~{Math.max(1, Math.round(8 * (1 - tripProgress / 100)))} daqiqa</span>
                 <button
                   onClick={() => setRideState('completed')}
                   className="text-xs text-[#FC3F1D] font-extrabold hover:underline"
@@ -667,7 +660,7 @@ export default function HomePage() {
                 onClick={handleResetOrder}
                 className="w-full bg-[#121214] dark:bg-white text-[#FCE000] dark:text-[#121214] py-3.5 rounded-2xl font-black text-sm shadow-md flex items-center justify-center gap-2 apple-card-press"
               >
-                <RotateCcw size={16} /> Yangi buyurtma
+                <RotateCcw size={16} /> Yangi buyurtma (Termiz)
               </button>
             </div>
           )}
@@ -675,14 +668,14 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* 5. Destination Search Modal (Yandex Autocomplete Style) */}
+      {/* 5. Destination Search Modal (Termiz Autocomplete) */}
       {showSearchModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
           <div className="w-full max-w-lg bg-white dark:bg-[#1C1C1E] rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
             
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
               <h3 className="font-black text-base text-[#121214] dark:text-white flex items-center gap-2">
-                <Search size={18} className="text-[#FCE000]" /> Manzilni tanlang
+                <Search size={18} className="text-[#FCE000]" /> Termiz bo'ylab manzilni tanlang
               </h3>
               <button
                 onClick={() => setShowSearchModal(false)}
@@ -692,22 +685,20 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* Live Search Input */}
             <div className="relative">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Ko'cha, bino yoki joy nomi..."
+                placeholder="Termiz ko'chasi yoki joy nomi..."
                 autoFocus
                 className="w-full bg-gray-100 dark:bg-[#26262A] text-[#121214] dark:text-white px-4 py-3.5 rounded-2xl text-sm font-bold border border-transparent focus:border-[#FCE000] outline-none"
               />
             </div>
 
-            {/* List of Results / Popular Places */}
             <div className="space-y-2">
               <span className="text-[11px] font-black text-gray-400 uppercase tracking-wider block px-1">
-                Tavsiya etilgan joylar (Toshkent)
+                Termiz mashhur joylari
               </span>
 
               {POPULAR_DESTINATIONS
@@ -731,9 +722,9 @@ export default function HomePage() {
                     </div>
                     <div className="text-right">
                       <span className="text-xs font-black text-emerald-500 block">
-                        9,000 so'mdan
+                        8,000 so'mdan
                       </span>
-                      <span className="text-[10px] text-gray-400">~12 daq</span>
+                      <span className="text-[10px] text-gray-400">~6 daq</span>
                     </div>
                   </div>
                 ))}

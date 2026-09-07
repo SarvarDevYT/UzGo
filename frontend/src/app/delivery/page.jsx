@@ -11,24 +11,24 @@ import { useLanguage } from '../../context/LanguageContext';
 
 const RESTAURANTS = [
   {
-    id: 'kfc',
-    name: 'KFC Toshkent',
-    category: 'Fast Food • Tovuq',
-    rating: 4.85,
+    id: 'tandir',
+    name: 'Termiz Tandir & Milliy Taomlar',
+    category: 'Surxon Tandiri • Osh • Shashlik',
+    rating: 4.97,
     deliveryTime: '20-30 daq',
     deliveryFee: 'Bepul',
-    image: 'https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?w=500&auto=format&fit=crop&q=80',
-    logo: '🍗',
-    badge: 'Ommabop',
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80',
+    logo: '🥩',
+    badge: 'Termiz Tandir',
     menu: [
-      { id: 'kfc1', name: 'Zinger Burger Kombo', price: 42000, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&auto=format&fit=crop&q=80', desc: 'Qarsildoq achchiq tovuq go\'shti, fri va 0.5L Pepsi' },
-      { id: 'kfc2', name: 'Box Master', price: 38000, image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=300&auto=format&fit=crop&q=80', desc: 'Tortilya noniga o\'ralgan tovuq filesi, pishloq va pomidor' },
-      { id: 'kfc3', name: 'Hot Wings (8 dona)', price: 39000, image: 'https://images.unsplash.com/photo-1527477378378-f463375b630e?w=300&auto=format&fit=crop&q=80', desc: 'Achchiq qarsildoq tovuq qanotchalari' },
+      { id: 't1', name: 'Surxon Tandir Go\'shti (0.5 kg)', price: 65000, image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=300&auto=format&fit=crop&q=80', desc: 'Archa bargida dimlangan mayin va shirali Termiz qo\'y go\'shti' },
+      { id: 't2', name: 'Surxondaryo To\'y Oshi (1 porsiya)', price: 34000, image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&auto=format&fit=crop&q=80', desc: 'Devzira guruch, barra qo\'y go\'shti, mayiz va qazi' },
+      { id: 't3', name: 'Termiz Qatlama Somsasi (3 dona)', price: 24000, image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300&auto=format&fit=crop&q=80', desc: 'Qatlama xamir, maydalangan lahm go\'sht va piyozli' },
     ]
   },
   {
-    id: 'evos',
-    name: 'EVOS Lavash',
+    id: 'evos_termiz',
+    name: 'EVOS Lavash Termiz',
     category: 'Lavash • Burger • Fast Food',
     rating: 4.92,
     deliveryTime: '15-25 daq',
@@ -37,41 +37,25 @@ const RESTAURANTS = [
     logo: '🌯',
     badge: 'Tezkor',
     menu: [
-      { id: 'ev1', name: 'Mol go\'shtli Lavash (Standart)', price: 36000, image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=300&auto=format&fit=crop&q=80', desc: 'Shirali mol go\'shti, chipslar, pomidor va maxsus sous' },
-      { id: 'ev2', name: 'Pishloqli Tovuq Lavash', price: 38000, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&auto=format&fit=crop&q=80', desc: 'Eritilgan golland pishlog\'i va nozik tovuq filesi' },
-      { id: 'ev3', name: 'Shaurma Kombo', price: 44000, image: 'https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?w=300&auto=format&fit=crop&q=80', desc: 'Katta shaurma, fri kartoshkasi va muzdek ichimlik' },
+      { id: 'ev1', name: 'Mol go\'shtli Lavash (Standart)', price: 34000, image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=300&auto=format&fit=crop&q=80', desc: 'Shirali mol go\'shti, chipslar, pomidor va maxsus sous' },
+      { id: 'ev2', name: 'Pishloqli Tovuq Lavash', price: 36000, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&auto=format&fit=crop&q=80', desc: 'Eritilgan golland pishlog\'i va nozik tovuq filesi' },
+      { id: 'ev3', name: 'Shaurma Kombo', price: 42000, image: 'https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?w=300&auto=format&fit=crop&q=80', desc: 'Katta shaurma, fri kartoshkasi va muzdek ichimlik' },
     ]
   },
   {
-    id: 'bellissimo',
-    name: 'Bellissimo Pizza',
-    category: 'Pizza • Italyancha',
-    rating: 4.88,
-    deliveryTime: '25-35 daq',
-    deliveryFee: 'Bepul',
-    image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&auto=format&fit=crop&q=80',
-    logo: '🍕',
-    badge: '30 daqiqada',
-    menu: [
-      { id: 'bp1', name: 'Pepperoni Pizza (30 cm)', price: 65000, image: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=300&auto=format&fit=crop&q=80', desc: 'Mazali pepperoni kolbasasi, motsarella pishlog\'i va tomat sousi' },
-      { id: 'bp2', name: 'Margarita Pizza', price: 54000, image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=300&auto=format&fit=crop&q=80', desc: 'Klassik italyancha motsarella va yangi rayhon barglari' },
-      { id: 'bp3', name: 'Kombo Bellissimo 4x1', price: 110000, image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300&auto=format&fit=crop&q=80', desc: '2 ta o\'rta pizza + 2 ta ichimlik + sous' },
-    ]
-  },
-  {
-    id: 'rayhon',
-    name: 'Rayhon Milliy Taomlar',
-    category: 'Osh • Shashlik • Somsa',
-    rating: 4.95,
+    id: 'oqtepa_termiz',
+    name: 'Oqtepa Lavash Termiz',
+    category: 'Burger • Lavash • Pizza',
+    rating: 4.89,
     deliveryTime: '20-30 daq',
-    deliveryFee: '5,000 so\'m',
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80',
-    logo: '🍲',
-    badge: 'Milliy',
+    deliveryFee: 'Bepul',
+    image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&auto=format&fit=crop&q=80',
+    logo: '🍔',
+    badge: 'Mashhur',
     menu: [
-      { id: 'r1', name: 'Toshkent To\'y Oshi (1 porsiya)', price: 38000, image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&auto=format&fit=crop&q=80', desc: 'Lazer guruchi, mayin qo\'y go\'shti, qazi va bedana tuxumi' },
-      { id: 'r2', name: 'Qiyma Shashlik (2 dona)', price: 34000, image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=300&auto=format&fit=crop&q=80', desc: 'Ko\'mirda pishirilgan shirali mol va dumba go\'shti' },
-      { id: 'r3', name: 'Tandir Somsa (Go\'shtli)', price: 12000, image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300&auto=format&fit=crop&q=80', desc: 'Qatlama xamirli, maydalangan go\'sht va piyozli issiq somsa' },
+      { id: 'oq1', name: 'Oqtepa Big Burger', price: 36000, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&auto=format&fit=crop&q=80', desc: 'Ikkita mol go\'shti kotleti, pishloq va sous' },
+      { id: 'oq2', name: 'Fri Kartoshkasi (Katta)', price: 16000, image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=300&auto=format&fit=crop&q=80', desc: 'Qarsildoq oltinrang fri' },
+      { id: 'oq3', name: 'Pepperoni Pizza (32 cm)', price: 58000, image: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=300&auto=format&fit=crop&q=80', desc: 'Pepperoni kolbasasi va motsarella pishlog\'i' },
     ]
   },
 ];
@@ -80,26 +64,21 @@ export default function DeliveryPage() {
   const router = useRouter();
   const { t } = useLanguage();
 
-  // Mode: 'eats' | 'courier'
   const [activeTab, setActiveTab] = useState('eats');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Barchasi');
 
-  // Food Cart State
   const [cart, setCart] = useState({});
-  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [showCartDrawer, setShowCartDrawer] = useState(false);
-  const [orderStatus, setOrderStatus] = useState(null); // null | 'placed' | 'delivering'
+  const [orderStatus, setOrderStatus] = useState(null);
 
-  // Courier Form State
-  const [courierFrom, setCourierFrom] = useState('Toshkent, Amir Temur ko\'chasi 14');
+  const [courierFrom, setCourierFrom] = useState('Termiz Markaz, At-Termiziy shoh ko\'chasi 14');
   const [courierTo, setCourierTo] = useState('');
   const [receiverPhone, setReceiverPhone] = useState('');
-  const [packageSize, setPackageSize] = useState('small'); // small | medium | large
+  const [packageSize, setPackageSize] = useState('small');
 
-  const categories = ['Barchasi', 'Fast Food', 'Lavash', 'Pizza', 'Milliy Taomlar', 'Shirinliklar'];
+  const categories = ['Barchasi', 'Tandir & Milliy', 'Lavash', 'Burger & Fast Food', 'Pizza'];
 
-  // Cart operations
   const addToCart = (item, rest) => {
     setCart((prev) => {
       const currentCount = prev[item.id]?.count || 0;
@@ -146,7 +125,7 @@ export default function DeliveryPage() {
   return (
     <div className="min-h-screen bg-[#F6F7F9] dark:bg-[#121214] text-[#121214] dark:text-[#F5F5F7] pb-28 font-sans transition-colors">
       
-      {/* Top Header & Mode Tabs */}
+      {/* Top Header */}
       <div className="bg-white dark:bg-[#1C1C1E] border-b border-gray-200/80 dark:border-gray-800 sticky top-16 z-30 shadow-sm backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           
@@ -159,7 +138,7 @@ export default function DeliveryPage() {
                   : 'bg-gray-100 dark:bg-[#26262A] text-gray-600 dark:text-gray-300'
               }`}
             >
-              <Utensils size={15} /> UzGo Taomlar (Eats)
+              <Utensils size={15} /> UzGo Taomlar (Termiz)
             </button>
 
             <button
@@ -170,11 +149,10 @@ export default function DeliveryPage() {
                   : 'bg-gray-100 dark:bg-[#26262A] text-gray-600 dark:text-gray-300'
               }`}
             >
-              <Package size={15} /> Kuryer (Yetkazib berish)
+              <Package size={15} /> Kuryer (Termiz)
             </button>
           </div>
 
-          {/* Cart Trigger Badge */}
           {activeTab === 'eats' && totalCartItems > 0 && (
             <button
               onClick={() => setShowCartDrawer(true)}
@@ -188,14 +166,12 @@ export default function DeliveryPage() {
         </div>
       </div>
 
-      {/* Main Content Area */}
+      {/* Main Container */}
       <div className="max-w-5xl mx-auto px-4 pt-5 space-y-6">
 
-        {/* 1. YANDEX EATS MODE */}
         {activeTab === 'eats' && (
           <div className="space-y-6">
             
-            {/* Search Bar & Location Banner */}
             <div className="bg-white dark:bg-[#1C1C1E] border border-gray-200/80 dark:border-gray-800 rounded-3xl p-4 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
               <div className="relative w-full md:w-96">
                 <Search size={18} className="absolute left-3.5 top-3.5 text-gray-400" />
@@ -203,14 +179,14 @@ export default function DeliveryPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Restoran yoki taom qidiring (Osh, Lavash, Pizza)..."
+                  placeholder="Termiz restorani yoki taom qidiring (Tandir, Osh, Lavash)..."
                   className="w-full bg-gray-100 dark:bg-[#26262A] text-[#121214] dark:text-white pl-10 pr-4 py-2.5 rounded-2xl text-xs font-bold outline-none border border-transparent focus:border-[#FCE000]"
                 />
               </div>
 
               <div className="flex items-center gap-2 text-xs font-black text-gray-500">
                 <MapPin size={15} className="text-[#FC3F1D]" />
-                <span>Yetkazish manzili: <strong>Toshkent, Amir Temur 14</strong></span>
+                <span>Yetkazish manzili: <strong>Termiz Markaz, At-Termiziy 14</strong></span>
               </div>
             </div>
 
@@ -231,7 +207,6 @@ export default function DeliveryPage() {
               ))}
             </div>
 
-            {/* Active Order Tracker if placed */}
             {orderStatus && (
               <div className="bg-[#121214] text-white p-4 rounded-3xl shadow-xl flex items-center justify-between border border-gray-800">
                 <div className="flex items-center gap-3">
@@ -240,7 +215,7 @@ export default function DeliveryPage() {
                   </div>
                   <div>
                     <h4 className="font-black text-sm">
-                      {orderStatus === 'placed' ? 'Oshpaz taomingizni tayyorlamoqda' : 'Kuryer yo\'lda! Yetib kelishiga ~15 daqiqa'}
+                      {orderStatus === 'placed' ? 'Oshpaz taomingizni tayyorlamoqda' : 'Kuryer Termiz bo\'ylab yo\'lda! Yetib kelishiga ~15 daqiqa'}
                     </h4>
                     <span className="text-xs text-gray-400">
                       Jami: {totalCartPrice.toLocaleString()} so'm • To'lov: UzGo Pay (+3% keshbek)
@@ -263,7 +238,6 @@ export default function DeliveryPage() {
                   key={rest.id}
                   className="bg-white dark:bg-[#1C1C1E] border border-gray-200/80 dark:border-gray-800 rounded-3xl p-5 shadow-sm space-y-4"
                 >
-                  {/* Restaurant Header */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 dark:border-gray-800 pb-3">
                     <div className="flex items-center gap-3">
                       <div className="text-3xl">{rest.logo}</div>
@@ -291,7 +265,6 @@ export default function DeliveryPage() {
                     </div>
                   </div>
 
-                  {/* Food Items List */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     {rest.menu.map((dish) => {
                       const countInCart = cart[dish.id]?.count || 0;
@@ -356,23 +329,22 @@ export default function DeliveryPage() {
           </div>
         )}
 
-        {/* 2. YANDEX EXPRESS COURIER MODE */}
+        {/* Courier Mode */}
         {activeTab === 'courier' && (
           <div className="max-w-xl mx-auto bg-white dark:bg-[#1C1C1E] border border-gray-200/80 dark:border-gray-800 rounded-3xl p-6 shadow-sm space-y-5">
             <div>
               <h3 className="font-black text-xl text-[#121214] dark:text-white flex items-center gap-2">
-                <Package size={22} className="text-[#FCE000]" /> Eshikdan-eshikkacha Tezkor Kuryer
+                <Package size={22} className="text-[#FCE000]" /> Termiz Bo'ylab Tezkor Kuryer
               </h3>
               <p className="text-xs text-gray-500 mt-1">
-                Hujjat, kalit, kiyim yoki posilkalarni 30 daqiqada yetkazib beramiz.
+                Hujjat, kalit, kiyim yoki posilkalarni 25 daqiqada yetkazib beramiz.
               </p>
             </div>
 
-            {/* Address Form */}
             <div className="space-y-3">
               <div>
                 <label className="text-xs font-black text-gray-500 uppercase tracking-wider block mb-1">
-                  1. Jo'natuvchi manzili
+                  1. Jo'natuvchi manzili (Termiz)
                 </label>
                 <div className="flex items-center bg-gray-50 dark:bg-[#26262A] p-3 rounded-2xl border border-gray-200 dark:border-gray-700">
                   <MapPin size={16} className="text-[#2563EB] mr-2" />
@@ -388,7 +360,7 @@ export default function DeliveryPage() {
 
               <div>
                 <label className="text-xs font-black text-gray-500 uppercase tracking-wider block mb-1">
-                  2. Qabul qiluvchi manzili
+                  2. Qabul qiluvchi manzili (Termiz)
                 </label>
                 <div className="flex items-center bg-gray-50 dark:bg-[#26262A] p-3 rounded-2xl border border-gray-200 dark:border-gray-700">
                   <MapPin size={16} className="text-[#FC3F1D] mr-2" />
@@ -412,23 +384,22 @@ export default function DeliveryPage() {
                     type="tel"
                     value={receiverPhone}
                     onChange={(e) => setReceiverPhone(e.target.value)}
-                    placeholder="+998 90 123 45 67"
+                    placeholder="+998 91 123 45 67"
                     className="w-full bg-transparent text-xs font-bold text-[#121214] dark:text-white outline-none"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Package Size */}
             <div>
               <label className="text-xs font-black text-gray-500 uppercase tracking-wider block mb-2">
                 Posilka hajmi
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { id: 'small', label: 'Kichik (Konvert)', price: '11,000 so\'m', icon: '✉️' },
-                  { id: 'medium', label: 'O\'rta (Paket)', price: '16,000 so\'m', icon: '📦' },
-                  { id: 'large', label: 'Katta (Quti)', price: '25,000 so\'m', icon: '🧳' },
+                  { id: 'small', label: 'Kichik (Konvert)', price: '9,000 so\'m', icon: '✉️' },
+                  { id: 'medium', label: 'O\'rta (Paket)', price: '14,000 so\'m', icon: '📦' },
+                  { id: 'large', label: 'Katta (Quti)', price: '22,000 so\'m', icon: '🧳' },
                 ].map((size) => (
                   <div
                     key={size.id}
@@ -458,7 +429,7 @@ export default function DeliveryPage() {
                   : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
               }`}
             >
-              <Bike size={18} /> Kuryer chaqirish (30 min)
+              <Bike size={18} /> Kuryer chaqirish (25 min)
             </button>
 
           </div>
@@ -466,7 +437,7 @@ export default function DeliveryPage() {
 
       </div>
 
-      {/* Food Cart Slide-Over Drawer */}
+      {/* Cart Slide-Over */}
       {showCartDrawer && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-end">
           <div className="w-full sm:max-w-md h-[90vh] sm:h-full bg-white dark:bg-[#1C1C1E] rounded-t-3xl sm:rounded-l-3xl p-5 flex flex-col justify-between shadow-2xl space-y-4">
@@ -484,7 +455,6 @@ export default function DeliveryPage() {
                 </button>
               </div>
 
-              {/* Items in Cart */}
               <div className="divide-y divide-gray-100 dark:divide-gray-800 max-h-[50vh] overflow-y-auto mt-2">
                 {Object.values(cart).map((item) => (
                   <div key={item.id} className="py-3 flex items-center justify-between">
@@ -511,7 +481,6 @@ export default function DeliveryPage() {
               </div>
             </div>
 
-            {/* Cart Checkout Summary */}
             <div className="border-t border-gray-100 dark:border-gray-800 pt-4 space-y-3">
               <div className="flex justify-between text-xs font-bold text-gray-500">
                 <span>Yetkazib berish (25 daqiqa)</span>
